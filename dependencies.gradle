@@ -1,0 +1,70 @@
+ext.versions = [
+    minSdk              : 23,
+    compileSdk          : 33,
+    targetSdk           : 32,
+    versionCode         : 1,
+    versionName         : '1.0.0',
+    resConfigs         : 'en',
+
+    // gradle plugins
+    gradleBuildTool        : '7.1.2',
+    spotlessGradle         : '6.4.1',
+    versionPlugin          : '0.23.0',
+
+    // one ui project
+    design                 : '1.2.3',
+    icons                  : '1.0.1',
+
+    // one ui project sesl
+    appcompat              : '1.3.0',
+    material               : '1.4.0',
+    recyclerview           : '1.3.0',
+    preference             : '1.1.0',
+
+    // kotlin
+    kotlin                 : '1.6.21',
+
+    // material
+//    materialVersion        : '1.6.0',
+
+    // architecture components
+    lifecycleVersion       : '2.4.1',
+    roomVersion            : '2.4.2',
+    archCompomentVersion   : '2.1.0',
+
+    // binding
+    bindablesVersion       : '1.0.9',
+
+    // di
+    koinVersion            : '2.0.1',
+
+    // network
+    retrofitVersion        : '2.9.0',
+    okhttpVersion          : '4.9.3',
+    sandwichVersion        : '1.2.4',
+
+    // coroutines
+    coroutinesVersion      : '1.6.1',
+
+    // glide
+    glideVersion           : '4.13.2',
+
+    // adapter
+    baseAdapter            : '1.0.4',
+
+    // whatIf
+    whatIfVersion          : '1.1.1',
+
+    // bundler
+    bundlerVersion         : '1.0.4',
+
+    // androidBottomBar
+    androidBottomBarVersion: '1.0.2',
+
+    // debugging
+    timberVersion          : '5.0.1',
+
+    // gson
+    gson                : '2.9.0',
+
+]

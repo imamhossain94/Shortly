@@ -1,27 +1,34 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.parcelize'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
+    apply from: '../dependencies.gradle'
     namespace 'com.newagedevs.url_shortener'
-    compileSdk 33
+    compileSdk versions.compileSdk
 
     defaultConfig {
         applicationId "com.newagedevs.url_shortener"
-        minSdk 26
-        targetSdk 33
-        versionCode 1
-        versionName "1.0.0"
-
-        resConfigs 'en'
+        minSdk versions.minSdk
+        targetSdk versions.targetSdk
+        versionCode versions.versionCode
+        versionName versions.versionName
+        resConfigs versions.resConfigs
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        dataBinding true
+    }
+
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -39,20 +46,76 @@ configurations.all {
     exclude group: 'androidx.core', module: 'core'
     exclude group: 'androidx.drawerlayout', module: 'drawerlayout'
     exclude group: 'androidx.viewpager', module: 'viewpager'
+    exclude group: 'androidx.viewpager2', module: 'viewpager2'
     exclude group: 'androidx.fragment', module: 'fragment'
     exclude group: 'androidx.customview', module: 'customview'
     exclude group: 'androidx.coordinatorlayout', module: 'coordinatorlayout'
     exclude group: 'com.android.support', module: 'support-compat'
+    exclude group: 'com.google.android.material', module: 'material'
+    exclude group: 'androidx.recyclerview', module: 'recyclerview'
 }
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
 
-    implementation 'io.github.oneuiproject:design:1.2.3'
-    implementation 'io.github.oneuiproject:icons:1.0.1'
-    implementation 'io.github.oneuiproject.sesl:appcompat:1.3.0'
-    implementation 'io.github.oneuiproject.sesl:material:1.4.0'
-    implementation 'io.github.oneuiproject.sesl:recyclerview:1.3.0'
-    implementation 'io.github.oneuiproject.sesl:preference:1.1.0'
-    /*TODO: add/update/remove libraries*/
+    // one ui project
+    implementation "io.github.oneuiproject:design:$versions.design"
+    implementation "io.github.oneuiproject:icons:$versions.icons"
+
+    // one ui project sesl
+    implementation "io.github.oneuiproject.sesl:appcompat:$versions.appcompat"
+    implementation "io.github.oneuiproject.sesl:material:$versions.material"
+    implementation "io.github.oneuiproject.sesl:recyclerview:$versions.recyclerview"
+    implementation "io.github.oneuiproject.sesl:preference:$versions.preference"
+
+
+    // architecture components
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycleVersion"
+    implementation "androidx.room:room-runtime:$versions.roomVersion"
+    implementation "androidx.room:room-ktx:$versions.roomVersion"
+    kapt "androidx.room:room-compiler:$versions.roomVersion"
+    testImplementation "androidx.arch.core:core-testing:$versions.archCompomentVersion"
+
+    // binding
+    implementation "com.github.skydoves:bindables:$versions.bindablesVersion"
+
+    // koin
+    implementation "org.koin:koin-android:$versions.koinVersion"
+    implementation "org.koin:koin-android-scope:$versions.koinVersion"
+    implementation "org.koin:koin-android-viewmodel:$versions.koinVersion"
+
+    // network
+    implementation "com.github.skydoves:sandwich:$versions.sandwichVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttpVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$versions.retrofitVersion"
+    testImplementation "com.squareup.okhttp3:mockwebserver:$versions.okhttpVersion"
+
+    // coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutinesVersion"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutinesVersion"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutinesVersion"
+
+    // glide
+    implementation "com.github.bumptech.glide:glide:$versions.glideVersion"
+    kapt "com.github.bumptech.glide:compiler:$versions.glideVersion"
+
+    // whatIf
+    implementation "com.github.skydoves:whatif:$versions.whatIfVersion"
+
+    // bundler
+    implementation "com.github.skydoves:bundler:$versions.bundlerVersion"
+
+    // android bottom navigation
+    implementation "com.github.skydoves:androidbottombar:$versions.androidBottomBarVersion"
+
+    // debugging
+    implementation "com.jakewharton.timber:timber:$versions.timberVersion"
+
+    // glide
+    implementation "com.github.bumptech.glide:glide:$versions.glideVersion"
+    kapt "com.github.bumptech.glide:compiler:$versions.glideVersion"
+
+
+
 }

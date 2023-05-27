@@ -1,4 +1,4 @@
-package com.newagedevs.urlshortener
+package com.newagedevs.url_shortener
 
 import android.content.Intent
 import android.os.Bundle

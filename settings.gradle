@@ -4,6 +4,9 @@ pluginManagement {
         google()
         mavenCentral()
         mavenLocal()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url "https://jitpack.io/" }
+        jcenter()
     }
 }
 dependencyResolutionManagement {
@@ -12,6 +15,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         mavenLocal()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url "https://jitpack.io/" }
+        jcenter()
     }
 }
 rootProject.name = "UrlShortener"
