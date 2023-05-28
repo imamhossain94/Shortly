@@ -22,7 +22,7 @@
 
     <item
         android:id="@+id/menu_app_info"
-        android:title="About Url Optimizer"
+        android:title="About"
         app:showAsAction="never"
         tools:ignore="AppCompatResource" />
 </menu>

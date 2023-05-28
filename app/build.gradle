@@ -68,6 +68,9 @@ dependencies {
     implementation "io.github.oneuiproject.sesl:recyclerview:$versions.recyclerview"
     implementation "io.github.oneuiproject.sesl:preference:$versions.preference"
 
+    //
+    implementation "androidx.fragment:fragment-ktx:1.2.5"
+
 
     // architecture components
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycleVersion"

@@ -1,1 +1,1 @@
-# Url Optimizer -> Url Optimizer
+# Shortly - Url Shortener

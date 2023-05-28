@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Url Optimizer</string>
-    <string name="database">UrlOptimizer.db</string>
+    <string name="app_name">Shortly</string>
+    <string name="database">Shortly.db</string>
 
 </resources>

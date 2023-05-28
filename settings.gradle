@@ -20,5 +20,5 @@ dependencyResolutionManagement {
         jcenter()
     }
 }
-rootProject.name = "URLOptimizer"
+rootProject.name = "Shortly"
 include ':app'
