@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<dev.oneuiproject.oneui.layout.ToolbarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/toolbar_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:expandable="true"
-    app:expanded="true"
-    app:subtitle="subtitle"
-    app:title="@string/app_name"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.core.widget.NestedScrollView
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.newagedevs.url_shortener.view.ui.main.MainViewModel" />
+    </data>
+
+    <dev.oneuiproject.oneui.layout.DrawerLayout
+        android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/oui_background_color"
-        app:layout_location="main_content">
+        app:expanded="false"
+        app:expandable="true"
+        app:title="@string/app_name"
+        tools:context=".view.ui.DashboardActivity">
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            app:layout_location="main_content"
+            app:toast="@{viewModel.toast}"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Hello World!" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/drawer_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            app:layout_location="drawer_panel" />
 
-        </LinearLayout>
+    </dev.oneuiproject.oneui.layout.DrawerLayout>
 
-    </androidx.core.widget.NestedScrollView>
 
-</dev.oneuiproject.oneui.layout.ToolbarLayout>
+</layout>

@@ -100,6 +100,9 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$versions.glideVersion"
     kapt "com.github.bumptech.glide:compiler:$versions.glideVersion"
 
+    // adapter
+    implementation "com.github.skydoves:baserecyclerviewadapter:$versions.baseAdapter"
+
     // whatIf
     implementation "com.github.skydoves:whatif:$versions.whatIfVersion"
 
