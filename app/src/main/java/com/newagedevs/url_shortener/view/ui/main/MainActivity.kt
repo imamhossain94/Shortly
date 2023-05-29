@@ -27,7 +27,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main),
     DrawerListAdapter.DrawerListener {
 
-    private val viewModel: MainViewModel by viewModel()
+    private val vm: MainViewModel by viewModel()
     private var fragmentManager: FragmentManager? = null
     private val fragments: ArrayList<Fragment?> = ArrayList()
     
@@ -35,7 +35,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main
         super.onCreate(savedInstanceState)
 
         binding {
-            viewModel = viewModel
+            viewModel = vm
         }
 
         initFragmentList()

@@ -65,6 +65,7 @@ dependencies {
     // one ui project sesl
     implementation "io.github.oneuiproject.sesl:appcompat:$versions.appcompat"
     implementation "io.github.oneuiproject.sesl:material:$versions.material"
+    implementation("io.github.oneuiproject.sesl:indexscroll:$versions.indexscroll")
     implementation "io.github.oneuiproject.sesl:recyclerview:$versions.recyclerview"
     implementation "io.github.oneuiproject.sesl:preference:$versions.preference"
 

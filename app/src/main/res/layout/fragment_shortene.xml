@@ -24,10 +24,32 @@
         android:paddingVertical="4dp"
         android:background="@color/oui_background_color">
 
-      <androidx.appcompat.widget.AppCompatSpinner
-          android:id="@+id/apppicker_spinner"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content" />
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+          <androidx.appcompat.widget.AppCompatEditText
+              android:id="@+id/fragment_searchview"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:paddingStart="5dp"
+              android:paddingEnd="0dp"
+              android:paddingTop="7.5dp"
+              android:paddingBottom="7.5dp"
+              android:hint="Enter short url"
+              android:background="#00000000"
+              android:drawableStart="@drawable/ic_link_svgrepo_com"
+              android:drawablePadding="7.5dp"
+              android:layout_weight="0.7"/>
+
+          <androidx.appcompat.widget.AppCompatSpinner
+              android:id="@+id/apppicker_spinner"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="0.3"/>
+      </LinearLayout>
+
 
     </dev.oneuiproject.oneui.widget.RoundFrameLayout>
 
@@ -40,18 +62,32 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-<!--      <androidx.apppickerview.widget.AppPickerView-->
-<!--          android:id="@+id/apppicker_list"-->
-<!--          android:layout_width="match_parent"-->
-<!--          android:layout_height="match_parent"-->
-<!--          android:background="@color/oui_background_color" />-->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:viewBindingIgnore="true">
 
-      <androidx.appcompat.widget.SeslProgressBar
-          android:id="@+id/apppicker_progress"
-          style="@style/Widget.AppCompat.ProgressBar.Large"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/indexscroll_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:background="@color/oui_background_color" />
+
+            <androidx.indexscroll.widget.SeslIndexScrollView
+                android:id="@+id/indexscroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+<!--      <androidx.appcompat.widget.SeslProgressBar-->
+<!--          android:id="@+id/apppicker_progress"-->
+<!--          style="@style/Widget.AppCompat.ProgressBar.Large"-->
+<!--          android:layout_width="wrap_content"-->
+<!--          android:layout_height="wrap_content"-->
+<!--          android:layout_gravity="center" />-->
 
     </dev.oneuiproject.oneui.widget.RoundFrameLayout>
 
