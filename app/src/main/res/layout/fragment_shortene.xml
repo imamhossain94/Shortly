@@ -41,7 +41,12 @@
               android:background="#00000000"
               android:drawableStart="@drawable/ic_link_svgrepo_com"
               android:drawablePadding="7.5dp"
-              android:layout_weight="0.7"/>
+              android:layout_weight="0.7"
+              android:layout_gravity="center|start"
+              android:singleLine="true"
+              android:maxLines="1"
+              android:ellipsize="end"
+              android:imeOptions="actionGo"/>
 
           <androidx.appcompat.widget.AppCompatSpinner
               android:id="@+id/apppicker_spinner"
@@ -62,25 +67,11 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <FrameLayout
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:viewBindingIgnore="true">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/indexscroll_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none"
-                android:background="@color/oui_background_color" />
-
-            <androidx.indexscroll.widget.SeslIndexScrollView
-                android:id="@+id/indexscroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
-
-        </FrameLayout>
+            android:background="@color/oui_background_color"
+            tools:viewBindingIgnore="true" />
 
 <!--      <androidx.appcompat.widget.SeslProgressBar-->
 <!--          android:id="@+id/apppicker_progress"-->

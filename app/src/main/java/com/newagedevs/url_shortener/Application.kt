@@ -3,6 +3,7 @@
 package com.newagedevs.url_shortener
 
 import android.app.Application
+import com.newagedevs.url_shortener.di.networkModule
 import com.newagedevs.url_shortener.di.persistenceModule
 import com.newagedevs.url_shortener.di.repositoryModule
 import com.newagedevs.url_shortener.di.viewModelModule
@@ -20,6 +21,7 @@ class Application : Application() {
 
       //Adding Module
       modules(viewModelModule)
+      modules(networkModule)
       modules(repositoryModule)
       modules(persistenceModule)
     }
