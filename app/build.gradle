@@ -6,6 +6,22 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def getProperty(String filename, String propName) {
+    def propsFile = rootProject.file(filename)
+    if (propsFile.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(propsFile))
+        if (props[propName] != null) {
+            return props[propName]
+        } else {
+            print("No such property " + propName + " in file " + filename)
+        }
+    } else {
+        print(filename + " does not exist!")
+    }
+}
+
+
 android {
     apply from: '../dependencies.gradle'
     namespace 'com.newagedevs.url_shortener'
@@ -20,6 +36,9 @@ android {
         resConfigs versions.resConfigs
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Get the secret keys
+        buildConfigField "String", "CUTTLY_API_KEY", "\"${getProperty("local.properties", "cuttly_api_key")}\""
     }
 
     buildFeatures {
@@ -93,6 +112,7 @@ dependencies {
     implementation "com.github.skydoves:sandwich:$versions.sandwichVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttpVersion"
     implementation "com.squareup.retrofit2:converter-gson:$versions.retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-scalars:$versions.retrofitVersion"
     testImplementation "com.squareup.okhttp3:mockwebserver:$versions.okhttpVersion"
 
     // coroutines

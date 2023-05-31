@@ -1,22 +1,20 @@
 package com.newagedevs.url_shortener.network
 
-import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitClient(private val baseUrl: String) {
+class RetrofitClient(
+    private val baseUrl: String,
+    private val client: OkHttpClient,
+    private var factory: retrofit2.Converter.Factory?) {
 
-    fun getRetrofit(): Retrofit {
-
-        val client = OkHttpClient.Builder()
-            .addInterceptor(RequestInterceptor())
-            .build()
+    fun get(): Retrofit {
 
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(factory?:GsonConverterFactory.create())
             .build()
 
     }

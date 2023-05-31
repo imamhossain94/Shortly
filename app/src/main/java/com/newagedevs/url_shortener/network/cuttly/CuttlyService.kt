@@ -1,9 +1,8 @@
-package com.newagedevs.url_shortener.network
+package com.newagedevs.url_shortener.network.cuttly
 
 import com.newagedevs.url_shortener.model.cuttly.Cuttly
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CuttlyService {

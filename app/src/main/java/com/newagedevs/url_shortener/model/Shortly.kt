@@ -8,8 +8,12 @@ import kotlinx.parcelize.Parcelize
 
 @Entity
 @Parcelize
-data class Model(
-    var example: String?,
+data class Shortly(
+    var longUrl : String?,
+    var provider : String?,
+    var shortUrl : String?,
+    var timestamp : String?,
+    var isFavorite : Boolean?,
 ) : Parcelable {
     @IgnoredOnParcel
     @PrimaryKey(autoGenerate = true)

@@ -1,16 +1,16 @@
 package com.newagedevs.url_shortener.repository
 
-import com.newagedevs.url_shortener.model.Model
-import com.newagedevs.url_shortener.persistence.ModelDao
+import com.newagedevs.url_shortener.model.Shortly
+import com.newagedevs.url_shortener.persistence.ShortlyDao
 import timber.log.Timber
 
 
 class MainRepository constructor(
-    private val modelDao: ModelDao
+    private val modelDao: ShortlyDao
 ) : Repository {
 
 
-    fun get(): Model? {
+    fun get(): Shortly? {
         return modelDao.get()
     }
 
@@ -18,7 +18,7 @@ class MainRepository constructor(
 //        return modelDao.flow()
 //    }
 
-    fun set(handler: Model) {
+    fun set(handler: Shortly) {
         modelDao.insert(handler)
     }
 
