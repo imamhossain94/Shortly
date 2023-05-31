@@ -1,12 +1,11 @@
-package com.newagedevs.url_shortener.network.chilpit
+package com.newagedevs.url_shortener.network.clck.ru
 
-import com.newagedevs.url_shortener.network.clck.ru.ClckRuService
 import com.skydoves.sandwich.ApiResponse
 import com.skydoves.sandwich.DataRetainPolicy
 import com.skydoves.sandwich.ResponseDataSource
 import kotlinx.coroutines.CoroutineScope
 
-class ChilpItClient(private val service: ClckRuService) {
+class ClckRuClient(private val service: ClckRuService) {
 
     fun short(
         url: String,
