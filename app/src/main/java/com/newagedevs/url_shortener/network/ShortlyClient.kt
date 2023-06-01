@@ -19,7 +19,7 @@ class CuttlyClient(private val service: CuttlyService) {
         dataSource
             .dataRetainPolicy(DataRetainPolicy.NO_RETAIN)
             .retry(3, 5000L)
-            .suspendCombine(service.short(key, url), coroutineScope, onResult)
+            .suspendCombine(service.short("", key, url), coroutineScope, onResult)
             .request()
     }
 
