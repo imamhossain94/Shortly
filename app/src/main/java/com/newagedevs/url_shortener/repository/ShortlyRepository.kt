@@ -1,10 +1,8 @@
 package com.newagedevs.url_shortener.repository
 
 import androidx.annotation.WorkerThread
-import com.newagedevs.url_shortener.BuildConfig
-import com.newagedevs.url_shortener.model.Shortly
 import com.newagedevs.url_shortener.model.cuttly.Cuttly
-import com.newagedevs.url_shortener.network.cuttly.CuttlyClient
+import com.newagedevs.url_shortener.network.ShortlyClient
 import com.newagedevs.url_shortener.network.mapper.ErrorResponseMapper
 import com.newagedevs.url_shortener.persistence.ShortlyDao
 import com.skydoves.sandwich.*
@@ -17,9 +15,10 @@ import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 
 
-class CuttlyRepository constructor(
-    private val client: CuttlyClient,
-    private val dataSource: ResponseDataSource<Cuttly>,
+class ShortlyRepository constructor(
+    private val client: ShortlyClient,
+    private val stringDataSource: ResponseDataSource<String>,
+    private val cuttlyDataSource: ResponseDataSource<Cuttly>,
     private val dao: ShortlyDao
 ) : Repository {
 
@@ -30,27 +29,28 @@ class CuttlyRepository constructor(
     @WorkerThread
     @ExperimentalCoroutinesApi
     fun short(
-        url: String,
+        provider: String,
+        longUrl: String,
         coroutineScope: CoroutineScope,
         error: (String?) -> Unit
     ) = callbackFlow {
 
-        client.short(
-            BuildConfig.CUTTLY_API_KEY,
-            url,
-            dataSource,
+        client.tinyurl(
+            longUrl,
+            stringDataSource,
             coroutineScope
         ) { apiResponse ->
             apiResponse
                 .suspendOnSuccess {
 
-                    dao.insert(Shortly(
-                        longUrl = data.url?.fullLink,
-                        shortUrl = data.url?.shortLink,
-                        provider = "Cutt.ly",
-                        timestamp = data.url?.date,
-                        isFavorite = false,
-                    ))
+//                    dao.insert(Shortly(
+//                        longUrl = longUrl,
+//                        shortUrl = data.url?.shortLink,
+//                        provider = "Cutt.ly",
+//                        timestamp = data.url?.date,
+//                        isFavorite = false,
+//                    ))
+
                     send(data)
                 }
                 .suspendOnError {

@@ -1,14 +1,15 @@
 package com.newagedevs.url_shortener.utils
 
-class Constants {
+class Urls {
 
     companion object {
-        val feedbackMail = arrayOf("imamagun94@gmail.com")
-        val contactMail = arrayOf("imamagun94@gmail.com")
-        const val privacyPolicyUrl = ""
-        const val sourceCodeUrl = "https://github.com/imamhossain94/UrlOptimizer"
-        const val publisherName = "https://play.google.com/store/apps/developer?id=NewAgeDevs"
-        const val appStoreId = "https://play.google.com/store/apps/details?id=com.newagedevs.url_shortener"
+        const val cuttly = "https://cutt.ly"
+        const val chilpit = "http://chilp.it"
+        const val clckru = "https://clck.ru"
+        const val dagd = "https://da.gd"
+        const val isgd = "https://is.gd"
+        const val osdb = "https://osdb.link"
+        const val tinyurl = "http://tinyurl.com"
     }
 
 }

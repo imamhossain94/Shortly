@@ -1,14 +1,14 @@
 package com.newagedevs.url_shortener.view.ui.main
 
 import androidx.databinding.Bindable
-import com.newagedevs.url_shortener.repository.MainRepository
+import com.newagedevs.url_shortener.repository.ShortlyRepository
 import com.skydoves.bindables.BindingViewModel
 import com.skydoves.bindables.bindingProperty
 import timber.log.Timber
 
 
 class MainViewModel constructor(
-    private val mainRepository: MainRepository
+    private val repository: ShortlyRepository
 ) : BindingViewModel() {
 
     @get:Bindable

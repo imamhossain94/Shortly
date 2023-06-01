@@ -6,12 +6,12 @@ import timber.log.Timber
 
 
 class MainRepository constructor(
-    private val modelDao: ShortlyDao
+    private val dao: ShortlyDao
 ) : Repository {
 
 
     fun get(): Shortly? {
-        return modelDao.get()
+        return dao.get()
     }
 
 //    fun flow(): Flow<AppHandler> {
@@ -19,8 +19,9 @@ class MainRepository constructor(
 //    }
 
     fun set(handler: Shortly) {
-        modelDao.insert(handler)
+        dao.insert(handler)
     }
+
 
     init {
         Timber.d("Injection MainRepository")

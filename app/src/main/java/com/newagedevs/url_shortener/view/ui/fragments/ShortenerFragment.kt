@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatSpinner
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.databinding.FragmentShorteneBinding
+import com.newagedevs.url_shortener.utils.Providers
 import com.newagedevs.url_shortener.view.base.FragmentInfo
 import com.newagedevs.url_shortener.view.ui.main.MainViewModel
 import com.skydoves.bindables.BindingFragment
@@ -17,7 +18,6 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 open class ShortenerFragment : BindingFragment<FragmentShorteneBinding>(R.layout.fragment_shortene),
     FragmentInfo {
-
 
 
     private val vm: MainViewModel by sharedViewModel()
@@ -69,17 +69,8 @@ open class ShortenerFragment : BindingFragment<FragmentShorteneBinding>(R.layout
 
     private fun initSpinner(view: View) {
         val spinner = view.findViewById<AppCompatSpinner>(R.id.apppicker_spinner)
-        val categories: MutableList<String> = ArrayList()
-        categories.add("cutt.ly")
-        categories.add("chilp.it")
-        categories.add("clck.ru")
-        categories.add("da.gd")
-        categories.add("git.io")
-        categories.add("is.gd")
-        categories.add("os.db")
-        categories.add("qps.ru")
-        categories.add("tinyURL")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Providers.list)
         adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item)
         spinner.adapter = adapter
         //spinner.setOnItemSelectedListener(this)
