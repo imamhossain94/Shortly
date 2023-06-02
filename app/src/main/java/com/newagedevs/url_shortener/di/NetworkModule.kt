@@ -6,6 +6,8 @@ import com.newagedevs.url_shortener.network.ShortlyClient
 import com.newagedevs.url_shortener.network.ShortlyService
 import com.skydoves.sandwich.ResponseDataSource
 import okhttp3.OkHttpClient
+import org.koin.core.qualifier.StringQualifier
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -22,17 +24,14 @@ val networkModule = module {
   single(override = true) {
     Retrofit.Builder()
       .baseUrl("http://tinyurl.com/")
-      //.client(get<OkHttpClient>())
+      .client(get<OkHttpClient>())
       .addConverterFactory(ScalarsConverterFactory.create())
-      //.addConverterFactory(GsonConverterFactory.create())
+      .addConverterFactory(GsonConverterFactory.create())
       .build()
   }
 
   single { get<Retrofit>().create(ShortlyService::class.java) }
 
   single { ShortlyClient(get()) }
-
-  single { ResponseDataSource<Cuttly>() }
-
 
 }

@@ -3,22 +3,22 @@
 
     <item
         android:icon="@drawable/ic_oui_copy_outline"
-        android:title="Copy Short URL" />
+        android:title="Short Url" />
 
     <item
         android:icon="@drawable/ic_oui_copy_outline"
-        android:title="Copy Long URL" />
+        android:title="Long URL" />
 
     <item
         android:icon="@drawable/ic_oui_share"
-        android:title="Share" />
+        android:title="Share Url" />
 
     <item
         android:icon="@drawable/ic_oui_delete"
-        android:title="Delete" />
+        android:title="Delete Url" />
 
     <item
         android:icon="@drawable/ic_oui_star_outline"
-        android:title="Add to Favorite" />
+        android:title="Add Favorite" />
 
 </menu>

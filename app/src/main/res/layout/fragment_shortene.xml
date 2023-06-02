@@ -77,7 +77,10 @@
             android:layout_height="match_parent"
             android:background="@color/oui_background_color"
             app:adapter="@{adapter}"
-            app:adapterShortenUrls="@{viewModel.shortenUrls}" />
+            app:adapterShortenUrls="@{viewModel.shortenUrls}"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/view_shorten_url_item"/>
 
 <!--      <androidx.appcompat.widget.SeslProgressBar-->
 <!--          android:id="@+id/apppicker_progress"-->

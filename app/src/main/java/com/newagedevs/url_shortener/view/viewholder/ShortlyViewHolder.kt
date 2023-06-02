@@ -7,6 +7,7 @@ import com.newagedevs.url_shortener.model.Shortly
 import com.skydoves.baserecyclerviewadapter.BaseViewHolder
 import dev.oneuiproject.oneui.dialog.GridMenuDialog
 import dev.oneuiproject.oneui.dialog.GridMenuDialog.GridMenuItem
+import timber.log.Timber
 
 class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
 
@@ -28,10 +29,15 @@ class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
   }
 
   override fun onClick(view: View) {
+
+  }
+
+  override fun onLongClick(p0: View?):Boolean {
+    Timber.d("onLongClick-----------------")
     val gridMenuDialog = GridMenuDialog(context)
     gridMenuDialog.inflateMenu(R.menu.tabs_grid_menu)
     gridMenuDialog.setOnItemClickListener { item: GridMenuItem? -> true }
+    gridMenuDialog.show()
+    return false
   }
-
-  override fun onLongClick(p0: View?) = false
 }

@@ -4,25 +4,27 @@ import com.newagedevs.url_shortener.BuildConfig
 import com.newagedevs.url_shortener.model.cuttly.Cuttly
 import com.newagedevs.url_shortener.model.osdb.Osdb
 import com.newagedevs.url_shortener.utils.Urls
-import com.skydoves.sandwich.ApiResponse
-import com.skydoves.sandwich.DataRetainPolicy
-import com.skydoves.sandwich.ResponseDataSource
+import com.skydoves.sandwich.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class ShortlyClient(private val service: ShortlyService) {
 
+
     fun tinyurl(
         longUrl: String,
-        dataSource: ResponseDataSource<String>,
         coroutineScope: CoroutineScope,
         onResult: suspend (response: ApiResponse<String>) -> Unit
     ) {
-        dataSource
-            .dataRetainPolicy(DataRetainPolicy.NO_RETAIN)
-            .retry(3, 5000L)
-            .suspendCombine(service.tinyurl( longUrl), coroutineScope, onResult)
-            .request()
+        service.tinyurl(longUrl).request {
+            coroutineScope.launch {
+                onResult(it)
+            }
+        }
     }
+
+
+
 
     fun chilpit(
         longUrl: String,

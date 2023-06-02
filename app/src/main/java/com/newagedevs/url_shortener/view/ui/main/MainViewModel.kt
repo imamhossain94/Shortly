@@ -13,6 +13,7 @@ import com.newagedevs.url_shortener.utils.Urls
 import com.skydoves.bindables.BindingViewModel
 import com.skydoves.bindables.asBindingProperty
 import com.skydoves.bindables.bindingProperty
+import com.skydoves.sandwich.message
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -32,8 +33,9 @@ class MainViewModel constructor(
     var isLoading: Boolean by bindingProperty(true)
         private set
 
+
     @get:Bindable
-    var shortenUrls: List<Shortly>? by bindingProperty(repository.loadShortenUrls())
+    var shortenUrls: List<Shortly>? by bindingProperty(listOf())
 
 
     fun onShortUrl(view: View, actionId: Int, event: KeyEvent?): Boolean {
@@ -44,7 +46,6 @@ class MainViewModel constructor(
             viewModelScope.launch {
                 horseDetailFlow.collect { value ->
 
-
                     shortenUrls = repository.loadShortenUrls()
                 }
             }
@@ -54,26 +55,8 @@ class MainViewModel constructor(
         return false
     }
 
-
-
-
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun initializeData() {
-
-        val horseDetailFlow = repository.short(provider, "https://stackoverflow.com/questions/5677563/listener-for-done-button-on-edittext", viewModelScope) {
-            Timber.d("________________________________");
-            Timber.d(it)
-            Timber.d("________________________________");
-        }
-
-        viewModelScope.launch {
-            horseDetailFlow.collect { value ->
-                shortenUrls = repository.loadShortenUrls()
-            }
-        }
-
-
+        shortenUrls = repository.loadShortenUrls()
     }
 
     init {

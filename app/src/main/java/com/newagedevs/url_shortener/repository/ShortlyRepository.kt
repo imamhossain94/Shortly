@@ -21,8 +21,6 @@ import timber.log.Timber
 
 class ShortlyRepository constructor(
     private val client: ShortlyClient,
-    private val stringDataSource: ResponseDataSource<String>,
-    private val cuttlyDataSource: ResponseDataSource<Cuttly>,
     private val dao: ShortlyDao
 ) : Repository {
 
@@ -32,9 +30,20 @@ class ShortlyRepository constructor(
 
     fun loadShortenUrls(): List<Shortly> {
         val shortenUrls = dao.getShortenUrlList()
-        return shortenUrls.ifEmpty {
+
+        Timber.d("________________________________");
+        Timber.d(shortenUrls.toString())
+        Timber.d("________________________________");
+
+        return if(shortenUrls.size == 0) {
             emptyList()
+        }else {
+            shortenUrls
         }
+
+//        return shortenUrls.ifEmpty {
+//            emptyList()
+//        }
     }
 
     @WorkerThread
@@ -45,11 +54,9 @@ class ShortlyRepository constructor(
         coroutineScope: CoroutineScope,
         error: (String?) -> Unit
     ) = callbackFlow {
-        Timber.d("________________________________");
 
         client.tinyurl(
             longUrl,
-            stringDataSource,
             coroutineScope
         ) { apiResponse ->
             apiResponse
@@ -63,27 +70,13 @@ class ShortlyRepository constructor(
                         isFavorite = false,
                     ))
 
-                    Timber.d("________________________________");
-                    Timber.d(data)
-                    Timber.d("________________________________");
-
-
                     send(data)
                 }
                 .suspendOnError {
 
-                    Timber.d("________________________________");
-                    Timber.d("Error")
-                    Timber.d("________________________________");
-
-
                     map(ErrorResponseMapper) { error("[Code: $code]: $message") }
                 }
                 .suspendOnException {
-
-                    Timber.d("________________________________");
-                    Timber.d(message())
-                    Timber.d("________________________________");
 
                     error(message())
                 }
