@@ -20,7 +20,7 @@ class ShortlyClient(private val service: ShortlyService) {
         dataSource
             .dataRetainPolicy(DataRetainPolicy.NO_RETAIN)
             .retry(3, 5000L)
-            .suspendCombine(service.tinyurl(Urls.tinyurl, longUrl), coroutineScope, onResult)
+            .suspendCombine(service.tinyurl( longUrl), coroutineScope, onResult)
             .request()
     }
 

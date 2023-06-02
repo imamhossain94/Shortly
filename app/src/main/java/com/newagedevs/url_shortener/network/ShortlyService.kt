@@ -7,8 +7,8 @@ import retrofit2.http.*
 
 interface ShortlyService {
 
-  @GET("/api-create.php")
-  fun tinyurl(@Url baseUrl:String, @Query("url") longUrl: String): Call<String>
+  @GET("api-create.php")
+  fun tinyurl(@Query("url") longUrl: String): Call<String>
 
   @GET("/api.php")
   fun chilpit(@Url baseUrl:String,  @Query("url") longUrl: String): Call<String>

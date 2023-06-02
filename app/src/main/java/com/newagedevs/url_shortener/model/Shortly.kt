@@ -9,11 +9,11 @@ import kotlinx.parcelize.Parcelize
 @Entity
 @Parcelize
 data class Shortly(
-    var longUrl : String?,
-    var provider : String?,
-    var shortUrl : String?,
-    var timestamp : String?,
-    var isFavorite : Boolean?,
+    val longUrl : String?,
+    val provider : String?,
+    val shortUrl : String?,
+    val timestamp : String?,
+    val isFavorite : Boolean?,
 ) : Parcelable {
     @IgnoredOnParcel
     @PrimaryKey(autoGenerate = true)

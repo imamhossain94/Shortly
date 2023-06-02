@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:icon="@drawable/ic_oui_copy_outline"
+        android:title="Copy Short URL" />
+
+    <item
+        android:icon="@drawable/ic_oui_copy_outline"
+        android:title="Copy Long URL" />
+
+    <item
+        android:icon="@drawable/ic_oui_share"
+        android:title="Share" />
+
+    <item
+        android:icon="@drawable/ic_oui_delete"
+        android:title="Delete" />
+
+    <item
+        android:icon="@drawable/ic_oui_star_outline"
+        android:title="Add to Favorite" />
+
+</menu>

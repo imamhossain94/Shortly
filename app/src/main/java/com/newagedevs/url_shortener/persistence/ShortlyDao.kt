@@ -13,6 +13,9 @@ interface ShortlyDao {
     @Query("SELECT * FROM Shortly LIMIT 1")
     fun get(): Shortly?
 
+    @Query("SELECT * FROM Shortly")
+    fun getShortenUrlList(): List<Shortly>
+
     @Query("SELECT * FROM Shortly LIMIT 1")
     fun flow(): Flow<Shortly>
 

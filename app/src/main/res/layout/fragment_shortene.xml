@@ -9,6 +9,10 @@
       name="viewModel"
       type="com.newagedevs.url_shortener.view.ui.main.MainViewModel" />
 
+      <variable
+          name="adapter"
+          type="com.newagedevs.url_shortener.view.adapter.ShortlyAdapter" />
+
   </data>
 
   <LinearLayout
@@ -46,7 +50,8 @@
               android:singleLine="true"
               android:maxLines="1"
               android:ellipsize="end"
-              android:imeOptions="actionGo"/>
+              android:imeOptions="actionGo"
+              android:onEditorAction="@{(view, actionId, event) -> viewModel.onShortUrl(view, actionId, event)}" />
 
           <androidx.appcompat.widget.AppCompatSpinner
               android:id="@+id/apppicker_spinner"
@@ -71,7 +76,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/oui_background_color"
-            tools:viewBindingIgnore="true" />
+            app:adapter="@{adapter}"
+            app:adapterShortenUrls="@{viewModel.shortenUrls}" />
 
 <!--      <androidx.appcompat.widget.SeslProgressBar-->
 <!--          android:id="@+id/apppicker_progress"-->

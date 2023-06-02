@@ -20,6 +20,6 @@ val persistenceModule = module {
       .build()
   }
 
-  single { get<AppDatabase>().modelDao() }
+  single { get<AppDatabase>().shortlyDao() }
 
 }

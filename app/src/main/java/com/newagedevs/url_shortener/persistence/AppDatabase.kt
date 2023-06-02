@@ -6,9 +6,9 @@ import androidx.room.TypeConverters
 import com.newagedevs.url_shortener.model.Shortly
 
 @Database(entities = [Shortly::class], version = 1, exportSchema = true)
-@TypeConverters(value = [])
+//@TypeConverters(value = [])
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun modelDao(): ShortlyDao
+    abstract fun shortlyDao(): ShortlyDao
 
 }
