@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/bvn_copy"
+        android:icon="@drawable/ic_oui_copy_outline"
+        android:title="Copy"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/bvn_share"
+        android:icon="@drawable/ic_oui_share_outline"
+        android:title="Share"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/bvn_delete"
+        android:icon="@drawable/ic_oui_delete_outline"
+        android:title="Delete"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/bvn_favorites"
+        android:title="Add to favorites"
+        app:showAsAction="never" />
+
+    <group android:id="@+id/menu_bnv">
+
+        <item
+            android:id="@+id/bvn_copy_long_url"
+            android:title="Copy long url"
+            app:showAsAction="never" />
+
+    </group>
+
+</menu>
