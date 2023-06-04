@@ -37,7 +37,7 @@
           android:gravity="center">
 
         <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/apppicker_spinner"
+            android:id="@+id/provider_picker_spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"/>

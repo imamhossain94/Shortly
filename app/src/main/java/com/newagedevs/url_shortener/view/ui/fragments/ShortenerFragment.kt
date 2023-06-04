@@ -84,7 +84,7 @@ open class ShortenerFragment : BindingFragment<FragmentShorteneBinding>(R.layout
     }
 
     private fun initSpinner(view: View) {
-        val spinner = binding.apppickerSpinner
+        val spinner = binding.providerPickerSpinner
 
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Providers.list)
         adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item)

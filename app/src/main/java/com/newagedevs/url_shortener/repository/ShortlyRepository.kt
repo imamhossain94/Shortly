@@ -2,6 +2,7 @@ package com.newagedevs.url_shortener.repository
 
 import androidx.annotation.WorkerThread
 import com.newagedevs.url_shortener.model.Shortly
+import com.newagedevs.url_shortener.model.cuttly.Cuttly
 import com.newagedevs.url_shortener.network.ShortlyClient
 import com.newagedevs.url_shortener.network.mapper.ErrorResponseMapper
 import com.newagedevs.url_shortener.persistence.ShortlyDao
@@ -13,6 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
+import org.jsoup.Jsoup
 import timber.log.Timber
 
 
@@ -86,6 +88,13 @@ class ShortlyRepository constructor(
                     }
                 }
             }
+            Providers.cuttly -> {
+                client.cuttly(longUrl, coroutineScope ) { it, p, l->
+                    handleCuttlyApiResponse(it, p, l, error).collect { value ->
+                        send(value)
+                    }
+                }
+            }
         }
         awaitClose()
     }.flowOn(Dispatchers.IO)
@@ -99,14 +108,49 @@ class ShortlyRepository constructor(
     )= callbackFlow {
         apiResponse
             .suspendOnSuccess {
+                var shortenedUrl = data
+                if (provider == Providers.osdb) {
+                    val doc = Jsoup.parse(data)
+                    shortenedUrl = doc.selectFirst("label#surl")
+                        ?.text().toString()
+                        .replace("Your shortened URL is:", "").trim()
+                }
                 dao.insert(Shortly(
                     longUrl = longUrl,
-                    shortUrl = data,
+                    shortUrl = shortenedUrl,
                     provider = provider,
                     timestamp = System.currentTimeMillis().toString(),
                     isFavorite = false,
                 ))
-                send(data)
+                send(shortenedUrl)
+            }
+            .suspendOnError {
+                map(ErrorResponseMapper) { error("[Code: $code]: $message") }
+            }
+            .suspendOnException {
+                send(message())
+            }
+
+        close()
+    }
+
+    private suspend fun handleCuttlyApiResponse(
+        apiResponse: ApiResponse<Cuttly>,
+        provider: String,
+        longUrl: String,
+        error: (String?) -> Unit
+    )= callbackFlow {
+        apiResponse
+            .suspendOnSuccess {
+
+                dao.insert(Shortly(
+                    longUrl = longUrl,
+                    shortUrl = data.url?.shortLink,
+                    provider = provider,
+                    timestamp = System.currentTimeMillis().toString(),
+                    isFavorite = false,
+                ))
+                send(data.url?.shortLink)
             }
             .suspendOnError {
                 map(ErrorResponseMapper) { error("[Code: $code]: $message") }

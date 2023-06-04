@@ -1,6 +1,9 @@
 package com.newagedevs.url_shortener.view.viewholder
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
@@ -8,11 +11,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.databinding.ViewShortenUrlItemBinding
+import com.newagedevs.url_shortener.extensions.toast
 import com.newagedevs.url_shortener.model.Shortly
 import com.skydoves.baserecyclerviewadapter.BaseViewHolder
-import dev.oneuiproject.oneui.dialog.GridMenuDialog
-import dev.oneuiproject.oneui.dialog.GridMenuDialog.GridMenuItem
-import timber.log.Timber
+
 
 class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
 
@@ -38,11 +40,6 @@ class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
   }
 
   override fun onLongClick(p0: View?):Boolean {
-    Timber.d("onLongClick-----------------")
-//    val gridMenuDialog = GridMenuDialog(context)
-//    gridMenuDialog.inflateMenu(R.menu.shorten_url_menu)
-//    gridMenuDialog.setOnItemClickListener { item: GridMenuItem? -> true }
-//    gridMenuDialog.show()
 
     val dialog = BottomSheetDialog(context)
     val view = (context as Activity).layoutInflater.inflate(R.layout.bottom_sheet_menu_sheet, null)
@@ -54,16 +51,45 @@ class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
     shortenTextView.text = data.shortUrl
     expandedTextView.text = data.longUrl
 
-//    bottomNavigationView.setOnItemSelectedListener {
-//
-//    }
+    val clipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    bottomNavigationView.setOnItemSelectedListener { it ->
+
+      when (it.itemId) {
+        R.id.bvn_copy -> {
+          val clip = ClipData.newPlainText("Shortly", data.shortUrl)
+          clipboard.setPrimaryClip(clip)
+          context.toast("Short urls copied!")
+        }
+        R.id.bvn_share -> {
+
+        }
+        R.id.bvn_delete -> {
+
+        }
+        R.id.bvn_favorites -> {
+
+        }
+        R.id.bvn_copy_long_url -> {
+          val clip = ClipData.newPlainText("Shortly", data.longUrl)
+          clipboard.setPrimaryClip(clip)
+          context.toast("Long urls copied!")
+        }
+        R.id.bvn_copy_short_url -> {
+          val clip = ClipData.newPlainText("Shortly", data.shortUrl)
+          clipboard.setPrimaryClip(clip)
+          context.toast("Short urls copied!")
+        }
+        else -> {}
+      }
+      dialog.cancel()
+      false
+    }
 
     dialog.setCancelable(true)
     dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
     dialog.setContentView(view)
     dialog.show()
-
-
 
     return false
   }

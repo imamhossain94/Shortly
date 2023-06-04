@@ -28,6 +28,11 @@
     <group android:id="@+id/menu_bnv">
 
         <item
+            android:id="@+id/bvn_copy_short_url"
+            android:title="Copy short url"
+            app:showAsAction="never" />
+
+        <item
             android:id="@+id/bvn_copy_long_url"
             android:title="Copy long url"
             app:showAsAction="never" />
