@@ -143,14 +143,16 @@ class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_app_info) {
-//            ActivityUtils.startPopOverActivity(
-//                this,
-//                null,//Intent(this, Example::class.java)
-//                null,
-//                ActivityUtils.POP_OVER_POSITION_RIGHT or ActivityUtils.POP_OVER_POSITION_TOP
-//            )
+            ActivityUtils.startPopOverActivity(
+                this,
+                Intent(this, AboutActivity::class.java),
+                null,
+                ActivityUtils.POP_OVER_POSITION_RIGHT or ActivityUtils.POP_OVER_POSITION_TOP
+            )
             return true
         }
+
+
         return false
     }
 

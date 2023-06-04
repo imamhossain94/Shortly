@@ -145,6 +145,7 @@ dependencies {
 
     //
     implementation 'org.jsoup:jsoup:1.14.3'
+    implementation 'com.google.android.play:app-update-ktx:2.1.0'
 
 
 
