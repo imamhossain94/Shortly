@@ -32,11 +32,11 @@ class FavoriteFragment : BindingFragment<FragmentFavoritesBinding>(R.layout.frag
   }
 
   override fun iconResId(): Int {
-    return R.drawable.ic_heart_svgrepo_com
+    return R.drawable.ic_star_svgrepo_com
   }
 
   override fun title(): CharSequence {
-    return "Favorites"
+    return "Favorites URL"
   }
 
   override fun isAppBarEnabled(): Boolean {

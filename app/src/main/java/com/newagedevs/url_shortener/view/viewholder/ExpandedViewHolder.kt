@@ -7,20 +7,22 @@ import android.widget.TextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.newagedevs.url_shortener.R
+import com.newagedevs.url_shortener.databinding.ViewExpandedUrlItemBinding
 import com.newagedevs.url_shortener.databinding.ViewShortenUrlItemBinding
+import com.newagedevs.url_shortener.model.Expander
 import com.newagedevs.url_shortener.model.Shortly
 import com.skydoves.baserecyclerviewadapter.BaseViewHolder
 import dev.oneuiproject.oneui.dialog.GridMenuDialog
 import dev.oneuiproject.oneui.dialog.GridMenuDialog.GridMenuItem
 import timber.log.Timber
 
-class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
+class ExpandedViewHolder(view: View) : BaseViewHolder(view) {
 
-  private lateinit var data: Shortly
-  private val binding: ViewShortenUrlItemBinding by bindings()
+  private lateinit var data: Expander
+  private val binding: ViewExpandedUrlItemBinding by bindings()
 
   override fun bindData(data: Any) {
-    if (data is Shortly) {
+    if (data is Expander) {
       this.data = data
       drawItemUI()
     }
@@ -28,7 +30,7 @@ class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
 
   private fun drawItemUI() {
     binding.apply {
-      shortly = data
+      expander = data
       executePendingBindings()
     }
   }
@@ -38,11 +40,6 @@ class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
   }
 
   override fun onLongClick(p0: View?):Boolean {
-    Timber.d("onLongClick-----------------")
-//    val gridMenuDialog = GridMenuDialog(context)
-//    gridMenuDialog.inflateMenu(R.menu.shorten_url_menu)
-//    gridMenuDialog.setOnItemClickListener { item: GridMenuItem? -> true }
-//    gridMenuDialog.show()
 
     val dialog = BottomSheetDialog(context)
     val view = (context as Activity).layoutInflater.inflate(R.layout.bottom_sheet_menu_sheet, null)
@@ -62,8 +59,6 @@ class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
     dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
     dialog.setContentView(view)
     dialog.show()
-
-
 
     return false
   }

@@ -5,13 +5,15 @@
 
   <data>
 
+    <import type="android.view.View" />
+
     <variable
       name="viewModel"
       type="com.newagedevs.url_shortener.view.ui.main.MainViewModel" />
 
-      <variable
-          name="adapter"
-          type="com.newagedevs.url_shortener.view.adapter.ShortlyAdapter" />
+    <variable
+        name="adapter"
+        type="com.newagedevs.url_shortener.view.adapter.ShortlyAdapter" />
 
   </data>
 
@@ -31,33 +33,48 @@
       <LinearLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:orientation="horizontal">
+          android:orientation="horizontal"
+          android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/apppicker_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"/>
 
           <androidx.appcompat.widget.AppCompatEditText
-              android:id="@+id/fragment_searchview"
+              android:id="@+id/fragment_url_view"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:paddingStart="5dp"
               android:paddingEnd="0dp"
               android:paddingTop="7.5dp"
               android:paddingBottom="7.5dp"
+              android:layout_marginEnd="5dp"
               android:hint="Enter short url"
               android:background="#00000000"
-              android:drawableStart="@drawable/ic_link_svgrepo_com"
+              android:drawableStart="@drawable/ic_oui_copy_outline"
               android:drawablePadding="7.5dp"
-              android:layout_weight="0.7"
+              android:layout_weight="0.5"
               android:layout_gravity="center|start"
+              android:focusable="true"
               android:singleLine="true"
               android:maxLines="1"
               android:ellipsize="end"
               android:imeOptions="actionGo"
               android:onEditorAction="@{(view, actionId, event) -> viewModel.onShortUrl(view, actionId, event)}" />
 
-          <androidx.appcompat.widget.AppCompatSpinner
-              android:id="@+id/apppicker_spinner"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="0.3"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/fragment_btn_shorten"
+            style="@style/OneUI.ButtonStyleOutline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="Short"
+            android:layout_gravity="center"
+            android:layout_margin="0dp"
+            android:layout_weight="0.2"/>
       </LinearLayout>
 
 
@@ -65,7 +82,17 @@
 
     <dev.oneuiproject.oneui.widget.Separator
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="@{!viewModel.isLoading ? View.VISIBLE : View.GONE}"/>
+
+    <androidx.appcompat.widget.SeslProgressBar
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:indeterminate="true"
+        android:layout_gravity="center"
+        android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"/>
 
     <dev.oneuiproject.oneui.widget.RoundFrameLayout
         android:layout_width="match_parent"
@@ -81,13 +108,6 @@
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/view_shorten_url_item"/>
-
-<!--      <androidx.appcompat.widget.SeslProgressBar-->
-<!--          android:id="@+id/apppicker_progress"-->
-<!--          style="@style/Widget.AppCompat.ProgressBar.Large"-->
-<!--          android:layout_width="wrap_content"-->
-<!--          android:layout_height="wrap_content"-->
-<!--          android:layout_gravity="center" />-->
 
     </dev.oneuiproject.oneui.widget.RoundFrameLayout>
 

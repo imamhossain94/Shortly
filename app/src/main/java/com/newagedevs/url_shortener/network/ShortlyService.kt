@@ -7,25 +7,25 @@ import retrofit2.http.*
 
 interface ShortlyService {
 
-  @GET("api-create.php")
-  fun tinyurl(@Query("url") longUrl: String): Call<String>
+  @GET
+  fun tinyurl(@Url url: String, @Query("url") longUrl: String): Call<String>
 
-  @GET("/api.php")
+  @GET
   fun chilpit(@Url baseUrl:String,  @Query("url") longUrl: String): Call<String>
 
-  @GET("/--")
+  @GET
   fun clckru(@Url baseUrl:String, @Query("url") longUrl: String): Call<String>
 
-  @GET("/shorten")
+  @GET
   fun dagd(@Url baseUrl:String, @Query("url") longUrl: String): Call<String>
 
-  @GET("/create.php")
+  @GET
   fun isgd(@Url baseUrl:String, @Query("format") format: String, @Query("url") longUrl: String): Call<String>
 
-  @POST("/")
+  @POST
   fun osdb(@Url baseUrl:String, @Body data: Osdb): Call<String>
 
-  @GET("/api/api.php")
+  @GET
   fun cuttly(@Url baseUrl: String, @Query("key") apiKey: String, @Query("short") longUrl: String): Call<Cuttly>
 
 }

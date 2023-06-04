@@ -22,4 +22,6 @@ val persistenceModule = module {
 
   single { get<AppDatabase>().shortlyDao() }
 
+  single { get<AppDatabase>().expanderDao() }
+
 }

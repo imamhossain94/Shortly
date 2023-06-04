@@ -9,7 +9,8 @@ import android.widget.Toast
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.newagedevs.url_shortener.BuildConfig
-
+import java.net.HttpURLConnection
+import java.net.URL
 
 fun getApplicationVersion(): String {
     return BuildConfig.VERSION_NAME
@@ -61,4 +62,29 @@ fun openWebPage(context: Context, url: String?, error: (String?) -> Unit) {
 
 fun isUriEmpty(uri: Uri?):Boolean{
     return uri == null || uri == Uri.EMPTY
+}
+
+object URLExpander {
+    fun expand(url: String): String {
+        var connection: HttpURLConnection
+        var finalUrl = url
+        try {
+            do {
+                connection = URL(finalUrl).openConnection() as HttpURLConnection
+                connection.instanceFollowRedirects = false
+                connection.useCaches = false
+                connection.requestMethod = "GET"
+                connection.connect()
+                val responseCode = connection.responseCode
+                if (responseCode in 300..399) {
+                    val redirectedUrl = connection.getHeaderField("Location") ?: break
+                    finalUrl = redirectedUrl
+                } else break
+            } while (connection.responseCode != HttpURLConnection.HTTP_OK)
+            connection.disconnect()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return finalUrl
+    }
 }

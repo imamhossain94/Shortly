@@ -5,17 +5,107 @@
 
   <data>
 
+    <import type="android.view.View" />
+
     <variable
         name="viewModel"
         type="com.newagedevs.url_shortener.view.ui.main.MainViewModel" />
 
+    <variable
+        name="adapter"
+        type="com.newagedevs.url_shortener.view.adapter.ShortlyAdapter" />
+
   </data>
 
-  <androidx.constraintlayout.widget.ConstraintLayout
-      android:id="@+id/container"
+  <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      tools:viewBindingIgnore="true">
 
-  </androidx.constraintlayout.widget.ConstraintLayout>
+    <dev.oneuiproject.oneui.widget.RoundFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="4dp"
+        android:background="@color/oui_background_color">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/fragment_url_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="5dp"
+            android:paddingEnd="0dp"
+            android:paddingTop="7.5dp"
+            android:paddingBottom="7.5dp"
+            android:layout_marginEnd="5dp"
+            android:hint="Enter short url"
+            android:background="#00000000"
+            android:drawableStart="@drawable/ic_oui_copy_outline"
+            android:drawablePadding="7.5dp"
+            android:layout_weight="0.7"
+            android:layout_gravity="center|start"
+            android:focusable="true"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:imeOptions="actionGo"
+            android:onEditorAction="@{(view, actionId, event) -> viewModel.onExpandUrl(view, actionId, event)}" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/fragment_btn_expand"
+            style="@style/OneUI.ButtonStyleOutline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="Expand"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="0.2"/>
+      </LinearLayout>
+
+
+    </dev.oneuiproject.oneui.widget.RoundFrameLayout>
+
+    <dev.oneuiproject.oneui.widget.Separator
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="@{!viewModel.isLoading ? View.VISIBLE : View.GONE}"/>
+
+    <androidx.appcompat.widget.SeslProgressBar
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:indeterminate="true"
+        android:layout_gravity="center"
+        android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"/>
+
+    <dev.oneuiproject.oneui.widget.RoundFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@color/oui_background_color"
+          app:adapter="@{adapter}"
+          app:adapterExpandedUrls="@{viewModel.expandedUrls}"
+          android:orientation="vertical"
+          app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+          tools:listitem="@layout/view_expanded_url_item"/>
+
+    </dev.oneuiproject.oneui.widget.RoundFrameLayout>
+
+  </LinearLayout>
 
 </layout>

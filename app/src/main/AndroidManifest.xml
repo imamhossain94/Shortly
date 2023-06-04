@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/OneUITheme"
         android:usesCleartextTraffic="true"
-        android:networkSecurityConfig="@xml/network_security_config">
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:windowSoftInputMode="stateAlwaysVisible">
 
         <meta-data
             android:name="SamsungBasicInteraction"

@@ -3,8 +3,8 @@
 
     <data>
         <variable
-            name="shortly"
-            type="com.newagedevs.url_shortener.model.Shortly" />
+            name="expander"
+            type="com.newagedevs.url_shortener.model.Expander" />
     </data>
 
     <LinearLayout
@@ -19,7 +19,7 @@
             android:id="@+id/list_item_shorten"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{shortly.shortUrl}"
+            android:text="@{expander.shortUrl}"
             android:layout_marginBottom="0dp"
             android:textSize="16sp"
             android:maxLines="1"
@@ -31,7 +31,7 @@
             android:id="@+id/list_item_expanded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{shortly.longUrl}"
+            android:text="@{expander.longUrl}"
             android:textStyle="normal"
             android:textSize="14sp"
             android:fontFamily="@string/sesl_font_family_regular"

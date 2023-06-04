@@ -1,15 +1,18 @@
 package com.newagedevs.url_shortener.view.ui.fragments
 
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.appcompat.widget.AppCompatSpinner
+import androidx.core.content.ContextCompat.getSystemService
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.databinding.FragmentShorteneBinding
+import com.newagedevs.url_shortener.extensions.onLeftDrawableClicked
 import com.newagedevs.url_shortener.utils.Providers
 import com.newagedevs.url_shortener.view.adapter.ShortlyAdapter
 import com.newagedevs.url_shortener.view.base.FragmentInfo
@@ -45,6 +48,22 @@ open class ShortenerFragment : BindingFragment<FragmentShorteneBinding>(R.layout
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.fragmentUrlView.onLeftDrawableClicked {
+            val clipboard = (mContext?.getSystemService(Context.CLIPBOARD_SERVICE)) as? ClipboardManager
+            val textToPaste: CharSequence? = clipboard?.primaryClip?.getItemAt(0)?.text ?: null
+            binding.fragmentUrlView.setText(textToPaste)
+            if(textToPaste != null) {
+                binding.fragmentUrlView.setSelection(textToPaste.length)
+
+                binding.fragmentUrlView.requestFocus()
+                binding.fragmentUrlView.postDelayed({
+                    val inputMethodManager =
+                        mContext?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                    inputMethodManager!!.showSoftInput(binding.fragmentUrlView, InputMethodManager.SHOW_IMPLICIT)
+                }, 200)
+
+            }
+        }
         initSpinner(view)
     }
 
@@ -65,7 +84,7 @@ open class ShortenerFragment : BindingFragment<FragmentShorteneBinding>(R.layout
     }
 
     private fun initSpinner(view: View) {
-        val spinner = view.findViewById<AppCompatSpinner>(R.id.apppicker_spinner)
+        val spinner = binding.apppickerSpinner
 
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Providers.list)
         adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item)

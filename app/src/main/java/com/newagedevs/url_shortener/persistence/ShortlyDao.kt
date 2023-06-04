@@ -13,7 +13,7 @@ interface ShortlyDao {
     @Query("SELECT * FROM Shortly LIMIT 1")
     fun get(): Shortly?
 
-    @Query("SELECT * FROM Shortly")
+    @Query("SELECT * FROM Shortly ORDER BY id DESC")
     fun getShortenUrlList(): List<Shortly>
 
     @Query("SELECT * FROM Shortly LIMIT 1")
