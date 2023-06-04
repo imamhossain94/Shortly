@@ -18,7 +18,7 @@ val networkModule = module {
 
   single(named("expanderOkHttpClient")) {
     OkHttpClient.Builder()
-      .followRedirects(false)
+      .followRedirects(true)
       .cache(null)
       .build()
   }

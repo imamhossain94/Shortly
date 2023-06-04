@@ -44,18 +44,20 @@ class ExpanderRepository constructor(
         error: (String?) -> Unit
     ) = callbackFlow {
 
-        client.expand(shortUrl, coroutineScope) { it, l->
+        client.expand(shortUrl, coroutineScope) {
             it.suspendOnSuccess {
                 dao.insert(Expander(
-                    longUrl = l,
+                    longUrl = this.raw.request.url.toString(),
                     shortUrl = shortUrl,
                     timestamp = System.currentTimeMillis().toString(),
                     isFavorite = false,
                 ))
-                send(data)
+                send(this.raw.request.url.toString())
             }
             .suspendOnError {
-                map(ErrorResponseMapper) { error("[Code: $code]: $message") }
+                map(ErrorResponseMapper) {
+                    error("[Code: $code]: $message")
+                }
             }
             .suspendOnException {
                 send(message())

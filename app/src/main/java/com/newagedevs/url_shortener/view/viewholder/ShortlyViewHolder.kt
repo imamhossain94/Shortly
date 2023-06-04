@@ -56,10 +56,8 @@ class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
     bottomNavigationView.setOnItemSelectedListener { it ->
 
       when (it.itemId) {
-        R.id.bvn_copy -> {
-          val clip = ClipData.newPlainText("Shortly", data.shortUrl)
-          clipboard.setPrimaryClip(clip)
-          context.toast("Short urls copied!")
+        R.id.bvn_open -> {
+
         }
         R.id.bvn_share -> {
 
@@ -87,7 +85,7 @@ class ShortlyViewHolder(view: View) : BaseViewHolder(view) {
     }
 
     dialog.setCancelable(true)
-    dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+    //dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
     dialog.setContentView(view)
     dialog.show()
 

@@ -15,11 +15,11 @@ class ExpanderClient(private val service: ExpanderService) {
     fun expand(
         shortUrl: String,
         coroutineScope: CoroutineScope,
-        onResult: suspend (response: ApiResponse<String>, shortUrl: String) -> Unit
+        onResult: suspend (response: ApiResponse<String>) -> Unit
     ) {
         service.expand(shortUrl).request {
             coroutineScope.launch {
-                onResult(it, shortUrl)
+                onResult(it)
             }
         }
     }

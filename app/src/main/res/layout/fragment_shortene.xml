@@ -54,6 +54,7 @@
               android:hint="Enter short url"
               android:background="#00000000"
               android:drawableStart="@drawable/ic_oui_copy_outline"
+              android:drawableEnd="@drawable/ic_oui_close"
               android:drawablePadding="7.5dp"
               android:layout_weight="0.5"
               android:layout_gravity="center|start"
@@ -63,18 +64,6 @@
               android:ellipsize="end"
               android:imeOptions="actionGo"
               android:onEditorAction="@{(view, actionId, event) -> viewModel.onShortUrl(view, actionId, event)}" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/fragment_btn_shorten"
-            style="@style/OneUI.ButtonStyleOutline"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:text="Short"
-            android:layout_gravity="center"
-            android:layout_margin="0dp"
-            android:layout_weight="0.2"/>
       </LinearLayout>
 
 
