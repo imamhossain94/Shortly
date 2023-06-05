@@ -11,6 +11,14 @@
         name="viewModel"
         type="com.newagedevs.url_shortener.view.ui.main.MainViewModel" />
 
+    <variable
+        name="shortlyAdapter"
+        type="com.newagedevs.url_shortener.view.adapter.ShortlyAdapter" />
+
+    <variable
+        name="expanderAdapter"
+        type="com.newagedevs.url_shortener.view.adapter.ExpanderAdapter" />
+
   </data>
 
   <LinearLayout
@@ -35,23 +43,34 @@
 
     <dev.oneuiproject.oneui.widget.Separator
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="@{!viewModel.isLoading ? View.VISIBLE : View.GONE}"/>
+        android:layout_height="wrap_content"/>
 
     <dev.oneuiproject.oneui.widget.RoundFrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-<!--      <androidx.recyclerview.widget.RecyclerView-->
-<!--          android:layout_width="match_parent"-->
-<!--          android:layout_height="match_parent"-->
-<!--          android:background="@color/oui_background_color"-->
-<!--          app:adapter="@{adapter}"-->
-<!--          app:adapterShortenUrls="@{viewModel.shortenUrls}"-->
-<!--          android:orientation="vertical"-->
-<!--          app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--          tools:listitem="@layout/view_shorten_url_item"/>-->
+      <androidx.recyclerview.widget.RecyclerView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@color/oui_background_color"
+          app:adapter="@{shortlyAdapter}"
+          app:adapterShortenUrls="@{viewModel.favoriteShortenUrls}"
+          android:orientation="vertical"
+          app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+          tools:listitem="@layout/view_shorten_url_item"
+          android:visibility="@{viewModel.favoriteTab == `Short Urls` ? View.VISIBLE : View.GONE}"/>
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@color/oui_background_color"
+          app:adapter="@{expanderAdapter}"
+          app:adapterExpandedUrls="@{viewModel.favoriteExpandedUrls}"
+          android:orientation="vertical"
+          app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+          tools:listitem="@layout/view_expanded_url_item"
+          android:visibility="@{viewModel.favoriteTab == `Expanded Urls` ? View.VISIBLE : View.GONE}"/>
 
     </dev.oneuiproject.oneui.widget.RoundFrameLayout>
 

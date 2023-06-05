@@ -16,6 +16,9 @@ interface ExpanderDao {
     @Query("SELECT * FROM Expander ORDER BY id DESC")
     fun getExpandedUrlList(): List<Expander>
 
+    @Query("SELECT * FROM Expander WHERE isFavorite = 1 ORDER BY id DESC")
+    fun getFavoriteExpandedUrls(): List<Expander>
+
     @Query("SELECT * FROM Expander LIMIT 1")
     fun flow(): Flow<Expander>
 

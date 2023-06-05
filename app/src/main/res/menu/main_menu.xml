@@ -4,18 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:title="Rate"
-        app:showAsAction="never"
-        tools:ignore="AppCompatResource" />
-    <item
+        android:id="@+id/menu_share"
         android:title="Share"
         app:showAsAction="never"
         tools:ignore="AppCompatResource" />
     <item
+        android:id="@+id/menu_rate"
+        android:title="Rate"
+        app:showAsAction="never"
+        tools:ignore="AppCompatResource" />
+    <item
+        android:id="@+id/menu_feedback"
         android:title="Feedback"
         app:showAsAction="never"
         tools:ignore="AppCompatResource" />
     <item
+        android:id="@+id/menu_contact"
         android:title="Contact"
         app:showAsAction="never"
         tools:ignore="AppCompatResource" />

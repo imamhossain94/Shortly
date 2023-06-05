@@ -36,6 +36,14 @@ class ExpanderRepository constructor(
         }
     }
 
+    fun loadFavoritesExpandedUrls(): List<Expander> {
+        val shortenUrls = dao.getFavoriteExpandedUrls()
+
+        return shortenUrls.ifEmpty {
+            emptyList()
+        }
+    }
+
     @WorkerThread
     @ExperimentalCoroutinesApi
     fun expand(

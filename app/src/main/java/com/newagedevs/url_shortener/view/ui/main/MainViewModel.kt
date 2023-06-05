@@ -9,6 +9,7 @@ import com.newagedevs.url_shortener.model.Expander
 import com.newagedevs.url_shortener.model.Shortly
 import com.newagedevs.url_shortener.repository.ExpanderRepository
 import com.newagedevs.url_shortener.repository.ShortlyRepository
+import com.newagedevs.url_shortener.utils.Tabs
 import com.newagedevs.url_shortener.utils.Urls
 import com.skydoves.bindables.BindingViewModel
 import com.skydoves.bindables.bindingProperty
@@ -28,6 +29,9 @@ class MainViewModel constructor(
     var provider: String by bindingProperty(Urls.tinyurl)
 
     @get:Bindable
+    var favoriteTab: String by bindingProperty(Tabs.short)
+
+    @get:Bindable
     var isLoading: Boolean by bindingProperty(false)
         private set
 
@@ -36,6 +40,12 @@ class MainViewModel constructor(
 
     @get:Bindable
     var expandedUrls: List<Expander>? by bindingProperty(listOf())
+
+    @get:Bindable
+    var favoriteShortenUrls: List<Shortly>? by bindingProperty(listOf())
+
+    @get:Bindable
+    var favoriteExpandedUrls: List<Expander>? by bindingProperty(listOf())
 
 
     fun toast(title: String?) {
@@ -87,9 +97,29 @@ class MainViewModel constructor(
         return false
     }
 
+    fun deleteShortenUrl(shortly: Shortly) {
+        shortlyRepository.delete(shortly)
+        shortenUrls = shortlyRepository.loadShortenUrls()
+    }
+
+
+    fun changeFavoriteTabs(value: String) {
+        favoriteTab = value
+        if(Tabs.short == value) {
+            favoriteExpandedUrls = emptyList()
+            favoriteShortenUrls = shortlyRepository.loadFavoritesShortenUrls()
+        }else{
+            favoriteShortenUrls = emptyList()
+            favoriteExpandedUrls = expanderRepository.loadFavoritesExpandedUrls()
+        }
+    }
+
     private fun initializeData() {
         shortenUrls = shortlyRepository.loadShortenUrls()
         expandedUrls = expanderRepository.loadExpandedUrls()
+
+        favoriteShortenUrls = shortlyRepository.loadFavoritesShortenUrls()
+        //favoriteExpandedUrls = expanderRepository.loadFavoritesExpandedUrls()
     }
 
     init {

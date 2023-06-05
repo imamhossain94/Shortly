@@ -33,6 +33,18 @@ class ShortlyRepository constructor(
         return shortenUrls.ifEmpty {
             emptyList()
         }
+    }
+
+    fun loadFavoritesShortenUrls(): List<Shortly> {
+        val shortenUrls = dao.getFavoritesShortenUrls()
+
+        return shortenUrls.ifEmpty {
+            emptyList()
+        }
+    }
+
+    fun delete(shortly: Shortly){
+        dao.delete(shortly)
 
     }
 

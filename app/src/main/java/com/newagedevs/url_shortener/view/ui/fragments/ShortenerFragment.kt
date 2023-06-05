@@ -39,7 +39,7 @@ open class ShortenerFragment : BindingFragment<FragmentShorteneBinding>(R.layout
 
         return binding {
           viewModel = vm
-          adapter = ShortlyAdapter()
+          adapter = ShortlyAdapter(vm)
         }.root
     }
 

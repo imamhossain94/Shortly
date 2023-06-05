@@ -27,6 +27,13 @@ fun shareTheApp(context: Context) {
         .startChooser()
 }
 
+fun shareUrl(context: Context, url:String) {
+    ShareCompat.IntentBuilder.from((context as Activity)).setType("text/plain")
+        .setChooserTitle("Chooser title")
+        .setText(url)
+        .startChooser()
+}
+
 fun openMailApp(context: Context, subject: String, mail: Array<String>) {
     try {
         val intent = Intent(Intent.ACTION_SENDTO)

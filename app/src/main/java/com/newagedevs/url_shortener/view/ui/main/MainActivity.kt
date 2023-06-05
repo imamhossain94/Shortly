@@ -13,6 +13,10 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.databinding.ActivityMainBinding
+import com.newagedevs.url_shortener.extensions.openAppStore
+import com.newagedevs.url_shortener.extensions.openMailApp
+import com.newagedevs.url_shortener.extensions.shareTheApp
+import com.newagedevs.url_shortener.utils.Constants
 import com.newagedevs.url_shortener.utils.DarkModeUtils
 import com.newagedevs.url_shortener.view.adapter.DrawerListAdapter
 import com.newagedevs.url_shortener.view.base.FragmentInfo
@@ -142,16 +146,31 @@ class MainActivity : BindingActivity<ActivityMainBinding>(R.layout.activity_main
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.menu_app_info) {
-            ActivityUtils.startPopOverActivity(
-                this,
-                Intent(this, AboutActivity::class.java),
-                null,
-                ActivityUtils.POP_OVER_POSITION_RIGHT or ActivityUtils.POP_OVER_POSITION_TOP
-            )
-            return true
-        }
 
+
+        when(item.itemId) {
+            R.id.menu_rate -> {
+                openAppStore(this, Constants.appStoreId) { }
+            }
+            R.id.menu_share -> {
+                shareTheApp(this)
+            }
+            R.id.menu_feedback -> {
+                openMailApp(this, "Feedback", Constants.feedbackMail)
+            }
+            R.id.menu_contact -> {
+                openMailApp(this, "Writing about app", Constants.contactMail)
+            }
+            R.id.menu_app_info -> {
+                ActivityUtils.startPopOverActivity(
+                    this,
+                    Intent(this, AboutActivity::class.java),
+                    null,
+                    ActivityUtils.POP_OVER_POSITION_RIGHT or ActivityUtils.POP_OVER_POSITION_TOP
+                )
+                return true
+            }
+        }
 
         return false
     }
