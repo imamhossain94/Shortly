@@ -15,10 +15,10 @@ interface ShortlyDao {
     fun get(): Shortly?
 
     @Query("SELECT * FROM Shortly ORDER BY id DESC")
-    fun getShortenUrlList(): List<Shortly>
+    suspend fun getShortenUrlList(): List<Shortly>
 
     @Query("SELECT * FROM Shortly WHERE isFavorite = 1 ORDER BY id DESC")
-    fun getFavoritesShortenUrls(): List<Shortly>
+    suspend fun getFavoritesShortenUrls(): List<Shortly>
 
     @Query("SELECT * FROM Shortly LIMIT 1")
     fun flow(): Flow<Shortly>
@@ -27,6 +27,15 @@ interface ShortlyDao {
     fun delete()
 
     @Delete
-    fun delete(shortly: Shortly)
+    suspend fun delete(shortly: Shortly)
+
+    @Query("DELETE FROM Shortly WHERE id = :id")
+    fun deleteById(id: Long)
+
+    @Update
+    suspend fun update(shortly: Shortly)
+
+    @Query("UPDATE Shortly SET isFavorite = :isFavorite_ WHERE id = :id_")
+    suspend fun updateFavoriteById(id_: Long, isFavorite_: Boolean)
 
 }

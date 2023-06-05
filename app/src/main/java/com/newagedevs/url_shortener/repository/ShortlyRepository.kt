@@ -14,6 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import timber.log.Timber
 
@@ -27,25 +28,27 @@ class ShortlyRepository constructor(
         Timber.d("Injection RaceRepository")
     }
 
-    fun loadShortenUrls(): List<Shortly> {
-        val shortenUrls = dao.getShortenUrlList()
-
-        return shortenUrls.ifEmpty {
-            emptyList()
-        }
+    suspend fun loadShortenUrls(): List<Shortly> {
+        return dao.getShortenUrlList()
     }
 
-    fun loadFavoritesShortenUrls(): List<Shortly> {
-        val shortenUrls = dao.getFavoritesShortenUrls()
-
-        return shortenUrls.ifEmpty {
-            emptyList()
-        }
+    suspend fun loadFavoritesShortenUrls(): List<Shortly> {
+        return dao.getFavoritesShortenUrls()
     }
 
-    fun delete(shortly: Shortly){
+    suspend fun delete(shortly: Shortly): List<Shortly> {
         dao.delete(shortly)
+        return loadShortenUrls()
+    }
 
+    suspend fun addFavorites(shortly: Shortly): List<Shortly> {
+        dao.updateFavoriteById(shortly.id, true)
+        return loadFavoritesShortenUrls()
+    }
+
+    suspend fun removeFavorites(shortly: Shortly): List<Shortly> {
+        dao.updateFavoriteById(shortly.id, false)
+        return loadFavoritesShortenUrls()
     }
 
     @WorkerThread

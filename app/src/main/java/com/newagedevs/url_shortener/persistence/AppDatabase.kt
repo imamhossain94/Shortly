@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.newagedevs.url_shortener.model.Expander
 import com.newagedevs.url_shortener.model.Shortly
 
-@Database(entities = [Shortly::class, Expander::class], version = 2, exportSchema = true)
+@Database(entities = [Shortly::class, Expander::class], version = 1, exportSchema = true)
 //@TypeConverters(value = [])
 abstract class AppDatabase : RoomDatabase() {
 

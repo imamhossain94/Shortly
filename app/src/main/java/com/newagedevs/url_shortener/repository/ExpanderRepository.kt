@@ -28,20 +28,27 @@ class ExpanderRepository constructor(
         Timber.d("Injection RaceRepository")
     }
 
-    fun loadExpandedUrls(): List<Expander> {
-        val urls = dao.getExpandedUrlList()
-
-        return urls.ifEmpty {
-            emptyList()
-        }
+    suspend fun loadExpandedUrls(): List<Expander> {
+        return dao.getExpandedUrlList()
     }
 
-    fun loadFavoritesExpandedUrls(): List<Expander> {
-        val shortenUrls = dao.getFavoriteExpandedUrls()
+    suspend fun loadFavoritesExpandedUrls(): List<Expander> {
+        return dao.getFavoriteExpandedUrls()
+    }
 
-        return shortenUrls.ifEmpty {
-            emptyList()
-        }
+    suspend fun delete(expander: Expander): List<Expander> {
+        dao.delete(expander)
+        return loadExpandedUrls()
+    }
+
+    suspend fun addFavorites(expander: Expander): List<Expander> {
+        dao.updateFavoriteById(expander.id, true)
+        return loadFavoritesExpandedUrls()
+    }
+
+    suspend fun removeFavorites(expander: Expander): List<Expander> {
+        dao.updateFavoriteById(expander.id, false)
+        return loadFavoritesExpandedUrls()
     }
 
     @WorkerThread

@@ -1,5 +1,7 @@
 package com.newagedevs.url_shortener.view.ui.main
 
+import android.os.Handler
+import android.os.Looper
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -15,7 +17,6 @@ import com.skydoves.bindables.BindingViewModel
 import com.skydoves.bindables.bindingProperty
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
 
 class MainViewModel constructor(
     private val shortlyRepository: ShortlyRepository,
@@ -47,7 +48,6 @@ class MainViewModel constructor(
     @get:Bindable
     var favoriteExpandedUrls: List<Expander>? by bindingProperty(listOf())
 
-
     fun toast(title: String?) {
         toast = null
         toast = title
@@ -60,7 +60,6 @@ class MainViewModel constructor(
                 toast(it)
                 isLoading = false
             }
-
             isLoading = true
             viewModelScope.launch {
                 flow.collect { value ->
@@ -69,7 +68,6 @@ class MainViewModel constructor(
                     toast(value)
                 }
             }
-
             return true
         }
         return false
@@ -82,7 +80,6 @@ class MainViewModel constructor(
                 toast(it)
                 isLoading = false
             }
-
             isLoading = true
             viewModelScope.launch {
                 flow.collect { value ->
@@ -91,35 +88,63 @@ class MainViewModel constructor(
                     toast(value)
                 }
             }
-
             return true
         }
         return false
     }
 
     fun deleteShortenUrl(shortly: Shortly) {
-        shortlyRepository.delete(shortly)
-        shortenUrls = shortlyRepository.loadShortenUrls()
+        viewModelScope.launch {
+            shortenUrls = shortlyRepository.delete(shortly)
+        }
     }
 
+    fun deleteExpandedUrl(expander: Expander) {
+        viewModelScope.launch {
+            expandedUrls = expanderRepository.delete(expander)
+        }
+    }
+
+    fun addFavoritesShortenUrl(shortly: Shortly) {
+        viewModelScope.launch {
+            favoriteShortenUrls = shortlyRepository.addFavorites(shortly)
+        }
+    }
+
+    fun addFavoritesExpandedUrl(expander: Expander) {
+        viewModelScope.launch {
+            favoriteExpandedUrls = expanderRepository.addFavorites(expander)
+        }
+    }
+
+    fun removeFavoritesShortenUrl(shortly: Shortly) {
+        viewModelScope.launch {
+            favoriteShortenUrls = shortlyRepository.removeFavorites(shortly)
+        }
+    }
+
+    fun removeFavoritesExpandedUrl(expander: Expander) {
+        viewModelScope.launch {
+            favoriteExpandedUrls = expanderRepository.removeFavorites(expander)
+        }
+    }
 
     fun changeFavoriteTabs(value: String) {
         favoriteTab = value
-        if(Tabs.short == value) {
-            favoriteExpandedUrls = emptyList()
-            favoriteShortenUrls = shortlyRepository.loadFavoritesShortenUrls()
-        }else{
-            favoriteShortenUrls = emptyList()
-            favoriteExpandedUrls = expanderRepository.loadFavoritesExpandedUrls()
+        viewModelScope.launch {
+            if (Tabs.short == value) {
+                favoriteShortenUrls = shortlyRepository.loadFavoritesShortenUrls()
+            } else {
+                favoriteExpandedUrls = expanderRepository.loadFavoritesExpandedUrls()
+            }
         }
     }
 
     private fun initializeData() {
-        shortenUrls = shortlyRepository.loadShortenUrls()
-        expandedUrls = expanderRepository.loadExpandedUrls()
-
-        favoriteShortenUrls = shortlyRepository.loadFavoritesShortenUrls()
-        //favoriteExpandedUrls = expanderRepository.loadFavoritesExpandedUrls()
+        viewModelScope.launch {
+            shortenUrls = shortlyRepository.loadShortenUrls()
+            expandedUrls = expanderRepository.loadExpandedUrls()
+        }
     }
 
     init {

@@ -32,32 +32,28 @@ object RecyclerViewBinding {
     @JvmStatic
     @BindingAdapter("adapterShortenUrls")
     fun bindAdapterShortenUrls(view: RecyclerView, shortenUrls: List<Shortly>?) {
-        shortenUrls.whatIfNotNullOrEmpty { items ->
-            view.adapter.whatIfNotNullAs<ShortlyAdapter> { adapter ->
-                adapter.addShortenUrls(items)
-                view.addItemDecoration(
-                    DividerItemDecoration(
-                        view.context,
-                        DividerItemDecoration.VERTICAL
-                    )
+        view.adapter.whatIfNotNullAs<ShortlyAdapter> { adapter ->
+            adapter.addShortenUrls(shortenUrls)
+            view.addItemDecoration(
+                DividerItemDecoration(
+                    view.context,
+                    DividerItemDecoration.VERTICAL
                 )
-            }
+            )
         }
     }
 
     @JvmStatic
     @BindingAdapter("adapterExpandedUrls")
     fun bindAdapterExpandedUrls(view: RecyclerView, expandedUrls: List<Expander>?) {
-        expandedUrls.whatIfNotNullOrEmpty { items ->
-            view.adapter.whatIfNotNullAs<ExpanderAdapter> { adapter ->
-                adapter.addExpandedUrls(items)
-                view.addItemDecoration(
-                    DividerItemDecoration(
-                        view.context,
-                        DividerItemDecoration.VERTICAL
-                    )
+        view.adapter.whatIfNotNullAs<ExpanderAdapter> { adapter ->
+            adapter.addExpandedUrls(expandedUrls)
+            view.addItemDecoration(
+                DividerItemDecoration(
+                    view.context,
+                    DividerItemDecoration.VERTICAL
                 )
-            }
+            )
         }
     }
 

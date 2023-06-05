@@ -37,15 +37,17 @@ class FavoriteFragment : BindingFragment<FragmentFavoritesBinding>(R.layout.frag
     super.onCreateView(inflater, container, savedInstanceState)
     return binding {
       viewModel = vm
-      shortlyAdapter = ShortlyAdapter(vm)
-      expanderAdapter = ExpanderAdapter()
+      shortlyAdapter = ShortlyAdapter(vm, true)
+      expanderAdapter = ExpanderAdapter(vm, true)
     }.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    initSpinner(view)
+    vm.changeFavoriteTabs(Tabs.short)
+
+    initSpinner()
   }
 
   override fun layoutResId(): Int {
@@ -64,7 +66,7 @@ class FavoriteFragment : BindingFragment<FragmentFavoritesBinding>(R.layout.frag
     return true
   }
 
-  private fun initSpinner(view: View) {
+  private fun initSpinner() {
     val spinner = binding.tabPickerSpinner
 
     val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Tabs.list)

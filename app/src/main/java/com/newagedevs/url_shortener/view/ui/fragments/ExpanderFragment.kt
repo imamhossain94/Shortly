@@ -32,7 +32,7 @@ class ExpanderFragment : BindingFragment<FragmentExpanderBinding>(R.layout.fragm
     super.onCreateView(inflater, container, savedInstanceState)
     return binding {
       viewModel = vm
-      adapter = ExpanderAdapter()
+      adapter = ExpanderAdapter(vm)
     }.root
   }
 

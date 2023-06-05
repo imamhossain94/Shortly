@@ -13,7 +13,7 @@ data class Shortly(
     val provider : String?,
     val shortUrl : String?,
     val timestamp : String?,
-    val isFavorite : Boolean?,
+    var isFavorite : Boolean?,
 ) : Parcelable {
     @IgnoredOnParcel
     @PrimaryKey(autoGenerate = true)
