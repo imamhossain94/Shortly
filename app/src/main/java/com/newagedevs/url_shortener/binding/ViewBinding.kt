@@ -1,18 +1,11 @@
 package com.newagedevs.url_shortener.binding
 
 import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.*
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.databinding.BindingAdapter
-import com.bumptech.glide.Glide
-import com.newagedevs.url_shortener.extensions.px
+import com.newagedevs.url_shortener.R
 import com.skydoves.whatif.whatIfNotNullOrEmpty
+import dev.oneuiproject.oneui.qr.QREncoder
 
 
 object ViewBinding {
@@ -23,6 +16,16 @@ object ViewBinding {
         text.whatIfNotNullOrEmpty {
             Toast.makeText(view.context, it, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    @JvmStatic
+    @BindingAdapter(value = ["app:srcQR"], requireAll = false)
+    fun srcQR(view: ImageView, content: String?) {
+        view.setImageBitmap(
+            QREncoder(view.context, content)
+                .setFGColor(Color.parseColor("#ff0072DE"), false, true)
+                .setIcon(R.drawable.ic_link_svgrepo_com).generate()
+        )
     }
 
 

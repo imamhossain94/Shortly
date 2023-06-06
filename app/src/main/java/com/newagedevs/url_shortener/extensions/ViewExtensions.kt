@@ -6,10 +6,12 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -18,6 +20,8 @@ import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.model.Expander
 import com.newagedevs.url_shortener.model.Shortly
 import com.newagedevs.url_shortener.view.ui.main.MainViewModel
+import dev.oneuiproject.oneui.qr.QREncoder
+import timber.log.Timber
 
 fun View.visible() {
   visibility = View.VISIBLE
@@ -27,7 +31,8 @@ fun View.visible() {
 fun AppCompatEditText.onDrawableClicked(context: Context) {
   this.setOnTouchListener { _, event ->
     if (event.action == MotionEvent.ACTION_UP) {
-      if (event.rawX <= (this.right - this.compoundDrawables[0].bounds.width())) {
+
+      if (event.rawX <= (this.left + (2*this.compoundDrawables[0].bounds.width()))) {
 
         val clipboard = (context.getSystemService(Context.CLIPBOARD_SERVICE)) as? ClipboardManager
         val textToPaste: CharSequence? = clipboard?.primaryClip?.getItemAt(0)?.text ?: null
@@ -79,9 +84,16 @@ fun onItemLongClick(context: Context, viewModel: MainViewModel, data: Any):Boole
   val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.tabs_bottom_nav)
   val shortenTextView = view.findViewById<TextView>(R.id.list_item_shorten)
   val expandedTextView = view.findViewById<TextView>(R.id.list_item_expanded)
+  val qrImageView = view.findViewById<ImageView>(R.id.list_item_qr)
 
   shortenTextView.text = shortUrl
   expandedTextView.text = longUrl
+
+  qrImageView.setImageBitmap(
+    QREncoder(view.context, shortUrl)
+      .setFGColor(Color.parseColor("#ff0072DE"), false, true)
+      .setIcon(R.drawable.ic_link_svgrepo_com).generate()
+  )
 
   val clipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
@@ -153,9 +165,16 @@ fun onFavoritesItemLongClick(context: Context, viewModel: MainViewModel, data: A
   val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.tabs_bottom_nav)
   val shortenTextView = view.findViewById<TextView>(R.id.list_item_shorten)
   val expandedTextView = view.findViewById<TextView>(R.id.list_item_expanded)
+  val qrImageView = view.findViewById<ImageView>(R.id.list_item_qr)
 
   shortenTextView.text = shortUrl
   expandedTextView.text = longUrl
+
+  qrImageView.setImageBitmap(
+    QREncoder(view.context, shortUrl)
+      .setFGColor(Color.parseColor("#ff0072DE"), false, true)
+      .setIcon(R.drawable.ic_link_svgrepo_com).generate()
+  )
 
   val clipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 

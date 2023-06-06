@@ -15,28 +15,45 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/oui_tab_layout_default_padding">
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="15dp">
 
-        <TextView
-            android:id="@+id/list_item_shorten"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:textSize="16sp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textColor="@color/oui_unclickablepref_text_color"
-            android:fontFamily="@string/sesl_font_family_regular"/>
+        <ImageView
+            android:id="@+id/list_item_qr"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="@string/todo" />
 
-        <TextView
-            android:id="@+id/list_item_expanded"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="normal"
-            android:textSize="14sp"
-            android:fontFamily="@string/sesl_font_family_regular"
-            android:focusable="false" />
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:id="@+id/list_item_shorten"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/oui_unclickablepref_text_color"
+                android:fontFamily="@string/sesl_font_family_regular"/>
+
+            <TextView
+                android:id="@+id/list_item_expanded"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:textSize="14sp"
+                android:fontFamily="@string/sesl_font_family_regular"
+                android:focusable="false" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
