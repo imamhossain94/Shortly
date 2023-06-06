@@ -14,8 +14,8 @@ The URL Shortener is the perfect free application for transforming long, ugly li
 
 ## Screenshots
 
-<img loading="lazy" src="preview/short.jpg" height="350"/><img loading="lazy" src="preview/expand.jpg" height="350"/><img loading="lazy" src="preview/favorites.jpg" height="350"/>
-<img loading="lazy" src="preview/sheet.jpg" height="350"/><img loading="lazy" src="preview/drawer.jpg" height="350"/><img loading="lazy" src="preview/about.jpg" height="350"/>
+<img loading="lazy" src="preview/short.jpg" height="350"/> <img loading="lazy" src="preview/expand.jpg" height="350"/> <img loading="lazy" src="preview/favorites.jpg" height="350"/>
+<img loading="lazy" src="preview/sheet.jpg" height="350"/> <img loading="lazy" src="preview/drawer.jpg" height="350"/><img loading="lazy" src="preview/about.jpg" height="350"/>
 
 ## Key Features:
 
