@@ -12,6 +12,11 @@ The URL Shortener is the perfect free application for transforming long, ugly li
 
 <br>
 
+<p align="center">
+<img src="/preview/featured.png" width="100%" title="Shortly featured">
+</p>
+
+
 ## Screenshots
 
 <img loading="lazy" src="preview/short.jpg" height="350"/> <img loading="lazy" src="preview/expand.jpg" height="350"/> <img loading="lazy" src="preview/favorites.jpg" height="350"/>
