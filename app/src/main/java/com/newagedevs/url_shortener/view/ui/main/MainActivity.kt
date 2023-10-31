@@ -1,13 +1,11 @@
 package com.newagedevs.url_shortener.view.ui.main
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -19,13 +17,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.databinding.ActivityMainBinding
-import com.newagedevs.url_shortener.extensions.*
-import com.newagedevs.url_shortener.model.Expander
-import com.newagedevs.url_shortener.model.Shortly
+import com.newagedevs.url_shortener.extensions.isValidUrl
+import com.newagedevs.url_shortener.extensions.openAppStore
+import com.newagedevs.url_shortener.extensions.openMailApp
+import com.newagedevs.url_shortener.extensions.shareTheApp
 import com.newagedevs.url_shortener.utils.Constants
 import com.newagedevs.url_shortener.utils.DarkModeUtils
 import com.newagedevs.url_shortener.view.adapter.DrawerListAdapter
