@@ -93,6 +93,38 @@ class MainViewModel constructor(
         return false
     }
 
+    fun shortenUrl(url: String, callback: (String?) -> Unit) {
+        val flow = shortlyRepository.short(provider, url, viewModelScope) {
+            toast(it)
+            isLoading = false
+        }
+        isLoading = true
+        viewModelScope.launch {
+            flow.collect { value ->
+                isLoading = false
+                shortenUrls = shortlyRepository.loadShortenUrls()
+                toast(value)
+                callback(value)
+            }
+        }
+    }
+
+    fun expandUrl(url: String, callback: (String?) -> Unit) {
+        val flow = expanderRepository.expand(url, viewModelScope) {
+            toast(it)
+            isLoading = false
+        }
+        isLoading = true
+        viewModelScope.launch {
+            flow.collect { value ->
+                isLoading = false
+                expandedUrls = expanderRepository.loadExpandedUrls()
+                toast(value)
+                callback(value)
+            }
+        }
+    }
+
     fun deleteShortenUrl(shortly: Shortly) {
         viewModelScope.launch {
             shortenUrls = shortlyRepository.delete(shortly)

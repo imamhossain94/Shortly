@@ -67,6 +67,15 @@ fun openWebPage(context: Context, url: String?, error: (String?) -> Unit) {
     }
 }
 
+fun isValidUrl(url: String): Boolean {
+    return try {
+        URL(url).toURI()
+        true
+    } catch (e: Exception) {
+        false
+    }
+}
+
 fun isUriEmpty(uri: Uri?):Boolean{
     return uri == null || uri == Uri.EMPTY
 }
