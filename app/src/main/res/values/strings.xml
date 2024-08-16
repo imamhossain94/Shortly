@@ -1,6 +1,3 @@
 <resources>
     <string name="app_name">Shortly</string>
-    <string name="database">Shortly.db</string>
-    <string name="todo">TODO</string>
-
 </resources>

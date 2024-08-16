@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_shortener"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="Shortener" />
+
+    <item
+        android:id="@+id/nav_expander"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="Expander" />
+
+    <item
+        android:id="@+id/nav_history"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="History" />
+
+    <item
+        android:id="@+id/nav_menu"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="Menu" />
+
+</menu>

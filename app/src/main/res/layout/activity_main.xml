@@ -1,39 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main"
+    tools:context=".ui.activities.MainActivity">
 
-    <data>
-        <import type="android.view.View" />
-
-        <variable
-            name="viewModel"
-            type="com.newagedevs.url_shortener.view.ui.main.MainViewModel" />
-    </data>
-
-    <dev.oneuiproject.oneui.layout.DrawerLayout
-        android:id="@+id/drawerLayout"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:expanded="false"
-        app:title="@string/app_name"
-        tools:context=".view.ui.main.MainActivity">
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph" />
 
-        <FrameLayout
-            android:id="@+id/main_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_location="main_content"
-            app:toast="@{viewModel.toast}"/>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_navigation_menu" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/drawer_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            app:layout_location="drawer_panel" />
-
-    </dev.oneuiproject.oneui.layout.DrawerLayout>
-
-
-</layout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

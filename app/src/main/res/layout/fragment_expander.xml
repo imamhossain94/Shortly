@@ -1,92 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    tools:context=".ui.fragments.ExpanderFragment">
 
-  <data>
-
-    <import type="android.view.View" />
-
-    <variable
-        name="viewModel"
-        type="com.newagedevs.url_shortener.view.ui.main.MainViewModel" />
-
-    <variable
-        name="adapter"
-        type="com.newagedevs.url_shortener.view.adapter.ExpanderAdapter" />
-
-  </data>
-
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="vertical"
-      tools:viewBindingIgnore="true">
-
-    <dev.oneuiproject.oneui.widget.RoundFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="4dp"
-        android:background="@color/oui_background_color">
-
-      <androidx.appcompat.widget.AppCompatEditText
-          android:id="@+id/fragment_url_view"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:paddingStart="5dp"
-          android:paddingEnd="0dp"
-          android:paddingTop="7.5dp"
-          android:paddingBottom="7.5dp"
-          android:layout_marginTop="5dp"
-          android:layout_marginBottom="5dp"
-          android:hint="Enter short url"
-          android:background="#00000000"
-          android:drawableStart="@drawable/ic_oui_copy_outline"
-          android:drawableEnd="@drawable/ic_oui_close"
-          android:drawablePadding="7.5dp"
-          android:layout_gravity="center|start"
-          android:focusable="true"
-          android:singleLine="true"
-          android:maxLines="1"
-          android:ellipsize="end"
-          android:imeOptions="actionGo"
-          android:onEditorAction="@{(view, actionId, event) -> viewModel.onExpandUrl(view, actionId, event)}" />
-
-
-    </dev.oneuiproject.oneui.widget.RoundFrameLayout>
-
-    <dev.oneuiproject.oneui.widget.Separator
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="@{!viewModel.isLoading ? View.VISIBLE : View.GONE}"/>
-
-    <androidx.appcompat.widget.SeslProgressBar
-        style="@style/Widget.AppCompat.ProgressBar"
+    <TextView
+        android:id="@+id/title_expander"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:indeterminate="true"
-        android:layout_gravity="center"
-        android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"/>
+        android:text="Shortly - Expand URL"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp"/>
 
-    <dev.oneuiproject.oneui.widget.RoundFrameLayout
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/url_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title_expander"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
 
-      <androidx.recyclerview.widget.RecyclerView
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:background="@color/oui_background_color"
-          app:adapter="@{adapter}"
-          app:adapterExpandedUrls="@{viewModel.expandedUrls}"
-          android:orientation="vertical"
-          app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-          tools:listitem="@layout/view_expanded_url_item"/>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter short URL" />
 
-    </dev.oneuiproject.oneui.widget.RoundFrameLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-  </LinearLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/expand_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Expand"
+        app:layout_constraintTop_toBottomOf="@id/url_input_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
 
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>
