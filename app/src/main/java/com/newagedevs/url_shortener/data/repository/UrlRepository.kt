@@ -28,32 +28,32 @@ class UrlRepository @Inject constructor(
 
     fun shortenWithTinyUrl(longUrl: String): LiveData<UrlData> {
         baseUrlInterceptor.setBaseUrl("http://tinyurl.com/")
-        return makeStringApiCall(Providers.tinyurl) { apiService.tinyurl(longUrl) }
+        return makeStringApiCall(longUrl, Providers.tinyurl) { apiService.tinyurl(longUrl) }
     }
 
     fun shortenWithChilpIt(longUrl: String): LiveData<UrlData> {
         baseUrlInterceptor.setBaseUrl("http://chilp.it/")
-        return makeStringApiCall(Providers.chilpit) { apiService.chilpit(longUrl) }
+        return makeStringApiCall(longUrl, Providers.chilpit) { apiService.chilpit(longUrl) }
     }
 
     fun shortenWithClckRu(longUrl: String): LiveData<UrlData> {
         baseUrlInterceptor.setBaseUrl("https://clck.ru/")
-        return makeStringApiCall(Providers.clckru) { apiService.clckru(longUrl) }
+        return makeStringApiCall(longUrl, Providers.clckru) { apiService.clckru(longUrl) }
     }
 
     fun shortenWithDaGd(longUrl: String): LiveData<UrlData> {
         baseUrlInterceptor.setBaseUrl("https://da.gd/")
-        return makeStringApiCall(Providers.dagd) { apiService.dagd(longUrl) }
+        return makeStringApiCall(longUrl, Providers.dagd) { apiService.dagd(longUrl) }
     }
 
     fun shortenWithIsGd(longUrl: String): LiveData<UrlData> {
         baseUrlInterceptor.setBaseUrl("https://is.gd/")
-        return makeStringApiCall(Providers.isgd) { apiService.isgd("simple", longUrl) }
+        return makeStringApiCall(longUrl, Providers.isgd) { apiService.isgd("simple", longUrl) }
     }
 
     fun shortenWithOsdb(data: Osdb): LiveData<UrlData> {
         baseUrlInterceptor.setBaseUrl("https://osdb.link/")
-        return makeStringApiCall(Providers.osdb) { apiService.osdb(data) }
+        return makeStringApiCall(data.url!!, Providers.osdb) { apiService.osdb(data) }
     }
 
     fun shortenWithCuttly(apiKey: String, longUrl: String): LiveData<UrlData> {
@@ -91,7 +91,7 @@ class UrlRepository @Inject constructor(
         return result
     }
 
-    private fun makeStringApiCall(providers: String, apiCall: () -> Call<String>): LiveData<UrlData> {
+    private fun makeStringApiCall(longUrl: String, providers: String, apiCall: () -> Call<String>): LiveData<UrlData> {
         val result = MutableLiveData<UrlData>()
         apiCall().enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -99,6 +99,7 @@ class UrlRepository @Inject constructor(
                     val data = response.body()
                     if (data != null) {
                         var shortenedUrl = data
+
                         if(providers == Providers.osdb) {
                             val doc = Jsoup.parse(data)
                             shortenedUrl = doc.selectFirst("label#surl")
@@ -106,7 +107,6 @@ class UrlRepository @Inject constructor(
                                 .replace("Your shortened URL is:", "").trim()
                         }
 
-                        val longUrl = call.request().url.queryParameter("url") ?: ""
                         val urlData = UrlData(
                             provider = providers,
                             originalUrl = longUrl,
@@ -128,6 +128,39 @@ class UrlRepository @Inject constructor(
                 result.value = UrlData(success = false)
             }
         })
+        return result
+    }
+
+    // Code to Expend URL
+    fun expand(shortUrl: String): LiveData<UrlData> {
+        val result = MutableLiveData<UrlData>()
+
+        apiService.expand(shortUrl).enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+
+                    val longUrl = response.raw().request.url.toString()
+
+                    val urlData = UrlData(
+                        provider = null,
+                        originalUrl = shortUrl,
+                        shortenedUrl = shortUrl,
+                        expandedUrl = longUrl,
+                        success = true
+                    )
+                    result.value = urlData
+                    saveUrlToDatabase(urlData)
+
+                } else {
+                    result.value = UrlData(success = false)
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                result.value = UrlData(success = false)
+            }
+        })
+
         return result
     }
 

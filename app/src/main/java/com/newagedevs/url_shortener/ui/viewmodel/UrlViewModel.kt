@@ -22,9 +22,13 @@ class UrlViewModel @Inject constructor(
             Providers.dagd -> repository.shortenWithDaGd(longUrl)
             Providers.isgd -> repository.shortenWithIsGd(longUrl)
             Providers.osdb -> repository.shortenWithOsdb(Osdb(longUrl))
-            Providers.cuttly -> repository.shortenWithCuttly("7cb8f45b33941dc8a24dde91930451c4bd1dc", longUrl)
+            Providers.cuttly -> repository.shortenWithCuttly("23cfc51f98e71afea0c6d454f084a255ffe16", longUrl)
             else -> throw IllegalArgumentException("Unknown provider")
         }
+    }
+
+    fun expendUrl(shortUrl: String): LiveData<UrlData> {
+        return repository.expand(shortUrl)
     }
 
 }

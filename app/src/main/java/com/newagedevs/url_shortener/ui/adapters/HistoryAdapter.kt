@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.data.model.UrlData
 
-class HistoryAdapter(private val onCopy: (UrlData) -> Unit, private val onDelete: (UrlData) -> Unit) : ListAdapter<UrlData, HistoryAdapter.HistoryViewHolder>(DiffCallback()) {
+class HistoryAdapter(private val onCopy: (UrlData) -> Unit, private val onDelete: (UrlData) -> Unit, private val onClick: (UrlData) -> Unit) : ListAdapter<UrlData, HistoryAdapter.HistoryViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -35,6 +35,7 @@ class HistoryAdapter(private val onCopy: (UrlData) -> Unit, private val onDelete
             shortUrlText.text = urlData.shortenedUrl
             expendedUrlText.text = urlData.expandedUrl
 
+            view.setOnClickListener { onClick(urlData) }
             copyButton.setOnClickListener { onCopy(urlData) }
             deleteButton.setOnClickListener { onDelete(urlData) }
         }

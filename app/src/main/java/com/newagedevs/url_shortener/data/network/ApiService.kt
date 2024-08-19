@@ -7,6 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface ApiService {
     @GET("api-create.php")
@@ -29,5 +30,8 @@ interface ApiService {
 
     @GET("api.php")
     fun cuttly(@Query("key") apiKey: String, @Query("short") longUrl: String): Call<Cuttly>
+
+    @GET
+    fun expand(@Url url: String): Call<String>
 }
 

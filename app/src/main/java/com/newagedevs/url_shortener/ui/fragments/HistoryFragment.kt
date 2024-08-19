@@ -34,10 +34,16 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
         adapter = HistoryAdapter(
             onCopy = {
 
+            },
+            onDelete = {
+                viewModel.deleteUrl(it)
             }
-        ) { urlData ->
-            viewModel.deleteUrl(urlData)
+        ) {
+            val args = Bundle()
+            args.putParcelable("url_data", it)
+            findNavController().navigate(R.id.action_shortenerFragment_to_resultFragment, args)
         }
+
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 

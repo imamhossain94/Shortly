@@ -75,27 +75,54 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
         setupProviderSpinner()
 
         actionButton.setOnClickListener {
-            val longUrl = inputUrl.text.toString()
-            val selectedProvider = providerDropDown.text.toString()
+            when (toggleButtonGroup.checkedButtonId) {
+                R.id.btn_shortener -> {
+                    val longUrl = inputUrl.text.toString()
+                    val selectedProvider = providerDropDown.text.toString()
 
-            if (longUrl.isNotEmpty()) {
-                val shortenedUrlLiveData = viewModel.shortenUrl(selectedProvider, longUrl)
-                shortenedUrlLiveData.observe(viewLifecycleOwner) {
+                    if (longUrl.isNotEmpty()) {
+                        val shortenedUrlLiveData = viewModel.shortenUrl(selectedProvider, longUrl)
+                        shortenedUrlLiveData.observe(viewLifecycleOwner) {
 
-                    if(it.success == true) {
-                        val args = Bundle()
-                        args.putString("uri", it.toString())
-                        findNavController().navigate(R.id.action_shortenerFragment_to_resultFragment, args)
-                    } else {
-                        run {
-                            Toast.makeText(requireContext(), "Failed to shorten URL", Toast.LENGTH_SHORT).show()
+                            if(it.success == true) {
+                                val args = Bundle()
+                                args.putParcelable("url_data", it)
+                                findNavController().navigate(R.id.action_shortenerFragment_to_resultFragment, args)
+                            } else {
+                                run {
+                                    Toast.makeText(requireContext(), "Failed to shorten URL", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
                         }
+                    } else {
+                        Toast.makeText(requireContext(), "Please enter a URL", Toast.LENGTH_SHORT).show()
                     }
-
                 }
-            } else {
-                Toast.makeText(requireContext(), "Please enter a URL", Toast.LENGTH_SHORT).show()
+                R.id.btn_expender -> {
+                    val shortUrl = inputUrl.text.toString()
+                    if (shortUrl.isNotEmpty()) {
+                        val expandUrlLiveData = viewModel.expendUrl(shortUrl)
+                        expandUrlLiveData.observe(viewLifecycleOwner) {
+                            if(it.success == true) {
+                                val args = Bundle()
+                                args.putParcelable("url_data", it)
+                                findNavController().navigate(R.id.action_shortenerFragment_to_resultFragment, args)
+                            } else {
+                                run {
+                                    Toast.makeText(requireContext(), "Failed to expand URL", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Please enter a URL", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else -> {
+                    Toast.makeText(requireContext(), "Please select Shorten or Expand", Toast.LENGTH_SHORT).show()
+                }
             }
+
         }
 
     }

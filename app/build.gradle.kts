@@ -4,6 +4,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("androidx.room")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -88,6 +89,9 @@ dependencies {
     // Coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // QR Code kotlin
+    implementation("io.github.g0dkar:qrcode-kotlin:4.1.1")
 
     // AppLovin SDK
 //    implementation("com.applovin:applovin-sdk:+")

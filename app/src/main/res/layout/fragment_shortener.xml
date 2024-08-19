@@ -21,12 +21,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Enter long URL here">
+        android:hint="Enter long URL here"
+        android:maxHeight="120dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_url"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:maxHeight="120dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Domain Dropdown -->
