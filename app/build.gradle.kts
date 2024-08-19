@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.newagedevs.url_shortener"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.newagedevs.url_shortener"
@@ -67,6 +67,10 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+
+    // jsoup
+    implementation("org.jsoup:jsoup:1.18.1")
+
 
     // Room (for local database storage)
     implementation("androidx.room:room-runtime:2.6.1")

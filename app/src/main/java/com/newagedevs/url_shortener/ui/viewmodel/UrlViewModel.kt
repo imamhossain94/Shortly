@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.newagedevs.url_shortener.data.model.Osdb
 import com.newagedevs.url_shortener.data.model.UrlData
 import com.newagedevs.url_shortener.data.repository.UrlRepository
+import com.newagedevs.url_shortener.utils.Providers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -15,13 +16,13 @@ class UrlViewModel @Inject constructor(
 
     fun shortenUrl(provider: String, longUrl: String): LiveData<UrlData> {
         return when (provider) {
-            "TinyURL" -> repository.shortenWithTinyUrl(longUrl)
-            "Chilp.it" -> repository.shortenWithChilpIt(longUrl)
-            "Clck.ru" -> repository.shortenWithClckRu(longUrl)
-            "Da.gd" -> repository.shortenWithDaGd(longUrl)
-            "Is.gd" -> repository.shortenWithIsGd(longUrl)
-            "Osdb" -> repository.shortenWithOsdb(Osdb(longUrl))
-            "Cutt.ly" -> repository.shortenWithCuttly("", longUrl)
+            Providers.tinyurl -> repository.shortenWithTinyUrl(longUrl)
+            Providers.chilpit -> repository.shortenWithChilpIt(longUrl)
+            Providers.clckru -> repository.shortenWithClckRu(longUrl)
+            Providers.dagd -> repository.shortenWithDaGd(longUrl)
+            Providers.isgd -> repository.shortenWithIsGd(longUrl)
+            Providers.osdb -> repository.shortenWithOsdb(Osdb(longUrl))
+            Providers.cuttly -> repository.shortenWithCuttly("7cb8f45b33941dc8a24dde91930451c4bd1dc", longUrl)
             else -> throw IllegalArgumentException("Unknown provider")
         }
     }

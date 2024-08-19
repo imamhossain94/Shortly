@@ -3,22 +3,17 @@
 
     <item
         android:id="@+id/nav_shortener"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_link_minimalistic"
         android:title="Shortener" />
 
     <item
-        android:id="@+id/nav_expander"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="Expander" />
-
-    <item
         android:id="@+id/nav_history"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_history"
         android:title="History" />
 
     <item
         android:id="@+id/nav_menu"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_hamburger_menu"
         android:title="Menu" />
 
 </menu>

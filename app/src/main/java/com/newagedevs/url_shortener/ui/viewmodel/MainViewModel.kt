@@ -17,26 +17,9 @@ class MainViewModel @Inject constructor(
 
     val historyLiveData: LiveData<List<UrlData>> = repository.getHistory()
 
-    private val _shortenUrlLiveData = MutableLiveData<UrlData>()
-    val shortenUrlLiveData: LiveData<UrlData> = _shortenUrlLiveData
+    fun deleteUrl(urlData: UrlData) {
+        repository.deleteUrl(urlData)
+    }
 
-    private val _expandUrlLiveData = MutableLiveData<UrlData>()
-    val expandUrlLiveData: LiveData<UrlData> = _expandUrlLiveData
-
-//    fun shortenUrl(url: String) {
-//        viewModelScope.launch {
-//            val result = repository.shortenUrl(url)
-//            _shortenUrlLiveData.postValue(result)
-//            repository.saveUrl(result)  // Save the result to the database
-//        }
-//    }
-//
-//    fun expandUrl(url: String) {
-//        viewModelScope.launch {
-//            val result = repository.expandUrl(url)
-//            _expandUrlLiveData.postValue(result)
-//            repository.saveUrl(result)  // Save the result to the database
-//        }
-//    }
 }
 

@@ -4,26 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_horizontal"
+    android:gravity="start"
     tools:context=".ui.fragments.ShortenerFragment">
 
     <TextView
         android:id="@+id/title_shortener"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Shortly - Shorten URL"
-        android:textAppearance="?attr/textAppearanceHeadline5"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="16dp" />
-
+        android:layout_margin="16dp"
+        android:text="Shortly - URL Shortener"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/urlInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:hint="Enter long URL here">
@@ -38,14 +33,14 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/menu"
+        android:id="@+id/provider_dropdown_layout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="domain">
+        android:hint="Select provider">
 
         <AutoCompleteTextView
             android:id="@+id/provider_dropdown"
@@ -56,11 +51,61 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:singleSelection="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+            <Button
+                style="?attr/materialButtonOutlinedStyle"
+                android:id="@+id/btn_shortener"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shorten" />
+            <Button
+                style="?attr/materialButtonOutlinedStyle"
+                android:id="@+id/btn_expender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expand" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:id="@+id/shorten_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Shorten"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:layout_marginStart="0dp"-->
+<!--            android:layout_marginEnd="16dp"/>-->
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/shorten_button"
-        android:layout_width="wrap_content"
+        style="@style/ThemeOverlay.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Shorten"
-        android:layout_marginTop="16dp" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Shorten" />
 
 </LinearLayout>
