@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.data.model.UrlData
+import com.newagedevs.url_shortener.utils.getUrl
 
-class HistoryAdapter(private val onCopy: (UrlData) -> Unit, private val onDelete: (UrlData) -> Unit, private val onClick: (UrlData) -> Unit) : ListAdapter<UrlData, HistoryAdapter.HistoryViewHolder>(DiffCallback()) {
+class HistoryAdapter(private val onCopy: (Pair<Boolean, String?>) -> Unit, private val onDelete: (UrlData) -> Unit, private val onClick: (UrlData) -> Unit) : ListAdapter<UrlData, HistoryAdapter.HistoryViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -32,12 +33,24 @@ class HistoryAdapter(private val onCopy: (UrlData) -> Unit, private val onDelete
 
         fun bind(urlData: UrlData) {
             titleText.text = if (urlData.originalUrl == urlData.expandedUrl) "Shortened" else "Expended"
-            shortUrlText.text = urlData.shortenedUrl
-            expendedUrlText.text = urlData.expandedUrl
+            shortUrlText.text = urlData.shortenedUrl?.trim()
+            expendedUrlText.text = urlData.expandedUrl?.trim()
 
             view.setOnClickListener { onClick(urlData) }
-            copyButton.setOnClickListener { onCopy(urlData) }
             deleteButton.setOnClickListener { onDelete(urlData) }
+            copyButton.setOnClickListener { onCopy(urlData.getUrl()) }
+
+            shortUrlText.setOnClickListener { onClick(urlData) }
+            shortUrlText.setOnLongClickListener {
+                onCopy(Pair(true, urlData.shortenedUrl))
+                return@setOnLongClickListener true
+            }
+
+            expendedUrlText.setOnClickListener { onClick(urlData) }
+            expendedUrlText.setOnLongClickListener {
+                onCopy(Pair(false, urlData.expandedUrl))
+                return@setOnLongClickListener true
+            }
         }
     }
 

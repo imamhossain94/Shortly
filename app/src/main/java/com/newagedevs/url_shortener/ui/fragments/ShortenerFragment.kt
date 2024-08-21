@@ -127,6 +127,11 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupProviderSpinner()
+    }
+
     private fun setupProviderSpinner() {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Providers.list)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

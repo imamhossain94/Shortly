@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Shortly</string>
+    <string name="todo">TODO</string>
+
+    <string name="rate_us">Rate us</string>
+    <string name="share">Share</string>
+    <string name="feedback">Feedback</string>
+    <string name="other_app">Other app</string>
+    <string name="about">About</string>
 </resources>

@@ -22,69 +22,133 @@
     </com.google.android.material.card.MaterialCardView>
 
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_marginHorizontal="16dp"
+        app:cardCornerRadius="12dp"
+        app:strokeColor="?attr/colorOutline"
+        app:strokeWidth="1dp">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Shortened URL"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/short_url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Short URL"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:id="@+id/expended_url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:maxLines="4"
-            android:ellipsize="end"
-            android:text="Expended URL"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shortened URL"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall" />
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/short_url"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Short URL"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/expended_url"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    android:text="Expended URL"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_copy"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="Copy" />
 
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_delete"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:textColor="?attr/colorError" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
+        android:gravity="start"
         android:padding="16dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/share_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Share" />
+
         <Space
             android:layout_width="16dp"
             android:layout_height="wrap_content"/>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/copy_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Copy" />
 
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/delete_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:textColor="?attr/colorError"/>
+
     </LinearLayout>
+
 
 
 

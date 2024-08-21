@@ -1,18 +1,34 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.activities.SplashActivity">
+    android:background="?colorOnSecondary">
 
-    <ImageView
-        android:id="@+id/splash_logo"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_foreground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_centerInParent="true">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_launcher" />
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/developerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="35dp"
+        android:text="NewAgeDevs"
+        android:textAlignment="center"
+        android:textStyle="italic"
+        android:textColor="#393939" />
+
+</RelativeLayout>

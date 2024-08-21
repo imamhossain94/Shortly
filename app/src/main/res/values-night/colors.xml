@@ -3,4 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="bottom_nav_color">#3700B3</color>
+    <color name="qr_core_color">#d0bcff</color>
+
+    <color name="bg_price_color">#4D000000</color>
 </resources>

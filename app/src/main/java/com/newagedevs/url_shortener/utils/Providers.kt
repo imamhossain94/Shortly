@@ -11,7 +11,7 @@ class Providers {
         const val osdb = "osdb.link"
         const val cuttly = "cutt.ly"
 
-        val list: MutableList<String> = arrayListOf(tinyurl, chilpit, clckru, dagd, isgd, osdb, cuttly)
+        val list: MutableList<String> = arrayListOf(tinyurl, chilpit, clckru, dagd, isgd, osdb)
     }
 
 }

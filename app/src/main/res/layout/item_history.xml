@@ -32,6 +32,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Short URL"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -40,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:maxLines="4"
+                android:maxLines="3"
                 android:ellipsize="end"
                 android:text="Expended URL"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
@@ -51,13 +53,15 @@
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_copy"

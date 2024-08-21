@@ -1,8 +1,12 @@
 package com.newagedevs.url_shortener.ui.fragments
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -13,6 +17,9 @@ import com.google.android.material.textfield.TextInputEditText
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.ui.adapters.HistoryAdapter
 import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
+import com.newagedevs.url_shortener.utils.getUrl
+import com.newagedevs.url_shortener.utils.shareUrl
+import com.newagedevs.url_shortener.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -31,9 +38,18 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
         toggleButtonGroup = view.findViewById(R.id.toggleButton)
         recyclerView = view.findViewById(R.id.recycler_view_history)
 
+        val clipboard: ClipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
         adapter = HistoryAdapter(
             onCopy = {
-
+                val (isShortUrl, url) = it
+                if (url != null) {
+                    val clip = ClipData.newPlainText("Shortly", url)
+                    clipboard.setPrimaryClip(clip)
+                    requireContext().showToast(if (isShortUrl) "Short URL copied!" else "Expanded URL copied!")
+                } else {
+                    requireContext().showToast("Cannot copy URL")
+                }
             },
             onDelete = {
                 viewModel.deleteUrl(it)

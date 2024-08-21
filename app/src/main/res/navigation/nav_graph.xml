@@ -10,8 +10,8 @@
         <action
             android:id="@+id/action_shortenerFragment_to_resultFragment"
             app:destination="@id/nav_result"
-            app:popUpTo="@id/nav_shortener"
-            app:popUpToInclusive="true" />
+            app:popUpTo="@id/nav_history"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -21,8 +21,8 @@
         <action
             android:id="@+id/action_shortenerFragment_to_resultFragment"
             app:destination="@id/nav_result"
-            app:popUpTo="@id/nav_shortener"
-            app:popUpToInclusive="true" />
+            app:popUpTo="@id/nav_history"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment

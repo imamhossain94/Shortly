@@ -5,6 +5,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("androidx.room")
     id("kotlin-parcelize")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -29,6 +30,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+    buildFeatures {
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -72,7 +76,6 @@ dependencies {
     // jsoup
     implementation("org.jsoup:jsoup:1.18.1")
 
-
     // Room (for local database storage)
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
@@ -93,8 +96,28 @@ dependencies {
     // QR Code kotlin
     implementation("io.github.g0dkar:qrcode-kotlin:4.1.1")
 
-    // AppLovin SDK
-//    implementation("com.applovin:applovin-sdk:+")
+    // Glide
+    implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
+    ksp("com.github.bumptech.glide:compiler:5.0.0-rc01")
+
+    // Justified textview
+    implementation("com.codesgood:justifiedtextview:1.1.0")
+
+    // Applovin
+    implementation("androidx.lifecycle:lifecycle-process:2.8.4")
+    implementation("com.applovin:applovin-sdk:+")
+
+    implementation("com.applovin.mediation:chartboost-adapter:+")
+    implementation("com.google.android.gms:play-services-base:16.1.0")
+    implementation("com.applovin.mediation:inmobi-adapter:+")
+    implementation("com.squareup.picasso:picasso:2.71828")
+    implementation("androidx.recyclerview:recyclerview:1.1.0")
+    implementation("com.applovin.mediation:ironsource-adapter:+")
+    implementation("com.applovin.mediation:vungle-adapter:+")
+    implementation("com.applovin.mediation:facebook-adapter:+")
+    implementation("com.applovin.mediation:mintegral-adapter:+")
+    implementation("com.applovin.mediation:smaato-adapter:+")
+    implementation("com.applovin.mediation:unityads-adapter:+")
 
 
 }
