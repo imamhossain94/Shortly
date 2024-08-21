@@ -23,7 +23,8 @@
             android:layout_height="18dp"
             android:layout_width="18dp"
             android:layout_marginEnd="5dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            app:tint="#5e59e2" />
 
         <TextView
             android:id="@+id/menu_title"
