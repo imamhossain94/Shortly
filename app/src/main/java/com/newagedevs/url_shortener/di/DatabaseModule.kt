@@ -2,6 +2,7 @@ package com.newagedevs.url_shortener.di
 
 import android.content.Context
 import androidx.room.Room
+import com.newagedevs.url_shortener.data.local.SharedPref
 import com.newagedevs.url_shortener.data.local.db.AppDatabase
 import com.newagedevs.url_shortener.data.local.db.UrlDao
 import dagger.Module
@@ -29,6 +30,12 @@ object DatabaseModule {
     @Singleton
     fun provideUrlDao(database: AppDatabase): UrlDao {
         return database.urlDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideSharedPref(@ApplicationContext context: Context): SharedPref {
+        return SharedPref(context)
     }
 }
 

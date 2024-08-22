@@ -1,31 +1,34 @@
 package com.newagedevs.url_shortener.ui.activities
 
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
-import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.limurse.iap.DataWrappers
+import com.limurse.iap.IapConnector
+import com.limurse.iap.PurchaseServiceListener
+import com.newagedevs.url_shortener.BuildConfig
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.helper.ApplovinAdsManager
+import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private val viewModel: MainViewModel by viewModels()
 
     private lateinit var adsContainer: LinearLayout
     private var adsManager: ApplovinAdsManager? = null
-
+    private var iapConnector: IapConnector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +41,43 @@ class MainActivity : AppCompatActivity() {
         }
 
         adsContainer = findViewById(R.id.ads_container)
-        adsManager = ApplovinAdsManager(this@MainActivity)
-        adsManager?.createBannerAd(adsContainer)
+
+        // Pro features
+        iapConnector = IapConnector(
+            context = this@MainActivity,
+            nonConsumableKeys = listOf(BuildConfig.PRODUCT_ID),
+            key = BuildConfig.BASE_64_KEY,
+            enableLogging = true
+        )
+
+        iapConnector?.addPurchaseListener(object : PurchaseServiceListener {
+            override fun onPricesUpdated(iapKeyPrices: Map<String, List<DataWrappers.ProductDetails>>) {
+                val productDetails = iapKeyPrices[BuildConfig.PRODUCT_ID]?.first()
+                viewModel.setProductPrice("${productDetails?.price}/")
+            }
+
+            override fun onProductPurchased(purchaseInfo: DataWrappers.PurchaseInfo) {
+                viewModel.setPro(true)
+            }
+
+            override fun onProductRestored(purchaseInfo: DataWrappers.PurchaseInfo) {
+                if(purchaseInfo.sku == BuildConfig.PRODUCT_ID && purchaseInfo.purchaseState == 1) {
+                    viewModel.setPro(true)
+                }
+            }
+
+            override fun onPurchaseFailed(purchaseInfo: DataWrappers.PurchaseInfo?, billingResponseCode: Int?) { }
+        })
+
+        viewModel.isProUser.observe(this) { isPro ->
+            if (isPro) {
+                adsContainer.visibility = View.GONE
+                adsContainer.removeAllViews()
+            } else {
+                adsManager = ApplovinAdsManager(this)
+                adsManager?.createBannerAd(adsContainer)
+            }
+        }
 
     }
 
@@ -54,5 +92,12 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
+    fun purchase() {
+        iapConnector?.purchase(this, BuildConfig.PRODUCT_ID)
+    }
+
+    fun showAds() {
+        adsManager?.showInterstitialAd()
+    }
 
 }

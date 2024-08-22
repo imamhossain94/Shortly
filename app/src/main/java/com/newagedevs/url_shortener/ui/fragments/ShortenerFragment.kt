@@ -1,40 +1,44 @@
 package com.newagedevs.url_shortener.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.newagedevs.url_shortener.R
-import com.newagedevs.url_shortener.data.model.UrlData
+import com.newagedevs.url_shortener.ui.activities.MainActivity
+import com.newagedevs.url_shortener.ui.activities.ResultActivity
+import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
 import com.newagedevs.url_shortener.ui.viewmodel.UrlViewModel
 import com.newagedevs.url_shortener.utils.Providers
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.internal.notify
 
 
 @AndroidEntryPoint
 class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
     private lateinit var inputUrlLayout: TextInputLayout
-    private lateinit var providerDropDownLayout: TextInputLayout
+    private lateinit var providerDropDownLayout: MaterialCardView
     private lateinit var inputUrl: TextInputEditText
-
-    private lateinit var providerDropDown: AutoCompleteTextView
-
+    private lateinit var providerDropDown: Spinner
     private lateinit var actionButton: MaterialButton
-
     private lateinit var toggleButtonGroup: MaterialButtonToggleGroup
-
+    private lateinit var removeAdsMCV: MaterialCardView
+    private lateinit var progressIndicator: CircularProgressIndicator
 
     private val viewModel: UrlViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,6 +49,14 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
         actionButton = view.findViewById(R.id.shorten_button)
         providerDropDown = view.findViewById(R.id.provider_dropdown)
         toggleButtonGroup = view.findViewById(R.id.toggleButton)
+        removeAdsMCV = view.findViewById(R.id.remove_ads_mcv)
+        progressIndicator = view.findViewById(R.id.progress_indicator)
+
+        removeAdsMCV.setOnClickListener {
+            (activity as? MainActivity)?.purchase()
+        }
+
+        setupProviderSpinner()
 
         toggleButtonGroup.check(R.id.btn_shortener)
         toggleButtonGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
@@ -55,8 +67,6 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
                         inputUrlLayout.hint = "Enter Long URL"
                         actionButton.text = "Shorten"
                         providerDropDownLayout.visibility = View.VISIBLE
-
-
                     }
                 }
                 R.id.btn_expender -> {
@@ -65,77 +75,64 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
                         inputUrlLayout.hint = "Enter short URL"
                         actionButton.text = "Expend"
                         providerDropDownLayout.visibility = View.GONE
-
-
                     }
                 }
             }
         }
 
-        setupProviderSpinner()
-
         actionButton.setOnClickListener {
-            when (toggleButtonGroup.checkedButtonId) {
+            mainViewModel.incrementClickCount()
+
+            val isProUser = mainViewModel.isProUser.value ?: false
+            val clickCount = mainViewModel.clickCount.value ?: 0
+
+            if (!isProUser && clickCount >= 3) {
+                mainViewModel.resetClickCount()
+                (activity as? MainActivity)?.showAds()
+            }
+
+            val url = inputUrl.text.toString()
+
+            if (url.isEmpty()) {
+                Toast.makeText(requireContext(), "Please enter a URL", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val resultLiveData = when (toggleButtonGroup.checkedButtonId) {
                 R.id.btn_shortener -> {
-                    val longUrl = inputUrl.text.toString()
-                    val selectedProvider = providerDropDown.text.toString()
-
-                    if (longUrl.isNotEmpty()) {
-                        val shortenedUrlLiveData = viewModel.shortenUrl(selectedProvider, longUrl)
-                        shortenedUrlLiveData.observe(viewLifecycleOwner) {
-
-                            if(it.success == true) {
-                                val args = Bundle()
-                                args.putParcelable("url_data", it)
-                                findNavController().navigate(R.id.action_shortenerFragment_to_resultFragment, args)
-                            } else {
-                                run {
-                                    Toast.makeText(requireContext(), "Failed to shorten URL", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), "Please enter a URL", Toast.LENGTH_SHORT).show()
-                    }
+                    val selectedProvider = providerDropDown.selectedItem.toString()
+                    viewModel.shortenUrl(selectedProvider, url)
                 }
                 R.id.btn_expender -> {
-                    val shortUrl = inputUrl.text.toString()
-                    if (shortUrl.isNotEmpty()) {
-                        val expandUrlLiveData = viewModel.expendUrl(shortUrl)
-                        expandUrlLiveData.observe(viewLifecycleOwner) {
-                            if(it.success == true) {
-                                val args = Bundle()
-                                args.putParcelable("url_data", it)
-                                findNavController().navigate(R.id.action_shortenerFragment_to_resultFragment, args)
-                            } else {
-                                run {
-                                    Toast.makeText(requireContext(), "Failed to expand URL", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), "Please enter a URL", Toast.LENGTH_SHORT).show()
-                    }
+                    viewModel.expendUrl(url)
                 }
                 else -> {
                     Toast.makeText(requireContext(), "Please select Shorten or Expand", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 }
             }
 
+            progressIndicator.visibility = View.VISIBLE
+
+            resultLiveData.observe(viewLifecycleOwner) { result ->
+                if (result.success == true) {
+                    val intent = Intent(requireContext(), ResultActivity::class.java)
+                    intent.putExtra("url_data", result)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(requireContext(), "Failed to process URL", Toast.LENGTH_SHORT).show()
+                }
+                progressIndicator.visibility = View.INVISIBLE
+            }
         }
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        setupProviderSpinner()
     }
 
     private fun setupProviderSpinner() {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, Providers.list)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         providerDropDown.setAdapter(adapter)
+        providerDropDown.post { providerDropDown.setSelection(0) }
     }
 
 }

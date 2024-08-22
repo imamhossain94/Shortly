@@ -23,7 +23,6 @@
         android:layout_marginEnd="16dp"
         android:hint="Enter long URL here"
         android:maxHeight="120dp">
-
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_url"
             android:layout_width="match_parent"
@@ -31,43 +30,34 @@
             android:maxHeight="120dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Domain Dropdown -->
-
-
-    <com.google.android.material.textfield.TextInputLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/provider_dropdown_layout"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:hint="Select provider">
-
-        <AutoCompleteTextView
+        android:layout_marginEnd="16dp">
+        <Spinner
             android:id="@+id/provider_dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="none" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="16dp"/>
+    </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/toggleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:singleSelection="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp">
+            app:singleSelection="true">
             <Button
                 style="?attr/materialButtonOutlinedStyle"
                 android:id="@+id/btn_shortener"
@@ -82,22 +72,69 @@
                 android:text="Expand" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
-
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--            android:id="@+id/shorten_button"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Shorten"-->
-<!--            android:layout_marginTop="16dp"-->
-<!--            android:layout_marginStart="0dp"-->
-<!--            android:layout_marginEnd="16dp"/>-->
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:indeterminate="true"
+            android:visibility="invisible"/>
 
     </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/remove_ads_mcv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:layout_margin="16dp"
+        app:cardBackgroundColor="@android:color/transparent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center"
+            android:background="@drawable/bg_round_primary">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/todo"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_crown"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingHorizontal="16dp"
+                android:textSize="16sp"
+                android:text="Remove Ads"
+                android:textColor="@color/white"/>
+
+            <ImageView
+                android:contentDescription="@string/todo"
+                android:gravity="center"
+                android:layout_height="24dp"
+                android:layout_width="24dp"
+                android:layout_marginEnd="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_arrow_right"
+                app:tint="@color/white" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
+
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/shorten_button"

@@ -3,22 +3,55 @@ package com.newagedevs.url_shortener.ui.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.newagedevs.url_shortener.data.model.UrlData
-import com.newagedevs.url_shortener.data.repository.UrlRepository
+import com.newagedevs.url_shortener.data.local.SharedPref
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: UrlRepository
+    private val sharedPref: SharedPref
 ) : ViewModel() {
 
-    val historyLiveData: LiveData<List<UrlData>> = repository.getHistory()
+    private val _isProUser = MutableLiveData<Boolean>()
+    private val _productPrice = MutableLiveData<String>()
+    private val _clickCount = MutableLiveData<Int>()
 
-    fun deleteUrl(urlData: UrlData) {
-        repository.deleteUrl(urlData)
+    val isProUser: LiveData<Boolean> = _isProUser
+    val productPrice: LiveData<String> = _productPrice
+    val clickCount: LiveData<Int> = _clickCount
+
+    init {
+        checkProStatus()
+        checkClickCount()
+    }
+
+    fun setPro(value: Boolean) {
+        sharedPref.setPro(value)
+        _isProUser.value = value
+    }
+
+    fun setProductPrice(value: String) {
+        _productPrice.value = value
+    }
+
+    private fun checkProStatus() {
+        _isProUser.value = sharedPref.isPro()
+    }
+
+    private fun checkClickCount() {
+        _clickCount.value = sharedPref.clickCount()
+    }
+
+    fun resetClickCount() {
+        sharedPref.resetClickCount()
+        _clickCount.value = 0
+    }
+
+    fun incrementClickCount() {
+        val currentCount = _clickCount.value ?: 0
+        val newCount = currentCount + 1
+        sharedPref.clickCount(newCount)
+        _clickCount.value = newCount
     }
 
 }

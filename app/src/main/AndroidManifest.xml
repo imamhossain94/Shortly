@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:name=".ShortlyApp"
@@ -15,7 +17,8 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Shortly"
-        tools:targetApi="31">
+        android:allowCrossUidActivitySwitchFromBelow="false"
+        tools:targetApi="35">
 
         <activity
             android:name=".ui.activities.SplashActivity"
@@ -35,6 +38,14 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.activities.ResultActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".ui.activities.AboutActivity"
+            android:exported="true" />
 
     </application>
 

@@ -13,6 +13,7 @@ import javax.inject.Inject
 class UrlViewModel @Inject constructor(
     private val repository: UrlRepository
 ) : ViewModel() {
+    val historyLiveData: LiveData<List<UrlData>> = repository.getHistory()
 
     fun shortenUrl(provider: String, longUrl: String): LiveData<UrlData> {
         return when (provider) {
@@ -31,5 +32,8 @@ class UrlViewModel @Inject constructor(
         return repository.expand(shortUrl)
     }
 
+    fun deleteUrl(urlData: UrlData) {
+        repository.deleteUrl(urlData)
+    }
 }
 

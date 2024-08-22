@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:orientation="vertical"
@@ -16,7 +16,7 @@
             android:id="@+id/pro_feature_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="16dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp">
 
@@ -105,7 +105,7 @@
                     android:layout_marginHorizontal="10dp"
                     android:layout_marginVertical="10dp"
                     android:focusable="false"
-                    android:text="Upgrade to the premium version of Shortly to enjoy ads free experience."
+                    android:text="Upgrade to the premium version of Shortly to enjoy an ads-free experience and unlock exclusive features for a smoother, uninterrupted usage."
                     android:textStyle="normal" />
 
                 <View
@@ -129,8 +129,8 @@
             android:id="@+id/in_house_ads_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="0dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="0dp"
             android:paddingVertical="10dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp">
@@ -149,7 +149,7 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:orientation="vertical"
-            android:padding="5dp"
+            android:padding="11dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"
             tools:listitem="@layout/item_menu" />

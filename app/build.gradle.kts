@@ -16,8 +16,8 @@ android {
         applicationId = "com.newagedevs.url_shortener"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 10
+        versionName = "2.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -119,6 +119,8 @@ dependencies {
     implementation("com.applovin.mediation:smaato-adapter:+")
     implementation("com.applovin.mediation:unityads-adapter:+")
 
+    // Google IAP
+    implementation("com.github.akshaaatt:Google-IAP:1.7.0")
 
 }
 

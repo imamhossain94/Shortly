@@ -6,32 +6,16 @@
     <fragment
         android:id="@+id/nav_shortener"
         android:name="com.newagedevs.url_shortener.ui.fragments.ShortenerFragment"
-        tools:layout="@layout/fragment_shortener" >
-        <action
-            android:id="@+id/action_shortenerFragment_to_resultFragment"
-            app:destination="@id/nav_result"
-            app:popUpTo="@id/nav_history"
-            app:popUpToInclusive="false" />
-    </fragment>
+        tools:layout="@layout/fragment_shortener" />
 
     <fragment
         android:id="@+id/nav_history"
         android:name="com.newagedevs.url_shortener.ui.fragments.HistoryFragment"
-        tools:layout="@layout/fragment_history" >
-        <action
-            android:id="@+id/action_shortenerFragment_to_resultFragment"
-            app:destination="@id/nav_result"
-            app:popUpTo="@id/nav_history"
-            app:popUpToInclusive="false" />
-    </fragment>
+        tools:layout="@layout/fragment_history" />
 
     <fragment
         android:id="@+id/nav_menu"
         android:name="com.newagedevs.url_shortener.ui.fragments.MenuFragment"
         tools:layout="@layout/fragment_menu" />
 
-    <fragment
-        android:id="@+id/nav_result"
-        android:name="com.newagedevs.url_shortener.ui.fragments.ResultFragment"
-        tools:layout="@layout/fragment_result" />
 </navigation>
