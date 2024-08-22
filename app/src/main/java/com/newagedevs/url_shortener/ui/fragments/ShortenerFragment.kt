@@ -16,6 +16,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.newagedevs.url_shortener.R
+import com.newagedevs.url_shortener.data.model.UrlData
 import com.newagedevs.url_shortener.ui.activities.MainActivity
 import com.newagedevs.url_shortener.ui.activities.ResultActivity
 import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
@@ -82,14 +83,9 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
         actionButton.setOnClickListener {
             mainViewModel.incrementClickCount()
-
             val isProUser = mainViewModel.isProUser.value ?: false
             val clickCount = mainViewModel.clickCount.value ?: 0
 
-            if (!isProUser && clickCount >= 3) {
-                mainViewModel.resetClickCount()
-                (activity as? MainActivity)?.showAds()
-            }
 
             val url = inputUrl.text.toString()
 
@@ -114,7 +110,7 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
             progressIndicator.visibility = View.VISIBLE
 
-            resultLiveData.observe(viewLifecycleOwner) { result ->
+            val observeResult: (result: UrlData) -> Unit = { result ->
                 if (result.success == true) {
                     val intent = Intent(requireContext(), ResultActivity::class.java)
                     intent.putExtra("url_data", result)
@@ -123,6 +119,15 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
                     Toast.makeText(requireContext(), "Failed to process URL", Toast.LENGTH_SHORT).show()
                 }
                 progressIndicator.visibility = View.INVISIBLE
+            }
+
+            if (!isProUser && clickCount >= 3) {
+                mainViewModel.resetClickCount()
+                (activity as? MainActivity)?.showAds {
+                    resultLiveData.observe(viewLifecycleOwner, observeResult)
+                }
+            } else {
+                resultLiveData.observe(viewLifecycleOwner, observeResult)
             }
         }
 
