@@ -123,12 +123,11 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
             if (!isProUser && clickCount >= 3) {
                 mainViewModel.resetClickCount()
-                (activity as? MainActivity)?.showAds {
-                    resultLiveData.observe(viewLifecycleOwner, observeResult)
-                }
-            } else {
-                resultLiveData.observe(viewLifecycleOwner, observeResult)
+                (activity as? MainActivity)?.showAds()
             }
+
+            resultLiveData.observe(viewLifecycleOwner, observeResult)
+
         }
 
     }

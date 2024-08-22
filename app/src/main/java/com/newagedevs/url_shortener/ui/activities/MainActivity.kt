@@ -96,8 +96,8 @@ class MainActivity : AppCompatActivity() {
         iapConnector?.purchase(this, BuildConfig.PRODUCT_ID)
     }
 
-    fun showAds(loaded: () -> Unit) {
-        adsManager?.showInterstitialAd(loaded = loaded)
+    fun showAds() {
+        adsManager?.showInterstitialAd()
     }
 
 }
