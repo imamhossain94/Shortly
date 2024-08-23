@@ -39,6 +39,15 @@ fun UrlData.getUrl(): Pair<Boolean, String?> {
     return Pair(isShortUrl, url)
 }
 
+fun String.isValidUrl(): Boolean {
+    return try {
+        URL(this).toURI()
+        true
+    } catch (e: Exception) {
+        false
+    }
+}
+
 
 fun shareTheApp(context: Context) {
     ShareCompat.IntentBuilder.from((context as Activity)).setType("text/plain")
@@ -89,7 +98,8 @@ fun openMailApp(context: Context, subject: String, mail: Array<String>) {
 
     // Build the email body
     val template = """
-        Your feedback here
+        Q: What problem did you encounter?
+        A: 
     
         --------------
         APP: $appName
@@ -134,12 +144,4 @@ fun openWebPage(context: Context, url: String?, error: (String?) -> Unit) {
     }
 }
 
-fun isValidUrl(url: String): Boolean {
-    return try {
-        URL(url).toURI()
-        true
-    } catch (e: Exception) {
-        false
-    }
-}
 

@@ -6,8 +6,6 @@
 
         <item name="android:navigationBarColor">?attr/colorSurface</item>
         <item name="android:statusBarColor" >?attr/colorSurface</item>
-        <item name="android:windowLightStatusBar"  >@color/white</item>
-        <item name="android:windowLightNavigationBar"  tools:targetApi="27">@color/white</item>
     </style>
 
     <style name="Theme.Shortly" parent="Base.Theme.Shortly" />

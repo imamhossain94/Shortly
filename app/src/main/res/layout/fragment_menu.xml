@@ -59,7 +59,7 @@
                             android:layout_marginBottom="0dp"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text="Enjoy an Ad-Free Experience"
+                            android:text="@string/enjoy_an_ad_free_experience"
                             android:textStyle="bold" />
 
                         <LinearLayout
@@ -83,9 +83,9 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="lifetime"
+                                android:text="@string/lifetime"
                                 android:textColor="?colorPrimary"
-                                android:textSize="10sp" />
+                                android:textSize="11sp" />
 
                         </LinearLayout>
 
@@ -105,7 +105,7 @@
                     android:layout_marginHorizontal="10dp"
                     android:layout_marginVertical="10dp"
                     android:focusable="false"
-                    android:text="Upgrade to the premium version of Shortly to enjoy an ads-free experience and unlock exclusive features for a smoother, uninterrupted usage."
+                    android:text="@string/upgrade_to_the_premium_version_of_shortly_to_enjoy_an_ads_free_experience_and_unlock_exclusive_features_for_a_smoother_uninterrupted_usage"
                     android:textStyle="normal" />
 
                 <View
@@ -116,10 +116,11 @@
                 <Button
                     android:id="@+id/upgrade_button"
                     android:layout_width="match_parent"
-                    android:layout_height="46dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:layout_marginVertical="7.5dp"
-                    android:text="UPGRADE" />
+                    android:textColor="@color/white"
+                    android:text="@string/remove_ads" />
 
             </LinearLayout>
 

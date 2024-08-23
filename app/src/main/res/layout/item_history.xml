@@ -23,7 +23,7 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Shortened URL"
+                android:text="@string/shortened_url"
                 android:textAppearance="?attr/textAppearanceHeadlineSmall" />
 
             <TextView
@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Short URL"
+                android:text="@string/short_url"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
@@ -44,7 +44,7 @@
                 android:layout_marginTop="16dp"
                 android:maxLines="3"
                 android:ellipsize="end"
-                android:text="Expended URL"
+                android:text="@string/expended_url"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="Copy" />
+                android:text="@string/copy" />
 
 
             <com.google.android.material.button.MaterialButton
@@ -77,7 +77,7 @@
                 style="?attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete"
+                android:text="@string/delete"
                 android:textColor="?attr/colorError" />
 
         </LinearLayout>

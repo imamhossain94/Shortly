@@ -22,6 +22,7 @@ import com.newagedevs.url_shortener.ui.activities.ResultActivity
 import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
 import com.newagedevs.url_shortener.ui.viewmodel.UrlViewModel
 import com.newagedevs.url_shortener.utils.Providers
+import com.newagedevs.url_shortener.utils.isValidUrl
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.notify
 
@@ -91,6 +92,11 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
             if (url.isEmpty()) {
                 Toast.makeText(requireContext(), "Please enter a URL", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (!url.isValidUrl()) {
+                Toast.makeText(requireContext(), "Please enter a valid URL", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

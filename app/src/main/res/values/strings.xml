@@ -7,4 +7,21 @@
     <string name="feedback">Feedback</string>
     <string name="other_app">Other app</string>
     <string name="about">About</string>
+    <string name="shorten">Shorten</string>
+    <string name="expand">Expand</string>
+    <string name="remove_ads">Remove Ads</string>
+    <string name="enter_long_url_here">Enter long URL here</string>
+    <string name="all">All</string>
+    <string name="enjoy_an_ad_free_experience">Enjoy an Ad-Free Experience</string>
+    <string name="lifetime">lifetime</string>
+    <string name="upgrade_to_the_premium_version_of_shortly_to_enjoy_an_ads_free_experience_and_unlock_exclusive_features_for_a_smoother_uninterrupted_usage">Upgrade to the premium version of Shortly to enjoy an ads-free experience and unlock exclusive features for a smoother, uninterrupted usage.</string>
+    <string name="newagedevs">NewAgeDevs</string>
+    <string name="shortened_url">Shortened URL</string>
+    <string name="short_url">Short URL</string>
+    <string name="expended_url">Expended URL</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
+    <string name="title">title</string>
+    <string name="ad">AD</string>
+    <string name="install">Install</string>
 </resources>

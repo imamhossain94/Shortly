@@ -6,14 +6,16 @@
     android:orientation="vertical"
     tools:context=".ui.fragments.HistoryFragment">
 
-    <TextView
-        android:id="@+id/title_shortener"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="History"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:title="History"/>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggleButton"
@@ -28,29 +30,30 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="All" />
+            android:text="@string/all" />
         <Button
             style="?attr/materialButtonOutlinedStyle"
             android:id="@+id/btn_shortener"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Shorten" />
+            android:text="@string/shorten" />
         <Button
             style="?attr/materialButtonOutlinedStyle"
             android:id="@+id/btn_expender"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Expand" />
+            android:text="@string/expand" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_history"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="6dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="6dp"
+        android:paddingHorizontal="6dp"
         tools:listitem="@layout/item_history" />
 
 </LinearLayout>

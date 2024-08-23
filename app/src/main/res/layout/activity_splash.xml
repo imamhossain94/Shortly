@@ -12,6 +12,7 @@
             android:id="@+id/logo"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:contentDescription="@string/todo"
             android:src="@drawable/ic_launcher" />
 
     </RelativeLayout>
@@ -24,9 +25,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_marginBottom="35dp"
-        android:text="NewAgeDevs"
+        android:text="@string/newagedevs"
         android:textAlignment="center"
-        android:textStyle="italic"
-        android:textColor="#393939" />
+        android:textStyle="italic" />
 
 </RelativeLayout>
