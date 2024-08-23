@@ -1,6 +1,7 @@
 package com.newagedevs.url_shortener.ui.fragments
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -21,6 +22,7 @@ import com.newagedevs.url_shortener.ui.activities.MainActivity
 import com.newagedevs.url_shortener.ui.activities.ResultActivity
 import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
 import com.newagedevs.url_shortener.ui.viewmodel.UrlViewModel
+import com.newagedevs.url_shortener.utils.Ads
 import com.newagedevs.url_shortener.utils.Providers
 import com.newagedevs.url_shortener.utils.isValidUrl
 import dagger.hilt.android.AndroidEntryPoint
@@ -133,7 +135,18 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
             }
 
             resultLiveData.observe(viewLifecycleOwner, observeResult)
+        }
 
+        mainViewModel.isProUser.observe(viewLifecycleOwner) { isPro ->
+            view.post {
+                try {
+                    if (isPro) {
+                        removeAdsMCV.visibility = View.GONE
+                    } else {
+                        removeAdsMCV.visibility = View.VISIBLE
+                    }
+                } catch (_:Exception) {}
+            }
         }
 
     }

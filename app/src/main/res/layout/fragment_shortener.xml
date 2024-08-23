@@ -104,7 +104,7 @@
                 android:id="@+id/remove_ads_mcv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginHorizontal="16dp"
                 android:padding="15dp"
                 app:cardBackgroundColor="@android:color/transparent">
 
