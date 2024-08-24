@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.newagedevs.url_shortener.R
+import com.newagedevs.url_shortener.ui.activities.MainActivity
 import com.newagedevs.url_shortener.ui.activities.ResultActivity
 import com.newagedevs.url_shortener.ui.adapters.HistoryAdapter
+import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
 import com.newagedevs.url_shortener.ui.viewmodel.UrlViewModel
 import com.newagedevs.url_shortener.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class HistoryFragment : Fragment(R.layout.fragment_history) {
 
     private val viewModel: UrlViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     private lateinit var adapter: HistoryAdapter
     private lateinit var toggleButtonGroup: MaterialButtonToggleGroup
@@ -51,6 +54,14 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
                 viewModel.deleteUrl(it)
             }
         ) {
+            mainViewModel.incrementClickCount()
+            val isProUser = mainViewModel.isProUser.value ?: false
+            val clickCount = mainViewModel.clickCount.value ?: 0
+            if (!isProUser && clickCount >= 3) {
+                mainViewModel.resetClickCount()
+                (activity as? MainActivity)?.showAds()
+            }
+
             val intent = Intent(requireContext(), ResultActivity::class.java)
             intent.putExtra("url_data", it)
             startActivity(intent)

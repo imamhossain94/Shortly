@@ -16,8 +16,8 @@ android {
         applicationId = "com.newagedevs.url_shortener"
         minSdk = 24
         targetSdk = 35
-        versionCode = 13
-        versionName = "2.0.5"
+        versionCode = 14
+        versionName = "2.0.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
