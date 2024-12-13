@@ -33,7 +33,7 @@ class AboutActivity : AppCompatActivity() {
         topAppBar.setNavigationOnClickListener { finish() }
 
         appVersion = findViewById(R.id.tv_app_version)
-        appVersion.text = "Shortly " + this.getAppVersion()
+        appVersion.text = "${getString(R.string.app_name)} " + this.getAppVersion()
     }
 
 }

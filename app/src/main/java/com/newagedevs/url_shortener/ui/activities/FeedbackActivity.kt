@@ -36,9 +36,7 @@ class FeedbackActivity : AppCompatActivity() {
 
         val checkBoxAppCrashes: CheckBox = findViewById(R.id.checkbox_app_crashes)
         val checkBoxTooManyAds: CheckBox = findViewById(R.id.checkbox_too_many_ads)
-        val checkBoxSlowDownloadSpeed: CheckBox = findViewById(R.id.checkbox_slow_download_speed)
         val checkBoxAppFreezes: CheckBox = findViewById(R.id.checkbox_app_freezes)
-        val checkBoxCantFindVideos: CheckBox = findViewById(R.id.checkbox_cant_find_videos)
         val checkBoxNotUserFriendly: CheckBox = findViewById(R.id.checkbox_not_user_friendly)
 
         closeButton.setOnClickListener {
@@ -50,9 +48,7 @@ class FeedbackActivity : AppCompatActivity() {
                 listOf(
                     checkBoxAppCrashes,
                     checkBoxTooManyAds,
-                    checkBoxSlowDownloadSpeed,
                     checkBoxAppFreezes,
-                    checkBoxCantFindVideos,
                     checkBoxNotUserFriendly
                 )
             )
@@ -62,9 +58,7 @@ class FeedbackActivity : AppCompatActivity() {
                 when (id) {
                     R.id.checkbox_app_crashes -> "App crashes during download"
                     R.id.checkbox_too_many_ads -> "Too many ads"
-                    R.id.checkbox_slow_download_speed -> "Slow download speed"
                     R.id.checkbox_app_freezes -> "App freezes or becomes unresponsive"
-                    R.id.checkbox_cant_find_videos -> "Can't find saved videos"
                     R.id.checkbox_not_user_friendly -> "App is not user-friendly"
                     else -> ""
                 }

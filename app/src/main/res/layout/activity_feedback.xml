@@ -62,7 +62,7 @@
                 android:layout_marginTop="8dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="App crashes during download"
+                android:text="App crashes a lot"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -80,19 +80,6 @@
                 android:textStyle="bold" />
 
             <CheckBox
-                android:id="@+id/checkbox_slow_download_speed"
-                style="@style/Widget.Material3.CompoundButton.CheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:text="Slow download speed"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <CheckBox
                 android:id="@+id/checkbox_app_freezes"
                 style="@style/Widget.Material3.CompoundButton.CheckBox"
                 android:layout_width="match_parent"
@@ -102,19 +89,6 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:text="App freezes or becomes unresponsive"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <CheckBox
-                android:id="@+id/checkbox_cant_find_videos"
-                style="@style/Widget.Material3.CompoundButton.CheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:text="Can't find saved videos"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
