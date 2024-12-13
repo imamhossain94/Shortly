@@ -8,4 +8,13 @@
     <color name="bg_price_color">#f2f2f2</color>
 
     <color name="primary_color">#5e59e2</color>
+
+    <color name="text_1">#1F1F39</color>
+    <color name="text_2">#23262F</color>
+    <color name="text_3">#4C5D77</color>
+    <color name="text_4">#777E90</color>
+    <color name="text_5">#B1B5C3</color>
+    <color name="text_6">#E6E8EC</color>
+    <color name="text_7">#F4F5F6</color>
+    <color name="text_8">#FCFCFD</color>
 </resources>

@@ -1,5 +1,6 @@
 package com.newagedevs.url_shortener.ui.adapters
 
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.data.model.UrlData
 import com.newagedevs.url_shortener.utils.getUrl
@@ -37,6 +39,32 @@ class HistoryAdapter(private val onCopy: (Pair<Boolean, String?>) -> Unit, priva
             expendedUrlText.text = urlData.expandedUrl?.trim()
 
             view.setOnClickListener { onClick(urlData) }
+            view.setOnLongClickListener {
+                MaterialAlertDialogBuilder(view.context)
+                    .setTitle(titleText.text)
+                    .setMessage(
+                        Html.fromHtml(
+                            "${shortUrlText.text}<br><br>${expendedUrlText.text}",
+                            Html.FROM_HTML_MODE_LEGACY
+                        )
+                    )
+                    .setNeutralButton("Cancel") { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("Open") { dialog, which ->
+                        onClick(urlData)
+                    }
+                    .setPositiveButton("Copy") { dialog, which ->
+                        if(urlData.originalUrl == urlData.expandedUrl) {
+                            onCopy(Pair(true, urlData.shortenedUrl))
+                        } else {
+                            onCopy(Pair(false, urlData.expandedUrl))
+                        }
+                    }
+                    .show()
+
+                return@setOnLongClickListener true
+            }
             deleteButton.setOnClickListener { onDelete(urlData) }
             copyButton.setOnClickListener { onCopy(urlData.getUrl()) }
 

@@ -15,6 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.inhouseads.InHouseBannerAdsView
 import com.newagedevs.url_shortener.ui.activities.AboutActivity
+import com.newagedevs.url_shortener.ui.activities.FeedbackActivity
 import com.newagedevs.url_shortener.ui.activities.MainActivity
 import com.newagedevs.url_shortener.ui.adapters.MenuAdapter
 import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
@@ -87,7 +88,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
             getString(R.string.rate_us) -> {
                 MaterialAlertDialogBuilder(requireContext())
                     .setTitle("Are You Enjoying?")
-                    .setMessage("If you like Shortly, please give it a 5 starts rating in Google Play, Thank You")
+                    .setMessage("If you like ${getString(R.string.app_name)}, please give it a 5 starts rating in Google Play, Thank You")
                     .setNegativeButton("Cancel") { dialog, _ ->
                         dialog.dismiss()
                     }
@@ -101,7 +102,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
                 .setChooserTitle("Share ${getString(R.string.app_name)} with:")
                 .setText(Constants.APP_STORE_BASE_URL + requireContext().packageName)
                 .startChooser()
-            getString(R.string.feedback) -> openMailApp(requireContext(), "App Feedback", Constants.FEEDBACK_MAIL)
+            getString(R.string.feedback) -> requireContext().startActivity(Intent(requireContext(), FeedbackActivity::class.java))
             getString(R.string.other_app) -> startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Constants.PUBLISHER_NAME)))
             getString(R.string.about) -> requireContext().startActivity(Intent(requireContext(), AboutActivity::class.java))
         }

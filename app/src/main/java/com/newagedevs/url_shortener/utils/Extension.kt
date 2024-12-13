@@ -65,7 +65,7 @@ fun shareUrl(context: Context, url:String) {
         .startChooser()
 }
 
-fun openMailApp(context: Context, subject: String, mail: Array<String>) {
+fun openMailApp(context: Context, subject: String, mail: Array<String>, content: String = "") {
 
     // Get app information
     val packageManager = context.packageManager
@@ -98,16 +98,17 @@ fun openMailApp(context: Context, subject: String, mail: Array<String>) {
 
     // Build the email body
     val template = """
-        Q: What problem did you encounter?
-        A: 
-    
-        --------------
-        APP: $appName
-        Version: $appVersion
-        Build: $appBuild
-        Device: $deviceName
-        System: $androidVersion
-    """.trimIndent()
+Q: What problem did you encounter?
+A: 
+$content
+
+--------------
+APP: $appName
+Version: $appVersion
+Build: $appBuild
+Device: $deviceName
+System: $androidVersion
+""".trimIndent()
 
 
     try {

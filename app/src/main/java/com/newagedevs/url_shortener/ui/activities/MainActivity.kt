@@ -2,6 +2,7 @@ package com.newagedevs.url_shortener.ui.activities
 
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     private lateinit var adsContainer: LinearLayout
+    private lateinit var nativeAdsContainer: FrameLayout
     private var adsManager: ApplovinAdsManager? = null
     private var iapConnector: IapConnector? = null
 
@@ -36,11 +38,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
 
         adsContainer = findViewById(R.id.ads_container)
+        nativeAdsContainer = findViewById(R.id.native_ads_container)
 
         // Pro features
         iapConnector = IapConnector(
@@ -73,9 +76,13 @@ class MainActivity : AppCompatActivity() {
             if (isPro) {
                 adsContainer.visibility = View.GONE
                 adsContainer.removeAllViews()
+
+                nativeAdsContainer.visibility = View.GONE
+                nativeAdsContainer.removeAllViews()
             } else {
                 adsManager = ApplovinAdsManager(this)
                 adsManager?.createBannerAd(adsContainer)
+                adsManager?.createNativeAds(nativeAdsContainer)
             }
         }
 
@@ -84,6 +91,11 @@ class MainActivity : AppCompatActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setupBottomNavigation()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        adsManager?.destroyAds()
     }
 
     private fun setupBottomNavigation() {

@@ -3,6 +3,8 @@ package com.newagedevs.url_shortener
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 import android.content.Context
+import android.os.Build
+import android.webkit.WebView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -21,8 +23,13 @@ class ShortlyApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initializeAppLovinSdk()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val process = getProcessName()
+            if (packageName != process) WebView.setDataDirectorySuffix(process)
+        }
+
+        initializeAppLovinSdk()
     }
 
     private fun initializeAppLovinSdk() {

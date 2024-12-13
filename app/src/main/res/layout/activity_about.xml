@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:title="About Shortly"
+            app:title="About"
             app:navigationIcon="@drawable/ic_arrow_left"
             app:navigationIconTint="?attr/colorOnBackground"/>
 
@@ -32,33 +32,36 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textColor="?attr/colorOnBackground"
-            android:text="Application version"/>
+            android:text="Version Info"/>
 
-        <TextView
-            android:id="@+id/tv_app_version"
-            android:layout_width="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="?attr/colorOnBackground"
-            android:text="Shortly Unknown"/>
+            android:elevation="0dp"
+            android:layout_marginTop="10dp">
+            <TextView
+                android:id="@+id/tv_app_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:padding="16dp"
+                android:textAlignment="center"
+                android:textColor="?attr/colorOnBackground"
+                android:text="Unknown"/>
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="16dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="?attr/colorOnBackground"
-            android:text="Application version"/>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
