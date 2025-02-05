@@ -149,6 +149,14 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
             }
         }
 
+        val sharedUrl = arguments?.getString("shared_url")
+        sharedUrl?.let {
+            inputUrl.setText(it)
+            actionButton.performClick()
+
+            requireArguments().clear()
+        }
+
     }
 
     private fun setupProviderSpinner() {

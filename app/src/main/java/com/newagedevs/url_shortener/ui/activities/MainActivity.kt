@@ -1,5 +1,6 @@
 package com.newagedevs.url_shortener.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
@@ -9,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -20,7 +22,6 @@ import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.helper.ApplovinAdsManager
 import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -85,12 +86,41 @@ class MainActivity : AppCompatActivity() {
                 adsManager?.createNativeAds(nativeAdsContainer)
             }
         }
-
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setupBottomNavigation()
+        handleSharedIntent(intent) // Move here to ensure NavController is ready
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleSharedIntent(intent)
+    }
+
+    private fun handleSharedIntent(intent: Intent) {
+        if (intent.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+            val sharedUrl = intent.getStringExtra(Intent.EXTRA_TEXT)
+            sharedUrl?.let {
+                // Ensure NavController is available before navigating
+                val navController = findNavControllerSafe() ?: return
+
+                val bundle = Bundle().apply {
+                    putString("shared_url", it)
+                }
+
+                navController.navigate(R.id.nav_shortener, bundle)
+            }
+        }
+    }
+
+    private fun findNavControllerSafe(): NavController? {
+        return try {
+            findNavController(R.id.nav_host_fragment)
+        } catch (e: IllegalStateException) {
+            null // NavController is not available yet
+        }
     }
 
     override fun onDestroy() {
@@ -99,9 +129,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupBottomNavigation() {
-        val navController = this.findNavController(R.id.nav_host_fragment)
+        val navController = findNavControllerSafe()
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
-        navView.setupWithNavController(navController)
+        navView.setupWithNavController(navController ?: return)
     }
 
     fun purchase() {
@@ -111,5 +141,4 @@ class MainActivity : AppCompatActivity() {
     fun showAds() {
         adsManager?.showInterstitialAd()
     }
-
 }
