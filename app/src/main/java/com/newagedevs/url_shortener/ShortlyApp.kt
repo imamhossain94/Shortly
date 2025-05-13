@@ -15,6 +15,7 @@ import com.applovin.mediation.ads.MaxAppOpenAd
 import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration
+import com.newagedevs.url_shortener.data.local.SharedPref
 
 @HiltAndroidApp
 class ShortlyApp : Application() {
@@ -29,7 +30,10 @@ class ShortlyApp : Application() {
             if (packageName != process) WebView.setDataDirectorySuffix(process)
         }
 
-        initializeAppLovinSdk()
+        if(!SharedPref(applicationContext).isPro()){
+            initializeAppLovinSdk()
+        }
+
     }
 
     private fun initializeAppLovinSdk() {
