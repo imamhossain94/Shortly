@@ -16,8 +16,8 @@ android {
         applicationId = "com.newagedevs.url_shortener"
         minSdk = 24
         targetSdk = 35
-        versionCode = 17
-        versionName = "2.0.9"
+        versionCode = 18
+        versionName = "2.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,6 +36,8 @@ android {
         buildConfig = true
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -49,6 +51,7 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -108,7 +111,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-process:2.8.7")
 
     // Applovin
-    implementation("com.google.android.gms:play-services-base:18.5.0")
+    implementation("com.google.android.gms:play-services-base:18.7.0")
     implementation("com.applovin:applovin-sdk:+")
     implementation("com.applovin.mediation:chartboost-adapter:+")
     implementation("com.google.android.gms:play-services-base:+")
