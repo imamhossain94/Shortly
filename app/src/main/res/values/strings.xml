@@ -10,7 +10,6 @@
     <string name="shorten">Shorten</string>
     <string name="expand">Expand</string>
     <string name="remove_ads">Remove Ads</string>
-    <string name="enter_long_url_here">Enter long URL here</string>
     <string name="all">All</string>
     <string name="enjoy_an_ad_free_experience">Enjoy an Ad-Free Experience</string>
     <string name="lifetime">lifetime</string>
@@ -24,4 +23,42 @@
     <string name="title">title</string>
     <string name="ad">AD</string>
     <string name="install">Install</string>
+    <string name="go_to_pro">Go To Pro</string>
+
+    <string name="enter_long_url_here">Enter long URL here</string>
+    <string name="enter_short_url_here">Enter short URL here</string>
+    <string name="select_provider">Select provider</string>
+    <string name="url_required">URL is required</string>
+    <string name="invalid_url">Please enter a valid URL</string>
+    <string name="select_action">Please select Shorten or Expand</string>
+    <string name="operation_failed">Failed to process URL</string>
+
+    <string name="are_you_enjoying">Are You Enjoying?</string>
+    <string name="rate_message">If you like %1$s, please give it a 5-star rating on Google Play. Thank you!</string>
+    <string name="share_app_with">Share %1$s with:</string>
+    <string name="icon">Icon</string>
+    <string name="navigate">Navigate</string>
+    <string name="premium">Premium</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="rate">Rate</string>
+    <string name="result">Result</string>
+    <string name="qr_code">QR Code</string>
+
+    <string name="shortened">Shortened</string>
+    <string name="expanded">Expanded</string>
+    <string name="delete_url">Delete URL</string>
+    <string name="confirm_delete">Are you sure you want to delete this URL? This action cannot be undone.</string>
+
+
+    <string name="tell_us_the_problem">Tell us the problem you met with</string>
+    <string name="please_choose_your_problem">Please choose your problem</string>
+    <string name="app_crashes_a_lot">App crashes a lot</string>
+    <string name="too_many_ads">Too many ads</string>
+    <string name="app_freezes_or_unresponsive">App freezes or becomes unresponsive</string>
+    <string name="app_not_user_friendly">App is not user-friendly</string>
+    <string name="feedback_on_other_issue">Feedback on other issue</string>
+    <string name="describe_the_issue">Describe the issue</string>
+    <string name="send">Send</string>
+    <string name="app_feedback">App Feedback</string>
 </resources>

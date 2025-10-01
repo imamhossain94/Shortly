@@ -4,89 +4,91 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="start"
     tools:context=".ui.fragments.ShortenerFragment">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:title="Shortly - URL Shortener"/>
-    </com.google.android.material.appbar.AppBarLayout>
-
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:animateLayoutChanges="true">
 
+            <!-- URL Input -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/urlInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:hint="@string/enter_long_url_here"
-                android:maxHeight="120dp">
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input_url"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxHeight="120dp" />
+                    android:maxLines="3"
+                    android:inputType="textUri|textMultiLine" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/provider_dropdown_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            <!-- Provider Dropdown (Exposed Dropdown) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/provider_dropdown_menu"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp">
+                android:layout_marginTop="12dp"
+                android:hint="@string/select_provider"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
-                <Spinner
+                <AutoCompleteTextView
                     android:id="@+id/provider_dropdown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="16dp" />
-            </com.google.android.material.card.MaterialCardView>
+                    android:editable="false"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Action Toggle + Progress -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
+                android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/toggleButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     app:singleSelection="true">
 
                     <Button
                         android:id="@+id/btn_shortener"
-                        style="?attr/materialButtonOutlinedStyle"
-                        android:layout_width="wrap_content"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="@string/shorten" />
 
                     <Button
                         android:id="@+id/btn_expender"
-                        style="?attr/materialButtonOutlinedStyle"
-                        android:layout_width="wrap_content"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="@string/expand" />
                 </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -94,26 +96,32 @@
                     android:id="@+id/progress_indicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginStart="12dp"
                     android:indeterminate="true"
                     android:visibility="invisible" />
 
             </LinearLayout>
 
+            <!-- Remove Ads Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/remove_ads_mcv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:padding="15dp"
-                app:cardBackgroundColor="@android:color/transparent">
+                android:layout_marginTop="12dp"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeColor="?attr/colorOutline"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_round_primary"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
+                    android:background="@drawable/bg_round_primary"
                     android:padding="16dp">
 
                     <ImageView
@@ -143,24 +151,21 @@
                         android:src="@drawable/ic_arrow_right"
                         app:tint="@color/white" />
 
-                </LinearLayout>
 
+                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-
     </ScrollView>
 
+    <!-- Primary Action Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/shorten_button"
-        style="@style/ThemeOverlay.Material3.Button.TonalButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:textColor="@color/white"
-        android:text="@string/shorten" />
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="12dp"
+        android:text="@string/shorten"
+        style="@style/ThemeOverlay.Material3.Button.TonalButton" />
 
 </LinearLayout>

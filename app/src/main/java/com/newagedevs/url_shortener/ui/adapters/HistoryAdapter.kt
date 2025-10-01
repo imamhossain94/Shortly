@@ -30,8 +30,8 @@ class HistoryAdapter(private val onCopy: (Pair<Boolean, String?>) -> Unit, priva
         private val titleText: TextView = view.findViewById(R.id.title)
         private val shortUrlText: TextView = view.findViewById(R.id.short_url)
         private val expendedUrlText: TextView = view.findViewById(R.id.expended_url)
-        private val copyButton: Button = view.findViewById(R.id.btn_copy)
-        private val deleteButton: Button = view.findViewById(R.id.btn_delete)
+//        private val copyButton: Button = view.findViewById(R.id.btn_copy)
+//        private val deleteButton: Button = view.findViewById(R.id.btn_delete)
 
         fun bind(urlData: UrlData) {
             titleText.text = if (urlData.originalUrl == urlData.expandedUrl) "Shortened" else "Expended"
@@ -65,8 +65,8 @@ class HistoryAdapter(private val onCopy: (Pair<Boolean, String?>) -> Unit, priva
 
                 return@setOnLongClickListener true
             }
-            deleteButton.setOnClickListener { onDelete(urlData) }
-            copyButton.setOnClickListener { onCopy(urlData.getUrl()) }
+//            deleteButton.setOnClickListener { onDelete(urlData) }
+//            copyButton.setOnClickListener { onCopy(urlData.getUrl()) }
 
             shortUrlText.setOnClickListener { onClick(urlData) }
             shortUrlText.setOnLongClickListener {

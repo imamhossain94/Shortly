@@ -2,90 +2,87 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical"
-        app:title="@string/app_name">
+        android:orientation="vertical">
 
+        <!-- Premium Upsell Card (shown only to free users) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/pro_feature_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="0dp">
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:strokeColor="?attr/colorOutline"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="10dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:visibility="visible">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/bg_round_primary"
-                        android:contentDescription="@string/todo"
-                        android:padding="15dp"
-                        android:scaleType="centerCrop"
+                        android:contentDescription="@string/premium"
+                        android:padding="8dp"
                         android:src="@drawable/ic_crown"
-                        app:tint="#FFFFFF" />
+                        app:tint="@android:color/white" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center|start"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
-                            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="0dp"
-                            android:ellipsize="end"
-                            android:maxLines="2"
                             android:text="@string/enjoy_an_ad_free_experience"
-                            android:textStyle="bold" />
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorPrimary" />
 
                         <LinearLayout
                             android:id="@+id/product_price_container"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
                             android:background="@drawable/bg_price"
                             android:orientation="horizontal"
                             android:paddingHorizontal="8dp"
-                            android:paddingVertical="1.5dp"
-                            android:visibility="visible">
+                            android:paddingVertical="2dp">
 
                             <TextView
                                 android:id="@+id/product_price"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="?colorPrimary"
+                                android:textColor="?attr/colorPrimary"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
                                 android:text="@string/lifetime"
-                                android:textColor="?colorPrimary"
-                                android:textSize="11sp" />
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="12sp" />
 
                         </LinearLayout>
 
@@ -93,68 +90,53 @@
 
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="?android:attr/listDivider" />
-
-                <com.codesgood.views.JustifiedTextView
+                <TextView
                     android:id="@+id/premium_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginVertical="10dp"
-                    android:focusable="false"
+                    android:layout_marginTop="12dp"
                     android:text="@string/upgrade_to_the_premium_version_of_shortly_to_enjoy_an_ads_free_experience_and_unlock_exclusive_features_for_a_smoother_uninterrupted_usage"
-                    android:textStyle="normal" />
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="?android:attr/listDivider" />
-
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/upgrade_button"
+                    style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginVertical="7.5dp"
-                    android:textColor="@color/white"
+                    android:layout_marginTop="16dp"
                     android:text="@string/remove_ads" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- In-House Ads (free users only) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/in_house_ads_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="0dp"
-            android:paddingVertical="10dp"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="0dp">
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp">
 
             <com.newagedevs.url_shortener.inhouseads.InHouseBannerAdsView
                 android:id="@+id/in_house_ad_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:padding="8dp" />
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Menu List -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/menu_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
-            android:orientation="vertical"
-            android:padding="11dp"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
+            android:paddingBottom="12dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_menu" />
 
     </LinearLayout>
 </ScrollView>
-

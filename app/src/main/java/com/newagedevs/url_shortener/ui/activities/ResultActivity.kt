@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -21,27 +22,15 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.data.model.UrlData
 import com.newagedevs.url_shortener.ui.viewmodel.UrlViewModel
-import com.newagedevs.url_shortener.utils.getUrl
 import com.newagedevs.url_shortener.utils.shareUrl
-import com.newagedevs.url_shortener.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import qrcode.QRCode
 
-
 @AndroidEntryPoint
 class ResultActivity : AppCompatActivity() {
-    
+
     private val viewModel: UrlViewModel by viewModels()
 
-    private lateinit var titleText: TextView
-    private lateinit var shortUrlText: TextView
-    private lateinit var expendedUrlText: TextView
-    private lateinit var qrCodeImageView:ImageView
-    private lateinit var shareButton:MaterialButton
-    private lateinit var copyButton:MaterialButton
-    private lateinit var deleteButton:MaterialButton
-    private lateinit var topAppBar:MaterialToolbar
-    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -53,92 +42,99 @@ class ResultActivity : AppCompatActivity() {
             insets
         }
 
-        titleText = findViewById(R.id.title)
-        shortUrlText = findViewById(R.id.short_url)
-        expendedUrlText = findViewById(R.id.expended_url)
-        qrCodeImageView = findViewById(R.id.qr_code_image)
-        shareButton = findViewById(R.id.share_button)
-        copyButton = findViewById(R.id.copy_button)
-        deleteButton = findViewById(R.id.delete_button)
-        topAppBar = findViewById(R.id.topAppBar)
+        val titleText = findViewById<TextView>(R.id.title)
+        val shortUrlText = findViewById<TextView>(R.id.short_url)
+        val expendedUrlText = findViewById<TextView>(R.id.expended_url)
+        val qrCodeImageView = findViewById<ImageView>(R.id.qr_code_image)
+        val shareButton = findViewById<MaterialButton>(R.id.share_button)
+        val copyButton = findViewById<MaterialButton>(R.id.copy_button)
+        val deleteButton = findViewById<MaterialButton>(R.id.delete_button)
+        val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
 
         topAppBar.setNavigationOnClickListener { finish() }
 
-        val urlData: UrlData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("url_data", UrlData::class.java)!!
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra("url_data")!!
+        // Get URL data
+        val urlData: UrlData = intent.getParcelableExtra("url_data") ?: run {
+            Toast.makeText(this, "Invalid data", Toast.LENGTH_SHORT).show()
+            finish()
+            return
         }
 
-        titleText.text = if (urlData.originalUrl == urlData.expandedUrl) "Shortened" else "Expended"
+        // Set title
+        titleText.setText(if (urlData.originalUrl == urlData.expandedUrl) R.string.shortened else R.string.expanded)
+
+        // Set URLs
         shortUrlText.text = urlData.shortenedUrl?.trim()
         expendedUrlText.text = urlData.expandedUrl?.trim()
 
-        shareButton.setOnClickListener {
-            val url = urlData.getUrl()
+        // Long-press to copy
+        shortUrlText.setOnLongClickListener {
+            copyUrl(urlData.shortenedUrl, isShort = true)
+            true
+        }
+        expendedUrlText.setOnLongClickListener {
+            copyUrl(urlData.expandedUrl, isShort = false)
+            true
+        }
 
-            if (url.second != null) {
-                shareUrl(this, url.second!!)
+        // Button actions
+        shareButton.setOnClickListener {
+            val urlToShare = urlData.shortenedUrl ?: urlData.expandedUrl
+            if (!urlToShare.isNullOrBlank()) {
+                shareUrl(this, urlToShare)
             } else {
-                this.showToast("Cannot share URL")
+                showToast("Cannot share URL")
             }
         }
 
-        shortUrlText.setOnLongClickListener {
-            copyURL(Pair(true, urlData.shortenedUrl))
-            return@setOnLongClickListener true
-        }
-
-        expendedUrlText.setOnLongClickListener {
-            copyURL(Pair(false, urlData.expandedUrl))
-            return@setOnLongClickListener true
-        }
-
         copyButton.setOnClickListener {
-            copyURL(urlData.getUrl())
+            val urlToCopy = urlData.shortenedUrl ?: urlData.expandedUrl
+            copyUrl(urlToCopy, isShort = urlData.shortenedUrl != null)
         }
 
         deleteButton.setOnClickListener {
             MaterialAlertDialogBuilder(this)
-                .setTitle("Delete URL")
-                .setMessage("Are you sure you want to delete this URL? This action cannot be undone.")
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .setPositiveButton("Delete") { dialog, _ ->
+                .setTitle(R.string.delete_url)
+                .setMessage(R.string.confirm_delete)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.delete) { _, _ ->
                     viewModel.deleteUrl(urlData)
                     finish()
-                    dialog.dismiss()
-                }.show()
+                }
+                .show()
         }
 
-        val qrcColor = ContextCompat.getColor(this, R.color.qr_core_color)
-        val qrCode = QRCode.ofRoundedSquares()
-            .withColor(qrcColor)
-            .withBackgroundColor(Color.TRANSPARENT)
-            .withSize(10)
-            .build(urlData.shortenedUrl ?: "")
+        // Generate QR code
+        try {
+            val qrColor = ContextCompat.getColor(this, R.color.qr_core_color)
+            val qrCode = QRCode.ofRoundedSquares()
+                .withColor(qrColor)
+                .withBackgroundColor(Color.TRANSPARENT)
+                .withSize(10)
+                .build(urlData.shortenedUrl ?: urlData.originalUrl ?: "")
 
-        val byteArray = qrCode.renderToBytes()
-
-        val bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-
-        qrCodeImageView.setImageBitmap(bmp)
-    }
-
-    private fun copyURL(it: Pair<Boolean, String?>) {
-        val clipboard: ClipboardManager = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
-        val (isShortUrl, url) = it
-        if (url != null) {
-            val clip = ClipData.newPlainText("Shortly", url)
-            clipboard.setPrimaryClip(clip)
-            this.showToast(if (isShortUrl) "Short URL copied!" else "Expanded URL copied!")
-        } else {
-            this.showToast("Cannot copy URL")
+            val byteArray = qrCode.renderToBytes()
+            val bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+            qrCodeImageView.setImageBitmap(bmp)
+        } catch (e: Exception) {
+            e.printStackTrace()
+//            qrCodeImageView.setImageResource(R.drawable.ic_broken_image)
         }
     }
 
+    private fun copyUrl(url: String?, isShort: Boolean) {
+        if (url.isNullOrBlank()) {
+            showToast("URL is empty")
+            return
+        }
 
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("Shortly", url))
+        val message = if (isShort) "Short URL copied!" else "Expanded URL copied!"
+        showToast(message)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 }

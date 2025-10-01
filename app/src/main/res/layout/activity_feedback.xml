@@ -4,166 +4,144 @@
     android:id="@+id/result_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="12dp">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_arrow_left"
-            app:navigationIconTint="?attr/colorOnBackground"
-            app:title="Feedback" />
+            app:title="@string/feedback" />
 
     </com.google.android.material.appbar.AppBarLayout>
-
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="12dp"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="5dp"
             android:orientation="vertical">
 
+            <!-- Problem Section -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="16dp"
-                android:text="Tell us the problem you met with"
-                android:textColor="@color/text_1"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="12dp"
+                android:text="@string/tell_us_the_problem"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="16dp"
-                android:text="Please choose your problem"
-                android:textColor="@color/text_4"
-                android:textSize="12sp" />
+                android:layout_marginTop="8dp"
+                android:text="@string/please_choose_your_problem"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <CheckBox
+            <!-- Checkboxes -->
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/checkbox_app_crashes"
-                style="@style/Widget.Material3.CompoundButton.CheckBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:text="App crashes a lot"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="12dp"
+                android:text="@string/app_crashes_a_lot"
+                android:textAppearance="?attr/textAppearanceBodyLarge" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/checkbox_too_many_ads"
-                style="@style/Widget.Material3.CompoundButton.CheckBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:text="Too many ads"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="@string/too_many_ads"
+                android:textAppearance="?attr/textAppearanceBodyLarge" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/checkbox_app_freezes"
-                style="@style/Widget.Material3.CompoundButton.CheckBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:text="App freezes or becomes unresponsive"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="@string/app_freezes_or_unresponsive"
+                android:textAppearance="?attr/textAppearanceBodyLarge" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/checkbox_not_user_friendly"
-                style="@style/Widget.Material3.CompoundButton.CheckBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:text="App is not user-friendly"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="@string/app_not_user_friendly"
+                android:textAppearance="?attr/textAppearanceBodyLarge" />
 
-
+            <!-- Other Issue -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="16dp"
-                android:text="Feedback on other issue"
-                android:textColor="@color/text_1"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="20dp"
+                android:text="@string/feedback_on_other_issue"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/other_issue"
-                style="?attr/textInputOutlinedDenseStyle"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginVertical="10dp"
-                android:hint="Describe the issue">
+                android:layout_marginTop="12dp"
+                android:hint="@string/describe_the_issue"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:maxLines="4"
+                    android:inputType="textMultiLine|textCapSentences" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
     </ScrollView>
 
+    <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="7dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="7dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center"
         android:orientation="horizontal">
 
-
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel_button"
             style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_margin="8dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="Cancel"
-            android:textColor="@color/text_1" />
+            android:text="@string/cancel" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/send_button"
             style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_margin="8dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/primary_color"
-            android:text="Send"
-            android:textColor="@color/white" />
+            android:text="@string/send" />
 
     </LinearLayout>
 
