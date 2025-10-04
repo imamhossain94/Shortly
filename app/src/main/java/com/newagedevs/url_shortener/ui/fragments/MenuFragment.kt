@@ -31,6 +31,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
         super.onViewCreated(view, savedInstanceState)
 
         val proFeatureLayout = view.findViewById<MaterialCardView>(R.id.pro_feature_layout)
+        val premiumStatusLayout = view.findViewById<MaterialCardView>(R.id.premium_status_layout)
         val inHouseAdsContainer = view.findViewById<MaterialCardView>(R.id.in_house_ads_container)
         val upgradeButton = view.findViewById<com.google.android.material.button.MaterialButton>(R.id.upgrade_button)
         val productPrice = view.findViewById<TextView>(R.id.product_price)
@@ -56,11 +57,12 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
         // Observe pro status
         viewModel.isProUser.observe(viewLifecycleOwner) { isPro ->
             proFeatureLayout.visibility = if (isPro) View.GONE else View.VISIBLE
+            premiumStatusLayout.visibility = if (isPro) View.VISIBLE else View.GONE
             inHouseAdsContainer.visibility = if (isPro) View.GONE else View.VISIBLE
 
             if (!isPro) {
                 inHouseAdView.setAdsData(Ads.list) { appLink ->
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(appLink)))
+                    startActivity(Intent(Intent.ACTION_VIEW, appLink.toUri()))
                 }
             }
         }

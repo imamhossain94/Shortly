@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.data.model.UrlData
@@ -25,11 +27,15 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
     private val viewModel: UrlViewModel by activityViewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var emptyStateLayout: LinearLayout
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val toggleButtonGroup = view.findViewById<MaterialButtonToggleGroup>(R.id.toggleButton)
-        val recyclerView = view.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recycler_view_history)
+        recyclerView = view.findViewById(R.id.recycler_view_history)
+        emptyStateLayout = view.findViewById(R.id.empty_state_layout)
 
         val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
@@ -88,6 +94,16 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
             R.id.btn_expender -> historyList.filter { it.originalUrl == it.shortenedUrl }
             else -> historyList
         }
+
         adapter.submitList(filtered)
+
+        // Show/hide empty state based on filtered list
+        if (filtered.isEmpty()) {
+            recyclerView.visibility = View.GONE
+            emptyStateLayout.visibility = View.VISIBLE
+        } else {
+            recyclerView.visibility = View.VISIBLE
+            emptyStateLayout.visibility = View.GONE
+        }
     }
 }

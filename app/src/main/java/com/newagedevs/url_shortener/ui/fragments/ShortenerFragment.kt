@@ -1,10 +1,13 @@
 package com.newagedevs.url_shortener.ui.fragments
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
+import android.widget.FrameLayout
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,6 +24,7 @@ import com.newagedevs.url_shortener.ui.activities.MainActivity
 import com.newagedevs.url_shortener.ui.activities.ResultActivity
 import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
 import com.newagedevs.url_shortener.ui.viewmodel.UrlViewModel
+import com.newagedevs.url_shortener.utils.Ads
 import com.newagedevs.url_shortener.utils.Providers
 import com.newagedevs.url_shortener.utils.isValidUrl
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,14 +34,19 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
     private lateinit var inputUrlLayout: TextInputLayout
     private lateinit var inputUrl: TextInputEditText
-    private lateinit var providerDropdown: AutoCompleteTextView
+    private lateinit var providerSpinner: Spinner
     private lateinit var actionButton: MaterialButton
     private lateinit var toggleButtonGroup: MaterialButtonToggleGroup
     private lateinit var removeAdsMCV: MaterialCardView
     private lateinit var progressIndicator: CircularProgressIndicator
 
+    private lateinit var nativeAdsContainer: FrameLayout
+
     private val viewModel: UrlViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
+
+    private var selectedProvider: String = ""
+    private var hasRequestedNativeAd = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,13 +54,15 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
         // Initialize views
         inputUrl = view.findViewById(R.id.input_url)
         inputUrlLayout = view.findViewById(R.id.urlInputLayout)
-        providerDropdown = view.findViewById(R.id.provider_dropdown)
+        providerSpinner = view.findViewById(R.id.provider_spinner)
         actionButton = view.findViewById(R.id.shorten_button)
         toggleButtonGroup = view.findViewById(R.id.toggleButton)
         removeAdsMCV = view.findViewById(R.id.remove_ads_mcv)
         progressIndicator = view.findViewById(R.id.progress_indicator)
 
-        // Setup provider dropdown
+        nativeAdsContainer = view.findViewById(R.id.native_ads_container)
+
+        // Setup provider spinner
         setupProviderSpinner()
 
         // Set initial toggle state
@@ -79,6 +90,19 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
         // Observe pro status
         mainViewModel.isProUser.observe(viewLifecycleOwner) { isPro ->
             removeAdsMCV.visibility = if (isPro) View.GONE else View.VISIBLE
+
+            // Only request native ad once and only for non-pro users
+            if (!isPro && !hasRequestedNativeAd) {
+                hasRequestedNativeAd = true
+                // Use post to ensure view is fully laid out
+                nativeAdsContainer.post {
+                    (activity as? MainActivity)?.createNativeAds(nativeAdsContainer)
+                }
+            } else if (isPro) {
+                // Clean up ad container for pro users
+                nativeAdsContainer.removeAllViews()
+                nativeAdsContainer.visibility = View.GONE
+            }
         }
 
         // Handle shared URL (e.g., from share intent)
@@ -96,22 +120,36 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
         val providers = Providers.list
         val adapter = ArrayAdapter(
             requireContext(),
-            androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+            android.R.layout.simple_spinner_item,
             providers
         )
-        providerDropdown.setAdapter(adapter)
-        providerDropdown.setText(providers.firstOrNull(), false)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        providerSpinner.adapter = adapter
+
+        // Set initial selection
+        selectedProvider = providers.firstOrNull() ?: ""
+
+        // Spinner item selection listener
+        providerSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedProvider = providers[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Do nothing
+            }
+        }
     }
 
     private fun updateUiForMode(isShortenMode: Boolean) {
         if (isShortenMode) {
             inputUrlLayout.hint = getString(R.string.enter_long_url_here)
             actionButton.setText(R.string.shorten)
-            providerDropdown.isEnabled = true
+            providerSpinner.isEnabled = true
         } else {
             inputUrlLayout.hint = getString(R.string.enter_short_url_here)
             actionButton.setText(R.string.expand)
-            providerDropdown.isEnabled = false
+            providerSpinner.isEnabled = false
         }
     }
 
@@ -136,7 +174,6 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
         val resultLiveData = when (toggleButtonGroup.checkedButtonId) {
             R.id.btn_shortener -> {
-                val selectedProvider = providerDropdown.text.toString()
                 viewModel.shortenUrl(selectedProvider, url)
             }
             R.id.btn_expender -> {
@@ -165,7 +202,6 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
             progressIndicator.visibility = View.INVISIBLE
         }
 
-
         // Show ad if needed (non-pro user, 3+ clicks)
         if (!isProUser && clickCount >= 3) {
             mainViewModel.resetClickCount()
@@ -177,6 +213,6 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Clear any pending observers if needed (optional but safe)
+        hasRequestedNativeAd = false
     }
 }

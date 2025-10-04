@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:scrollbars="none"
         android:clipToPadding="false"
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp">
@@ -39,26 +40,23 @@
                     android:inputType="textUri|textMultiLine" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Provider Dropdown (Exposed Dropdown) -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/provider_dropdown_menu"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            <!-- Provider Spinner -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:hint="@string/select_provider"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="?attr/colorOutline"
+                app:strokeWidth="1dp">
 
-                <AutoCompleteTextView
-                    android:id="@+id/provider_dropdown"
+                <Spinner
+                    android:id="@+id/provider_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:editable="false"
-                    android:inputType="none" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="56dp"
+                    android:paddingHorizontal="16dp"
+                    android:spinnerMode="dropdown" />
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Action Toggle + Progress -->
             <LinearLayout
@@ -151,9 +149,17 @@
                         android:src="@drawable/ic_arrow_right"
                         app:tint="@color/white" />
 
-
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <FrameLayout
+                android:id="@+id/native_ads_container"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="12dp"
+                android:background="@color/zxing_transparent"
+                android:orientation="vertical"/>
 
         </LinearLayout>
     </ScrollView>

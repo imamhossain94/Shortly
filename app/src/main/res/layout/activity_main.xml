@@ -8,14 +8,6 @@
     android:id="@+id/main"
     tools:context=".ui.activities.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/ads_container"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/banner_height"
-        android:background="@color/zxing_transparent"
-        android:orientation="vertical"/>
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -25,11 +17,11 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph" />
 
-    <FrameLayout
-        android:id="@+id/native_ads_container"
+    <LinearLayout
+        android:id="@+id/ads_container"
         android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/native_height"
+        android:layout_height="@dimen/banner_height"
         android:background="@color/zxing_transparent"
         android:orientation="vertical"/>
 

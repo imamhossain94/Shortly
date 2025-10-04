@@ -61,4 +61,11 @@
     <string name="describe_the_issue">Describe the issue</string>
     <string name="send">Send</string>
     <string name="app_feedback">App Feedback</string>
+
+    <string name="premium_active">Premium Active</string>
+    <string name="thank_you_for_being_premium_member">Thank you for being a premium member! You\'re enjoying an ad-free experience with all exclusive features unlocked.</string>
+
+    <string name="no_history">No History</string>
+    <string name="no_history_yet">No history yet</string>
+    <string name="start_shortening_urls">Start shortening or expanding URLs to see them here</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.newagedevs.url_shortener.data.local
 
 import android.content.Context
+import androidx.core.content.edit
 
 class SharedPref(private val context: Context) {
     private val prefName = "url_shortener"
@@ -11,14 +12,14 @@ class SharedPref(private val context: Context) {
 
     fun isPro(): Boolean {
         val sharedPref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
-        return sharedPref.getBoolean(proKey, false)
+        return false //sharedPref.getBoolean(proKey, false)
     }
 
     fun setPro(value: Boolean) {
         val sharedPref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.putBoolean(proKey, value)
-        editor.apply()
+        sharedPref.edit {
+            putBoolean(proKey, value)
+        }
     }
 
     fun clickCount(): Int {
@@ -28,24 +29,24 @@ class SharedPref(private val context: Context) {
 
     fun clickCount(count: Int) {
         val sharedPref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.putInt(clickCountKey, count)
-        editor.apply()
+        sharedPref.edit {
+            putInt(clickCountKey, count)
+        }
     }
 
     fun incClickCount() {
         val sharedPref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
         val currentCount = sharedPref.getInt(clickCountKey, 0)
-        val editor = sharedPref.edit()
-        editor.putInt(clickCountKey, currentCount + 1)
-        editor.apply()
+        sharedPref.edit {
+            putInt(clickCountKey, currentCount + 1)
+        }
     }
 
     fun resetClickCount() {
         val sharedPref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.putInt(clickCountKey, 0)
-        editor.apply()
+        sharedPref.edit {
+            putInt(clickCountKey, 0)
+        }
     }
 
 }
