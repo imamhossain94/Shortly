@@ -17,8 +17,8 @@ android {
         minSdk = 24
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
-        versionCode = 20
-        versionName = "2.1.2"
+        versionCode = 21
+        versionName = "2.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -126,7 +126,7 @@ dependencies {
     implementation("com.applovin.mediation:unityads-adapter:4.16.1.0")
 
     // Google IAP
-    implementation("com.github.akshaaatt:Google-IAP:1.7.0")
+    implementation("com.github.akshaaatt:Google-IAP:1.8.0")
 
 }
 

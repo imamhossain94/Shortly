@@ -57,9 +57,10 @@ class MainActivity : AppCompatActivity() {
         )
 
         iapConnector?.addPurchaseListener(object : PurchaseServiceListener {
-            override fun onPricesUpdated(iapKeyPrices: Map<String, List<DataWrappers.ProductDetails>>) {
-                val productDetails = iapKeyPrices[BuildConfig.PRODUCT_ID]?.first()
-                viewModel.setProductPrice("${productDetails?.price}/")
+            override fun onPricesUpdated(iapKeyPrices: Map<String, DataWrappers.ProductDetails>) {
+                val productDetails = iapKeyPrices[BuildConfig.PRODUCT_ID]
+                val product = productDetails?.offers?.firstOrNull()?.pricingPhases?.first()
+                viewModel.setProductPrice("${product?.price}/")
             }
 
             override fun onProductPurchased(purchaseInfo: DataWrappers.PurchaseInfo) {
