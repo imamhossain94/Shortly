@@ -17,8 +17,8 @@ android {
         minSdk = 24
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
-        versionCode = 21
-        versionName = "2.1.3"
+        versionCode = 23
+        versionName = "2.1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,11 +39,11 @@ android {
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
 
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 
     room {
@@ -59,7 +59,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.filament.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -123,7 +122,7 @@ dependencies {
     implementation("com.applovin.mediation:vungle-adapter:7.6.0.0")
     implementation("com.applovin.mediation:facebook-adapter:6.20.0.0")
     implementation("com.applovin.mediation:mintegral-adapter:16.9.91.0")
-    implementation("com.applovin.mediation:unityads-adapter:4.16.1.0")
+    implementation("com.applovin.mediation:unityads-adapter:4.16.2.0")
 
     // Google IAP
     implementation("com.github.akshaaatt:Google-IAP:1.8.0")
