@@ -57,7 +57,7 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
     // Function to create banner ads
     fun createBannerAd(view: LinearLayout) {
         val bannerAdsListener = BannerAdsListener(view)
-        val adView = MaxAdView(bannerId, context).apply {
+        val adView = MaxAdView(bannerId).apply {
             setListener(bannerAdsListener)
             layoutParams = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -70,7 +70,7 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
 
     // Function to preload interstitial ads
     private fun preloadInterstitialAd() {
-        interstitialAd = MaxInterstitialAd(interstitialId, context).apply {
+        interstitialAd = MaxInterstitialAd(interstitialId).apply {
             setListener(InterstitialAdsListener())
             loadAd()
         }
@@ -78,7 +78,7 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
 
     // Function to preload rewarded ads
     private fun preloadRewardedAd() {
-        rewardedAd = MaxRewardedAd.getInstance(rewardId, context).apply {
+        rewardedAd = MaxRewardedAd.getInstance(rewardId).apply {
             setListener(RewardAdsListener())
             loadAd()
         }
@@ -176,7 +176,7 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
 
     // Function to create a native ad view binder
     private fun createNativeAdBinder(): MaxNativeAdViewBinder {
-        return MaxNativeAdViewBinder.Builder(R.layout.view_native_ads)
+        return MaxNativeAdViewBinder.Builder(R.layout.view_medium_native_ads)
             .setTitleTextViewId(R.id.title_text_view)
             .setBodyTextViewId(R.id.body_text_view)
             .setAdvertiserTextViewId(R.id.advertiser_text_view)

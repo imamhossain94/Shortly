@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/small_native_ad_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp"
+    app:strokeColor="?attr/colorOutline"
+    app:strokeWidth="0.5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <!-- Left: Icon -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="8dp"
+            app:strokeWidth="0.5dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:cardElevation="0dp">
+            <ImageView
+                android:id="@+id/icon_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@mipmap/ic_launcher" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Middle: Content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+            <!-- Ad Badge and Title -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/ad_indicator_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="9sp"
+                    android:text="Ad"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="2dp"
+                    android:background="@drawable/bg_price"
+                    android:textColor="?colorPrimary"
+                    android:letterSpacing="0.05"/>
+
+                <TextView
+                    android:id="@+id/title_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textColor="?android:textColorPrimary"
+                    tools:text="Pandora Music" />
+            </LinearLayout>
+
+            <!-- Star Rating (optional, can be hidden) -->
+            <FrameLayout
+                android:id="@+id/star_rating_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:visibility="gone"/>
+
+            <!-- Body Text -->
+            <TextView
+                android:id="@+id/body_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:textColor="?android:textColorSecondary"
+                tools:text="Personalized music streaming" />
+        </LinearLayout>
+
+        <!-- Right: CTA Button -->
+        <Button
+            android:id="@+id/cta_button"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:minWidth="72dp"
+            android:minHeight="36dp"
+            android:paddingHorizontal="16dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="Install" />
+
+        <!-- Options Menu (hidden by default for small ads) -->
+        <FrameLayout
+            android:id="@+id/options_view"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="top"
+            android:layout_marginStart="4dp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
