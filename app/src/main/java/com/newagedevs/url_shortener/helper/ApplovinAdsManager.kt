@@ -175,7 +175,7 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
     }
 
     private fun createNativeAdBinder(): MaxNativeAdViewBinder {
-        return MaxNativeAdViewBinder.Builder(R.layout.view_small_media_native_ads)
+        return MaxNativeAdViewBinder.Builder(R.layout.view_medium_native_ads)
             .setTitleTextViewId(R.id.title_text_view)
             .setBodyTextViewId(R.id.body_text_view)
             .setAdvertiserTextViewId(R.id.advertiser_text_view)

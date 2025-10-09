@@ -105,7 +105,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:indeterminate="true"
-                        android:visibility="invisible" />
+                        android:visibility="gone" />
 
 
                     <com.google.android.material.button.MaterialButton

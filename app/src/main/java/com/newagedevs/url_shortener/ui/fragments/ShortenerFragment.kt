@@ -203,7 +203,7 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
 
         val observeResult: (UrlData) -> Unit = { result ->
             actionButton.isEnabled = true
-            progressIndicator.visibility = View.INVISIBLE
+            progressIndicator.visibility = View.GONE
 
             if (result.success == true) {
                 val intent = Intent(requireContext(), ResultActivity::class.java)
@@ -212,7 +212,7 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
             } else {
                 Toast.makeText(requireContext(), getString(R.string.operation_failed), Toast.LENGTH_SHORT).show()
             }
-            progressIndicator.visibility = View.INVISIBLE
+            progressIndicator.visibility = View.GONE
         }
 
         // Show ad if needed (non-pro user, 3+ clicks)
