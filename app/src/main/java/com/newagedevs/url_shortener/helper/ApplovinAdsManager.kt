@@ -39,22 +39,20 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
 
     private var nativeAdLoader: MaxNativeAdLoader? = null
     private var loadedNativeAd: MaxAd? = null
+    private var isNativeAdDisplayed = false
 
     private val bannerId = BuildConfig.banner_AdUnit
     private val interstitialId: String = BuildConfig.interstitial_AdUnit
     private val rewardId: String = BuildConfig.reward_AdUnit
     private val nativeAdUnitId: String = BuildConfig.native_AdUnit
 
-    // Add a handler for retry operations
     private val retryHandler = Handler(Looper.getMainLooper())
 
     init {
-        // Preload interstitial and rewarded ads
         preloadInterstitialAd()
-        preloadRewardedAd()
+        // preloadRewardedAd()
     }
 
-    // Function to create banner ads
     fun createBannerAd(view: LinearLayout) {
         val bannerAdsListener = BannerAdsListener(view)
         val adView = MaxAdView(bannerId).apply {
@@ -68,7 +66,6 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
         adView.loadAd()
     }
 
-    // Function to preload interstitial ads
     private fun preloadInterstitialAd() {
         interstitialAd = MaxInterstitialAd(interstitialId).apply {
             setListener(InterstitialAdsListener())
@@ -76,7 +73,6 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
         }
     }
 
-    // Function to preload rewarded ads
     private fun preloadRewardedAd() {
         rewardedAd = MaxRewardedAd.getInstance(rewardId).apply {
             setListener(RewardAdsListener())
@@ -84,63 +80,64 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
         }
     }
 
-    // Function to create native ads
     fun createNativeAds(containerView: FrameLayout) {
-        // Check if context is still valid
         if (context.isFinishing || context.isDestroyed) {
             return
         }
 
-        // Clear the container first
+        // Only create new ads if no ad is currently loaded or displayed
+        if (loadedNativeAd != null && isNativeAdDisplayed) {
+            val adView = createNativeAdView()
+            nativeAdLoader?.render(adView, loadedNativeAd)
+
+            containerView.removeAllViews()
+            containerView.addView(adView)
+            containerView.visibility = View.VISIBLE
+            isNativeAdDisplayed = true
+            return
+        }
+
+        // Clear the container only if we're loading a new ad
         containerView.removeAllViews()
         containerView.visibility = View.GONE
 
-        // Create a native ad loader if not already created
         if (nativeAdLoader == null) {
             nativeAdLoader = MaxNativeAdLoader(nativeAdUnitId)
         }
 
         nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
-                // Check if context is still valid
                 if (context.isFinishing || context.isDestroyed) {
                     return
                 }
 
-                // Clean up any pre-existing native ad to prevent memory leaks
+                // Clean up any pre-existing native ad
                 loadedNativeAd?.let { oldAd ->
                     nativeAdLoader?.destroy(oldAd)
                 }
 
-                // Save reference to the ad
                 loadedNativeAd = ad
-
-                // Reset retry attempt on successful load
                 nativeAdRetryAttempt = 0.0
 
-                // Create a native ad view and render the ad
                 val adView = createNativeAdView()
                 nativeAdLoader?.render(adView, ad)
 
-                // Add the native ad view to the container
                 containerView.removeAllViews()
                 containerView.addView(adView)
                 containerView.visibility = View.VISIBLE
+                isNativeAdDisplayed = true
             }
 
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
-                // Check if context is still valid before retrying
                 if (context.isFinishing || context.isDestroyed) {
                     return
                 }
 
-                // Handle failed ad load
                 containerView.visibility = View.GONE
+                isNativeAdDisplayed = false
 
-                // Implement exponential backoff for retries with maximum retry limit
                 nativeAdRetryAttempt++
 
-                // Limit retry attempts to prevent infinite retries
                 if (nativeAdRetryAttempt > 5) {
                     return
                 }
@@ -150,7 +147,6 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
                 )
 
                 retryHandler.postDelayed({
-                    // Double-check context validity before retry
                     if (!context.isFinishing && !context.isDestroyed) {
                         nativeAdLoader?.loadAd()
                     }
@@ -158,27 +154,26 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
-                // Handle ad click event if needed
                 if (!context.isFinishing && !context.isDestroyed) {
-                    // Load a new ad when the current one expires
+                    // Load a new ad after click
+                    loadedNativeAd = null
+                    isNativeAdDisplayed = false
                     nativeAdLoader?.loadAd()
                 }
             }
 
             override fun onNativeAdExpired(ad: MaxAd) {
-                // Check if context is still valid
                 if (!context.isFinishing && !context.isDestroyed) {
-                    // Load a new ad when the current one expires
+                    loadedNativeAd = null
+                    isNativeAdDisplayed = false
                     nativeAdLoader?.loadAd()
                 }
             }
         })
 
-        // Start loading the native ad
         nativeAdLoader?.loadAd()
     }
 
-    // Function to create a native ad view binder
     private fun createNativeAdBinder(): MaxNativeAdViewBinder {
         return MaxNativeAdViewBinder.Builder(R.layout.view_small_media_native_ads)
             .setTitleTextViewId(R.id.title_text_view)
@@ -192,12 +187,10 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
             .build()
     }
 
-    // Function to create a native ad view
     private fun createNativeAdView(): MaxNativeAdView {
         return MaxNativeAdView(createNativeAdBinder(), context)
     }
 
-    // Function to show preloaded interstitial ads
     fun showInterstitialAd(loaded: () -> Unit = { }, failed: () -> Unit = { }) {
         if (interstitialAd?.isReady == true) {
             interstitialAd?.showAd(context)
@@ -207,10 +200,7 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
         }
     }
 
-    // Function to show preloaded reward ads
-    fun showRewardAd(
-        failed: () -> Unit
-    ) {
+    fun showRewardAd(failed: () -> Unit) {
         if (rewardedAd?.isReady == true) {
             rewardedAd?.showAd(context)
         } else {
@@ -218,22 +208,20 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
         }
     }
 
-    // Destroy all ads to free resources
     fun destroyAds() {
         interstitialAd?.destroy()
         rewardedAd?.destroy()
 
-        // Clean up native ad resources
         loadedNativeAd?.let { ad ->
             nativeAdLoader?.destroy(ad)
         }
         loadedNativeAd = null
+        isNativeAdDisplayed = false
 
         nativeAdLoader?.destroy()
         nativeAdLoader = null
     }
 
-    // Listener for banner ads
     class BannerAdsListener(private val view: LinearLayout) : MaxAdViewAdListener {
         override fun onAdLoaded(maxAd: MaxAd) {
             view.visibility = View.VISIBLE
@@ -260,7 +248,6 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
         override fun onAdCollapsed(maxAd: MaxAd) {}
     }
 
-    // Listener for interstitial ads
     inner class InterstitialAdsListener : MaxAdListener {
         override fun onAdLoaded(maxAd: MaxAd) {
             retryAttempt = 0.0
@@ -280,11 +267,10 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
         override fun onAdDisplayed(maxAd: MaxAd) {}
         override fun onAdClicked(maxAd: MaxAd) {}
         override fun onAdHidden(maxAd: MaxAd) {
-            preloadInterstitialAd() // Preload the next ad
+            preloadInterstitialAd()
         }
     }
 
-    // Listener for reward ads
     inner class RewardAdsListener : MaxRewardedAdListener {
         override fun onAdLoaded(maxAd: MaxAd) {
             rewardRetryAttempt = 0.0
@@ -304,7 +290,7 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
         override fun onAdDisplayed(maxAd: MaxAd) {}
         override fun onAdClicked(maxAd: MaxAd) {}
         override fun onAdHidden(maxAd: MaxAd) {
-            preloadRewardedAd() // Preload the next ad
+            preloadRewardedAd()
         }
 
         override fun onUserRewarded(maxAd: MaxAd, maxReward: MaxReward) {
