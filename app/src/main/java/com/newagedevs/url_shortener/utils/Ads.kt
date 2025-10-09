@@ -1,6 +1,6 @@
 package com.newagedevs.url_shortener.utils
 
-import com.newagedevs.url_shortener.inhouseads.BannerAd
+import com.newagedevs.url_shortener.helper.inhouseads.BannerAd
 
 class Ads {
 

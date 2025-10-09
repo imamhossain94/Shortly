@@ -159,6 +159,10 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
 
             override fun onNativeAdClicked(ad: MaxAd) {
                 // Handle ad click event if needed
+                if (!context.isFinishing && !context.isDestroyed) {
+                    // Load a new ad when the current one expires
+                    nativeAdLoader?.loadAd()
+                }
             }
 
             override fun onNativeAdExpired(ad: MaxAd) {
@@ -176,7 +180,7 @@ class ApplovinAdsManager(private val context: Activity, private val listener: Ap
 
     // Function to create a native ad view binder
     private fun createNativeAdBinder(): MaxNativeAdViewBinder {
-        return MaxNativeAdViewBinder.Builder(R.layout.view_medium_native_ads)
+        return MaxNativeAdViewBinder.Builder(R.layout.view_small_media_native_ads)
             .setTitleTextViewId(R.id.title_text_view)
             .setBodyTextViewId(R.id.body_text_view)
             .setAdvertiserTextViewId(R.id.advertiser_text_view)

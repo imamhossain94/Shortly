@@ -12,7 +12,7 @@ class SharedPref(private val context: Context) {
 
     fun isPro(): Boolean {
         val sharedPref = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
-        return false //sharedPref.getBoolean(proKey, false)
+        return sharedPref.getBoolean(proKey, false)
     }
 
     fun setPro(value: Boolean) {

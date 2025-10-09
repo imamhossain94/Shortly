@@ -70,7 +70,7 @@
             android:layout_gravity="end"
             android:text="@string/ad"
             android:textSize="8sp"
-            android:background="@drawable/bg_price"
+            android:background="@drawable/bg_outline"
             android:padding="3.5dp"
             tools:ignore="SmallSp" />
 

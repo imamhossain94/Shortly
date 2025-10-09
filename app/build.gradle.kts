@@ -52,7 +52,7 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -64,68 +64,68 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     // Navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.9.5")
-    implementation("androidx.navigation:navigation-ui-ktx:2.9.5")
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.57.2")
-    ksp("com.google.dagger:hilt-compiler:2.57.2")
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     // Retrofit (for network calls)
-    implementation("com.squareup.okhttp3:okhttp:5.1.0")
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.converter.scalars)
 
     // jsoup
-    implementation("org.jsoup:jsoup:1.21.2")
+    implementation(libs.jsoup)
 
     // Room (for local database storage)
-    implementation("androidx.room:room-runtime:2.8.1")
-    implementation("androidx.room:room-ktx:2.8.1")
-    ksp("androidx.room:room-compiler:2.8.1")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // QR Code Generator (e.g., ZXing)
-    implementation("com.google.zxing:core:3.5.3")
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation(libs.core)
+    implementation(libs.zxing.android.embedded)
 
     // Hilt Dagger (Use with Hilt)
-    implementation("com.google.dagger:dagger:2.57.2")
-    ksp("com.google.dagger:dagger-compiler:2.57.2")
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
 
     // Coroutine
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 
     // QR Code kotlin
-    implementation("io.github.g0dkar:qrcode-kotlin:4.5.0")
+    implementation(libs.qrcode.kotlin)
 
     // Glide
-    implementation("com.github.bumptech.glide:glide:5.0.5")
-    ksp("com.github.bumptech.glide:compiler:5.0.5")
+    implementation(libs.glide)
+    ksp(libs.compiler)
 
     // Justified textview
-    implementation("com.codesgood:justifiedtextview:2.0.1")
+    implementation(libs.justifiedtextview)
 
     // AndroidX
-    implementation("androidx.lifecycle:lifecycle-process:2.9.4")
+    implementation(libs.androidx.lifecycle.process)
 
     // Applovin
-    implementation("com.google.android.gms:play-services-base:18.9.0")
-    implementation("com.applovin:applovin-sdk:13.4.0")
-    implementation("com.applovin.mediation:chartboost-adapter:9.10.0.0")
-    implementation("com.google.android.gms:play-services-base:18.9.0")
-    implementation("com.applovin.mediation:inmobi-adapter:10.8.8.0")
-    implementation("com.squareup.picasso:picasso:2.71828")
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
-    implementation("com.applovin.mediation:ironsource-adapter:9.0.0.0.0")
-    implementation("com.applovin.mediation:vungle-adapter:7.6.0.0")
-    implementation("com.applovin.mediation:facebook-adapter:6.20.0.0")
-    implementation("com.applovin.mediation:mintegral-adapter:16.9.91.0")
-    implementation("com.applovin.mediation:unityads-adapter:4.16.2.0")
+    implementation(libs.play.services.base)
+    implementation(libs.applovin.sdk)
+    implementation(libs.chartboost.adapter)
+    implementation(libs.play.services.base)
+    implementation(libs.inmobi.adapter)
+    implementation(libs.picasso)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.ironsource.adapter)
+    implementation(libs.vungle.adapter)
+    implementation(libs.facebook.adapter)
+    implementation(libs.mintegral.adapter)
+    implementation(libs.unityads.adapter)
 
     // Google IAP
-    implementation("com.github.akshaaatt:Google-IAP:1.8.0")
+    implementation(libs.google.iap)
 
 }
 

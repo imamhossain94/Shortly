@@ -5,22 +5,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/small_native_ad_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="135dp"
+    android:layout_marginBottom="2dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="1dp"
-
+    app:cardElevation="2dp"
     app:strokeWidth="0.5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
         android:orientation="horizontal">
 
         <!-- Left: Media View -->
         <FrameLayout
             android:id="@+id/media_view_container"
             android:layout_width="150dp"
-            android:layout_height="135dp"
+            android:layout_height="match_parent"
             android:background="@color/black"/>
 
         <!-- Right: Content -->
@@ -28,6 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:orientation="vertical"
             android:padding="10dp">
 
@@ -35,6 +37,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
@@ -54,7 +57,7 @@
                         android:text="Ad"
                         android:paddingHorizontal="5dp"
                         android:paddingVertical="2dp"
-                        android:background="@drawable/bg_price"
+                        android:background="@drawable/bg_outline"
                         android:textColor="?colorPrimary"
                         android:letterSpacing="0.05"/>
 

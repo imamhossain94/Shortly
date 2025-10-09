@@ -1,4 +1,4 @@
-package com.newagedevs.url_shortener.inhouseads
+package com.newagedevs.url_shortener.helper.inhouseads
 
 import android.content.Context
 import android.view.LayoutInflater

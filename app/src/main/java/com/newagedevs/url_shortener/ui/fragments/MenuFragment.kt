@@ -1,7 +1,6 @@
 package com.newagedevs.url_shortener.ui.fragments
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -12,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.newagedevs.url_shortener.R
-import com.newagedevs.url_shortener.inhouseads.InHouseBannerAdsView
+import com.newagedevs.url_shortener.helper.inhouseads.InHouseBannerAdsView
 import com.newagedevs.url_shortener.ui.activities.AboutActivity
 import com.newagedevs.url_shortener.ui.activities.FeedbackActivity
 import com.newagedevs.url_shortener.ui.activities.MainActivity

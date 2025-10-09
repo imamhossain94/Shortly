@@ -1,5 +1,4 @@
-
-package com.newagedevs.url_shortener.inhouseads
+package com.newagedevs.url_shortener.helper.inhouseads
 
 data class BannerAd(
     val appIconUrl: String,

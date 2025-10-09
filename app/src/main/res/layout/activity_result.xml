@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context=".ui.activities.ResultActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -28,10 +30,8 @@
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
         android:layout_marginHorizontal="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-
-        >
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp">
 
         <ImageView
             android:id="@+id/qr_code_image"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:layout_marginHorizontal="16dp"
-        app:cardCornerRadius="12dp"
+        app:cardCornerRadius="8dp"
         app:cardElevation="2dp"
 
         >
@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/title"

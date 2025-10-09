@@ -1,11 +1,10 @@
-package com.newagedevs.url_shortener.inhouseads
+package com.newagedevs.url_shortener.helper.inhouseads
 
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
@@ -80,7 +79,7 @@ class InHouseBannerAdsView @JvmOverloads constructor(
         val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
         val view = layoutManager.findViewByPosition(currentIndex) ?: return
 
-        view.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        view.measure(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         val height = view.measuredHeight
         val layoutParams = recyclerView.layoutParams
         layoutParams.height = height

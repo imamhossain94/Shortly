@@ -17,4 +17,6 @@
     <color name="text_6">#E6E8EC</color>
     <color name="text_7">#F4F5F6</color>
     <color name="text_8">#FCFCFD</color>
+
+    <color name="stroke_color">#cdc7d3</color>
 </resources>

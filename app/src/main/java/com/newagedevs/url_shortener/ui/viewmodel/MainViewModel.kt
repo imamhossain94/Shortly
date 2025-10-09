@@ -26,8 +26,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun setPro(value: Boolean) {
-//        sharedPref.setPro(value)
-//        _isProUser.value = value
+        sharedPref.setPro(value)
+        _isProUser.value = value
     }
 
     fun setProductPrice(value: String) {

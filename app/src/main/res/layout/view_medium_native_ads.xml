@@ -6,9 +6,9 @@
     android:id="@+id/pro_feature_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="12dp"
+    android:layout_marginBottom="2dp"
+    app:cardCornerRadius="8dp"
     app:cardElevation="2dp"
-
     app:strokeWidth="0.5dp">
 
     <LinearLayout
@@ -77,7 +77,7 @@
                             android:text="Ad"
                             android:paddingHorizontal="5dp"
                             android:paddingVertical="2dp"
-                            android:background="@drawable/bg_price"
+                            android:background="@drawable/bg_outline"
                             android:textColor="?colorPrimary"
                             android:letterSpacing="0.05"/>
 
