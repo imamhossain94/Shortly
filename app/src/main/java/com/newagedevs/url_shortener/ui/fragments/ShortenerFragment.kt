@@ -8,6 +8,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -20,6 +21,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.data.model.UrlData
+import com.newagedevs.url_shortener.helper.ApplovinAdsManager
 import com.newagedevs.url_shortener.ui.activities.MainActivity
 import com.newagedevs.url_shortener.ui.activities.ResultActivity
 import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
@@ -28,9 +30,13 @@ import com.newagedevs.url_shortener.utils.Ads
 import com.newagedevs.url_shortener.utils.Providers
 import com.newagedevs.url_shortener.utils.isValidUrl
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
+
+    @Inject
+    lateinit var adsManager: ApplovinAdsManager
 
     private lateinit var inputUrlLayout: TextInputLayout
     private lateinit var inputUrl: TextInputEditText
@@ -39,6 +45,7 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
     private lateinit var toggleButtonGroup: MaterialButtonToggleGroup
     private lateinit var removeAdsMCV: MaterialCardView
     private lateinit var progressIndicator: CircularProgressIndicator
+    private lateinit var premiumDescription: TextView
 
     private lateinit var nativeAdsContainer: FrameLayout
 
@@ -59,6 +66,7 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
         toggleButtonGroup = view.findViewById(R.id.toggleButton)
         removeAdsMCV = view.findViewById(R.id.remove_ads_mcv)
         progressIndicator = view.findViewById(R.id.progress_indicator)
+        premiumDescription = view.findViewById<TextView>(R.id.premium_description)
 
         nativeAdsContainer = view.findViewById(R.id.native_ads_container)
 
@@ -87,6 +95,10 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
             handleUrlAction()
         }
 
+        mainViewModel.productPrice.observe(viewLifecycleOwner) { price ->
+            premiumDescription.text = "Join 500+ users • Only $price/lifetime • Limited Time!"
+        }
+
         // Observe pro status
         mainViewModel.isProUser.observe(viewLifecycleOwner) { isPro ->
             removeAdsMCV.visibility = if (isPro) View.GONE else View.VISIBLE
@@ -96,7 +108,8 @@ class ShortenerFragment : Fragment(R.layout.fragment_shortener) {
                 hasRequestedNativeAd = true
                 // Use post to ensure view is fully laid out
                 nativeAdsContainer.post {
-                    (activity as? MainActivity)?.createNativeAds(nativeAdsContainer)
+                    // User is not pro - initialize ads
+                    adsManager.createNativeAds( nativeAdsContainer)
                 }
             } else if (isPro) {
                 // Clean up ad container for pro users

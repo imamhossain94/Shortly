@@ -30,8 +30,8 @@
         android:layout_marginHorizontal="16dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="2dp"
-        app:strokeColor="?attr/colorOutline"
-        app:strokeWidth="1dp">
+
+        >
 
         <ImageView
             android:id="@+id/qr_code_image"
@@ -52,8 +52,8 @@
         android:layout_marginHorizontal="16dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="2dp"
-        app:strokeColor="?attr/colorOutline"
-        app:strokeWidth="1dp">
+
+        >
 
         <LinearLayout
             android:layout_width="match_parent"

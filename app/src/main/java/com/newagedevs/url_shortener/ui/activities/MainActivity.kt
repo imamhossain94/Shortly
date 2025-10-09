@@ -22,19 +22,19 @@ import com.newagedevs.url_shortener.R
 import com.newagedevs.url_shortener.helper.ApplovinAdsManager
 import com.newagedevs.url_shortener.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var adsManager: ApplovinAdsManager
+
     private val viewModel: MainViewModel by viewModels()
 
     private lateinit var adsContainer: LinearLayout
-    private var adsManager: ApplovinAdsManager? = null
     private var iapConnector: IapConnector? = null
 
-    // Track pending native ad requests
-    private val pendingNativeAdContainers = mutableListOf<FrameLayout>()
-    private var isAdsManagerReady = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,45 +78,13 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.isProUser.observe(this) { isPro ->
             if (isPro) {
-                // User is pro - clean up ads
-                isAdsManagerReady = false
                 adsContainer.visibility = View.GONE
                 adsContainer.removeAllViews()
-                adsManager?.destroyAds()
-                adsManager = null
-                pendingNativeAdContainers.clear()
+                adsManager.destroyAds()
             } else {
-                // User is not pro - initialize ads
-                if (adsManager == null) {
-                    adsManager = ApplovinAdsManager(this)
-                    adsManager?.createBannerAd(adsContainer)
-                    isAdsManagerReady = true
-
-                    // Process any pending native ad requests
-                    processPendingNativeAds()
-                }
+                adsManager = ApplovinAdsManager(this)
+                adsManager.createBannerAd(adsContainer)
             }
-        }
-    }
-
-    fun createNativeAds(view: FrameLayout) {
-        if (isAdsManagerReady && adsManager != null) {
-            // Ads manager is ready, create ad immediately
-            adsManager?.createNativeAds(view)
-        } else {
-            // Ads manager not ready yet, queue the request
-            if (!pendingNativeAdContainers.contains(view)) {
-                pendingNativeAdContainers.add(view)
-            }
-        }
-    }
-
-    private fun processPendingNativeAds() {
-        if (isAdsManagerReady && adsManager != null) {
-            pendingNativeAdContainers.forEach { container ->
-                adsManager?.createNativeAds(container)
-            }
-            pendingNativeAdContainers.clear()
         }
     }
 
@@ -157,8 +125,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        pendingNativeAdContainers.clear()
-        adsManager?.destroyAds()
+        adsManager.destroyAds()
     }
 
     private fun setupBottomNavigation() {

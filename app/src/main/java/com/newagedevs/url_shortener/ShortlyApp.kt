@@ -16,9 +16,13 @@ import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 import com.newagedevs.url_shortener.data.local.SharedPref
+import javax.inject.Inject
 
 @HiltAndroidApp
 class ShortlyApp : Application() {
+
+    @Inject
+    lateinit var sharedPref: SharedPref
 
     private lateinit var appOpenManager: AppOpenManager
 
@@ -30,7 +34,7 @@ class ShortlyApp : Application() {
             if (packageName != process) WebView.setDataDirectorySuffix(process)
         }
 
-        if(!SharedPref(applicationContext).isPro()){
+        if(!sharedPref.isPro()){
             initializeAppLovinSdk()
         }
 

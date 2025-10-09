@@ -23,7 +23,7 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp"
             app:strokeColor="?attr/colorPrimary"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0.5dp"
             tools:visibility="visible">
 
             <LinearLayout
@@ -61,24 +61,12 @@
                             android:textAppearance="?attr/textAppearanceTitleMedium"
                             android:textColor="?attr/colorPrimary" />
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:background="@drawable/bg_price"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="2dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Lifetime"
-                                android:textColor="?attr/colorPrimary"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
+                            android:text="@string/lifetime"
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 
@@ -103,9 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            app:strokeColor="?attr/colorOutline"
-            app:strokeWidth="1dp">
+            app:cardElevation="2dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -185,9 +171,9 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/upgrade_button"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/remove_ads" />
 
@@ -208,7 +194,7 @@
                 android:id="@+id/in_house_ad_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp" />
+                android:paddingHorizontal="8dp" />
 
         </com.google.android.material.card.MaterialCardView>
 

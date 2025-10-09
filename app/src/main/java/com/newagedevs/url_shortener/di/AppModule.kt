@@ -1,12 +1,15 @@
 package com.newagedevs.url_shortener.di
 
+import android.app.Activity
 import com.newagedevs.url_shortener.data.local.db.UrlDao
 import com.newagedevs.url_shortener.data.network.ApiService
 import com.newagedevs.url_shortener.data.network.BaseUrlInterceptor
 import com.newagedevs.url_shortener.data.repository.UrlRepository
+import com.newagedevs.url_shortener.helper.ApplovinAdsManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

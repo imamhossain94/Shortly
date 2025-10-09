@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="8dp"
     app:cardElevation="1dp"
-    app:strokeColor="?attr/colorOutline"
+
     app:strokeWidth="0.5dp">
 
     <LinearLayout
