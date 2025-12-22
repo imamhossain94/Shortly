@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shortly/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../data/models/url_data.dart';
@@ -52,7 +53,9 @@ class _ResultDialogState extends State<ResultDialog>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    isShorten ? "Shortened URL" : "Expanded URL",
+                    isShorten
+                        ? AppLocalizations.of(context)!.shortenedUrl
+                        : AppLocalizations.of(context)!.expanded,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -66,37 +69,42 @@ class _ResultDialogState extends State<ResultDialog>
             ),
             TabBar(
               controller: _tabController,
-              tabs: const [
-                Tab(text: "Details", icon: Icon(Icons.link)),
-                Tab(text: "QR Code", icon: Icon(Icons.qr_code)),
+              tabs: [
+                const Tab(text: "Details", icon: Icon(Icons.link)),
+                Tab(
+                  text: AppLocalizations.of(context)!.qrCode,
+                  icon: const Icon(Icons.qr_code),
+                ),
               ],
             ),
-            SizedBox(
-              height: 320,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  // Details Tab
-                  Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primaryContainer.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.primary.withOpacity(0.2),
+            AnimatedSize(
+              duration: 200.ms,
+              child: SizedBox(
+                height: 350,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    // Details Tab
+                    SingleChildScrollView(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer
+                                  .withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.2),
+                              ),
                             ),
-                          ),
-                          child: SingleChildScrollView(
                             child: SelectableText(
                               displayUrl ?? "Error",
                               style: Theme.of(context).textTheme.headlineSmall
@@ -107,100 +115,105 @@ class _ResultDialogState extends State<ResultDialog>
                                     fontWeight: FontWeight.bold,
                                   ),
                               textAlign: TextAlign.center,
-                              maxLines: 5,
                             ),
+                          ).animate().scale(),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _ActionButton(
+                                  icon: Icons.copy,
+                                  label: AppLocalizations.of(context)!.copy,
+                                  onTap: () {
+                                    if (displayUrl != null) {
+                                      Clipboard.setData(
+                                        ClipboardData(text: displayUrl),
+                                      );
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.copiedToClipboard,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _ActionButton(
+                                  icon: Icons.share,
+                                  label: AppLocalizations.of(context)!.share,
+                                  onTap: () {
+                                    if (displayUrl != null)
+                                      Share.share(displayUrl);
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                        ).animate().scale(),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _ActionButton(
-                                icon: Icons.copy,
-                                label: "Copy",
-                                onTap: () {
-                                  if (displayUrl != null) {
-                                    Clipboard.setData(
-                                      ClipboardData(text: displayUrl),
-                                    );
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text("Copied!")),
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _ActionButton(
-                                icon: Icons.share,
-                                label: "Share",
-                                onTap: () {
-                                  if (displayUrl != null)
-                                    Share.share(displayUrl);
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        _ActionButton(
-                          icon: Icons.open_in_browser,
-                          label: "Open in Browser",
-                          isOutlined: true,
-                          onTap: () async {
-                            if (displayUrl != null) {
-                              final uri = Uri.parse(displayUrl);
-                              if (await canLaunchUrl(uri)) {
-                                launchUrl(
-                                  uri,
-                                  mode: LaunchMode.externalApplication,
-                                );
+                          const SizedBox(height: 12),
+                          _ActionButton(
+                            icon: Icons.open_in_browser,
+                            label: "Open", // Simplified label to fit
+                            isOutlined: true,
+                            onTap: () async {
+                              if (displayUrl != null) {
+                                final uri = Uri.parse(displayUrl);
+                                if (await canLaunchUrl(uri)) {
+                                  launchUrl(
+                                    uri,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
                               }
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Original: $originalUrl",
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // QR Tab
-                  Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (displayUrl != null)
-                            QrWidget(
-                              data: displayUrl,
-                              color:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.black
-                                  : Colors.black,
-                              backgroundColor: Colors.white,
-                            ).animate().scale(),
+                            },
+                          ),
                           const SizedBox(height: 16),
-                          Text(
-                            "Scan to open",
-                            style: Theme.of(context).textTheme.bodyMedium,
+                          SelectableText(
+                            "${AppLocalizations.of(context)!.original}: $originalUrl",
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+
+                    // QR Tab
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (displayUrl != null)
+                              Expanded(
+                                child: Center(
+                                  child: QrWidget(
+                                    data: displayUrl,
+                                    color: Colors.black,
+                                    backgroundColor: Colors.white,
+                                  ).animate().scale(),
+                                ),
+                              ),
+                            const SizedBox(height: 16),
+                            Text(
+                              "Scan to open",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shortly/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../providers/shortener_provider.dart';
+import '../providers/history_provider.dart';
 import '../dialogs/result_dialog.dart';
 
 class ExpanderView extends ConsumerStatefulWidget {
@@ -28,9 +30,9 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
   void _handleExpand() {
     final url = _urlController.text.trim();
     if (url.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please enter a URL")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.enterUrl)),
+      );
       return;
     }
 
@@ -49,6 +51,8 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
         ).then((_) {
           // Optional cleanup
         });
+        // Refresh history
+        ref.read(historyProvider.notifier).refresh();
       }
     });
 
@@ -99,7 +103,7 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                   _buildHeader(),
                   const SizedBox(height: 24),
                   Text(
-                    "Paste your shortened URL to reveal the destination. We follow redirects to show you where the link goes.",
+                    AppLocalizations.of(context)!.expandDesc,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -132,14 +136,14 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Expand your link",
+          AppLocalizations.of(context)!.expandLink,
           style: Theme.of(
             context,
           ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         ).animate().fadeIn().moveX(begin: -10, end: 0),
         const SizedBox(height: 8),
         Text(
-          "Reveal the destination of shortened URLs.",
+          AppLocalizations.of(context)!.expandDesc,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -152,7 +156,7 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
     return TextField(
       controller: _urlController,
       decoration: InputDecoration(
-        labelText: "Shortened URL",
+        labelText: AppLocalizations.of(context)!.shortenedUrl,
         hintText: "https://bit.ly/example",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         prefixIcon: const Icon(Icons.unfold_more),
@@ -189,7 +193,11 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
               ),
             )
           : const Icon(Icons.open_in_new),
-      label: Text(state.isLoading ? "Expanding..." : "Expand URL"),
+      label: Text(
+        state.isLoading
+            ? "${AppLocalizations.of(context)!.expand}..."
+            : AppLocalizations.of(context)!.expand,
+      ),
     ).animate().fadeIn(delay: 400.ms);
   }
 

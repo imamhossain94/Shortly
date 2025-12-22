@@ -7,6 +7,8 @@ import 'presentation/screens/main_screen.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'presentation/providers/locale_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Set edge-to-edge mode
@@ -31,6 +33,7 @@ class ShortlyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
+    final locale = ref.watch(localeProvider);
 
     return MaterialApp(
       title: 'Shortly',
@@ -38,13 +41,14 @@ class ShortlyApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
+      locale: locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('en')],
+      supportedLocales: const [Locale('en'), Locale('es')],
       home: const MainScreen(),
     );
   }

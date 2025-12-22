@@ -25,11 +25,11 @@ class FilterNotifier extends Notifier<HistoryFilter> {
   }
 
   void updateQuery(String newQuery) {
-    state = state.copyWith(query: newQuery);
+    state = HistoryFilter(query: newQuery, type: state.type);
   }
 
   void updateType(String? newType) {
-    state = state.copyWith(type: newType);
+    state = HistoryFilter(query: state.query, type: newType);
   }
 }
 

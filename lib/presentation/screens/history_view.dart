@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shortly/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
@@ -25,10 +26,15 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
   Widget build(BuildContext context) {
     // Watch the filtered history
     final history = ref.watch(filteredHistoryProvider);
+    final historyState = ref.watch(historyProvider);
+
+    if (historyState.isLoading && history.isEmpty) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("History"),
+        title: Text(AppLocalizations.of(context)!.history),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Padding(
@@ -38,7 +44,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
             ),
             child: SearchBar(
               controller: _searchController,
-              hintText: "Search history...",
+              hintText: "${AppLocalizations.of(context)!.search}...",
               leading: const Icon(Icons.search),
               elevation: WidgetStateProperty.all(0),
               backgroundColor: WidgetStateProperty.all(
@@ -54,14 +60,17 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                     ref.read(historyFilterProvider.notifier).updateType(value);
                   },
                   itemBuilder: (context) => [
-                    const PopupMenuItem(value: null, child: Text("All")),
-                    const PopupMenuItem(
-                      value: 'shorten',
-                      child: Text("Shortened"),
+                    PopupMenuItem(
+                      value: null,
+                      child: Text(AppLocalizations.of(context)!.all),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
+                      value: 'shorten',
+                      child: Text(AppLocalizations.of(context)!.shortenedUrl),
+                    ),
+                    PopupMenuItem(
                       value: 'expand',
-                      child: Text("Expanded"),
+                      child: Text(AppLocalizations.of(context)!.expanded),
                     ),
                   ],
                 ),
@@ -94,7 +103,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    "No history found",
+                    AppLocalizations.of(context)!.noHistory,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Theme.of(context).colorScheme.outline,
                     ),
@@ -126,7 +135,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                     elevation: 0,
                     color: Theme.of(
                       context,
-                    ).colorScheme.secondaryContainer.withOpacity(0.4),
+                    ).colorScheme.secondaryContainer.withValues(alpha: 0.4),
                     margin: const EdgeInsets.only(bottom: 12),
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(16),
@@ -155,8 +164,8 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                           const SizedBox(height: 4),
                           Text(
                             item.provider != null
-                                ? "Original: ${item.originalUrl}"
-                                : "Expanded: ${item.expandedUrl}",
+                                ? "${AppLocalizations.of(context)!.original}: ${item.originalUrl}"
+                                : "${AppLocalizations.of(context)!.expanded}: ${item.expandedUrl}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),

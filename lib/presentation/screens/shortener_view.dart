@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shortly/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/constants.dart';
 import '../providers/shortener_provider.dart';
+import '../providers/history_provider.dart';
 import '../dialogs/result_dialog.dart';
 
 class ShortenerView extends ConsumerStatefulWidget {
@@ -40,9 +42,9 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
   void _handleShorten() {
     final url = _urlController.text.trim();
     if (url.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please enter a URL")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.enterUrl)),
+      );
       return;
     }
     ref.read(shortenerProvider.notifier).shorten(_selectedProvider, url);
@@ -59,12 +61,10 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
           context: context,
           builder: (c) => ResultDialog(result: next.result!),
         ).then((_) {
-          // Optional: clear result on close, or keep it.
-          // keeping it allows user to interact again if they rotate?
-          // But usually we want to reset for next op.
-          // ref.read(shortenerProvider.notifier).clearResult();
-          // _urlController.clear();
+          // Optional cleanup
         });
+        // Refresh history
+        ref.read(historyProvider.notifier).refresh();
       }
     });
 
@@ -117,7 +117,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                   _buildHeader(),
                   const SizedBox(height: 24),
                   Text(
-                    "Select a provider and enter your long URL to get started. Our service supports multiple providers for your convenience.",
+                    AppLocalizations.of(context)!.shortenDesc,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -151,14 +151,14 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Shorten your link",
+          AppLocalizations.of(context)!.shortenLink,
           style: Theme.of(
             context,
           ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         ).animate().fadeIn().moveX(begin: -10, end: 0),
         const SizedBox(height: 8),
         Text(
-          "Select a provider and enter your long URL below.",
+          AppLocalizations.of(context)!.shortenDesc,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -173,7 +173,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
         DropdownButtonFormField<String>(
           value: _selectedProvider,
           decoration: InputDecoration(
-            labelText: "Provider",
+            labelText: AppLocalizations.of(context)!.provider,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             prefixIcon: const Icon(Icons.hub),
           ),
@@ -192,7 +192,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
         TextField(
           controller: _urlController,
           decoration: InputDecoration(
-            labelText: "Long URL",
+            labelText: AppLocalizations.of(context)!.longUrl,
             hintText: "https://example.com",
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             prefixIcon: const Icon(Icons.link),
@@ -231,7 +231,11 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
               ),
             )
           : const Icon(Icons.auto_fix_high),
-      label: Text(state.isLoading ? "Shortening..." : "Shorten URL"),
+      label: Text(
+        state.isLoading
+            ? "${AppLocalizations.of(context)!.shorten}..."
+            : AppLocalizations.of(context)!.shorten,
+      ),
     ).animate().fadeIn(delay: 500.ms);
   }
 
