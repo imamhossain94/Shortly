@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_shortly/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import '../../core/theme.dart';
 import '../providers/shortener_provider.dart';
 import '../providers/history_provider.dart';
-import '../dialogs/result_dialog.dart';
+import 'result_screen.dart';
 
 class ExpanderView extends ConsumerStatefulWidget {
   const ExpanderView({super.key});
@@ -35,7 +35,6 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
       );
       return;
     }
-
     ref.read(shortenerProvider.notifier).expand(url);
   }
 
@@ -45,83 +44,290 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
 
     ref.listen(shortenerProvider, (previous, next) {
       if (next.result != null && next.error == null && !next.isLoading) {
-        showDialog(
-          context: context,
-          builder: (c) => ResultDialog(result: next.result!),
-        ).then((_) {
-          // Optional cleanup
-        });
-        // Refresh history
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ResultScreen(result: next.result!),
+          ),
+        );
         ref.read(historyProvider.notifier).refresh();
       }
     });
 
     final state = ref.watch(shortenerProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isLandscape = constraints.maxWidth > 600;
-          if (isLandscape) {
-            return _buildLandscapeLayout(state);
-          }
-          return _buildPortraitLayout(state);
-        },
-      ),
-    );
-  }
-
-  Widget _buildPortraitLayout(ShortenerState state) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 20),
-          _buildHeader(),
-          const SizedBox(height: 32),
-          _buildInputs(),
-          const SizedBox(height: 24),
-          _buildButton(state),
-          _buildError(state),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLandscapeLayout(ShortenerState state) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Container(
+      color: Colors.transparent,
+      child: CustomScrollView(
+        slivers: [
+          // ── App Bar ──────────────────────────────────────────────────
+          SliverAppBar(
+            pinned: true,
+            backgroundColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu_rounded, size: 24),
+                onPressed: () => Scaffold.maybeOf(context)?.openDrawer(),
+              ),
+            ),
+            title: RichText(
+              text: TextSpan(
                 children: [
-                  _buildHeader(),
-                  const SizedBox(height: 24),
-                  Text(
-                    AppLocalizations.of(context)!.expandDesc,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  TextSpan(
+                    text: 'Verify',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color:
+                              isDark ? AppColors.textPrimary : Colors.black87,
+                        ),
+                  ),
+                  TextSpan(
+                    text: ' Link',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.accent,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Info card
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.accent.withValues(alpha: 0.15),
+                          AppColors.accent.withValues(alpha: 0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                          color: AppColors.accent.withValues(alpha: 0.25), width: 1.5),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.verified_user_rounded,
+                            color: AppColors.accent,
+                            size: 22,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Expand Shortened Link',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(fontWeight: FontWeight.w700),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'Reveal the full destination URL behind any shortened link.',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.textSecondary
+                                      : Colors.grey.shade600,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 32),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildInputs(),
+
                   const SizedBox(height: 24),
-                  _buildButton(state),
-                  _buildError(state),
+
+                  Text(
+                    'Shortened URL',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: isDark
+                              ? AppColors.textSecondary
+                              : Colors.grey.shade600,
+                        ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Input card
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkCard : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: isDark
+                          ? Border.all(color: AppColors.darkCardBorder)
+                          : Border.all(color: Colors.grey.shade200),
+                      boxShadow: isDark
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.03),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                    ),
+                    child: TextField(
+                      controller: _urlController,
+                      style: TextStyle(
+                        color:
+                            isDark ? AppColors.textPrimary : Colors.black87,
+                        fontSize: 15,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'https://bit.ly/example',
+                        hintStyle: const TextStyle(
+                            color: AppColors.textMuted, fontSize: 14),
+                        prefixIcon: const Icon(
+                          Icons.shield_outlined,
+                          color: AppColors.textMuted,
+                          size: 20,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.content_paste_rounded,
+                              size: 18),
+                          color: AppColors.textMuted,
+                          onPressed: () async {
+                            final data =
+                                await Clipboard.getData('text/plain');
+                            if (data?.text != null) {
+                              _urlController.text = data!.text!;
+                            }
+                          },
+                        ),
+                        filled: false,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 18),
+                      ),
+                      keyboardType: TextInputType.url,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _handleExpand(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // Expand button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: ElevatedButton(
+                      onPressed: state.isLoading ? null : _handleExpand,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accent,
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor:
+                            AppColors.accent.withValues(alpha: 0.5),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: state.isLoading
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              'Expand & Verify',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                    ),
+                  ),
+
+                  // Error
+                  if (state.error != null) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border:
+                            Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.error_outline,
+                              color: Colors.red, size: 18),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              state.error!,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 32),
+
+                  // How it works section
+                  Text(
+                    'How it works',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  const SizedBox(height: 16),
+                  _HowItWorksStep(
+                    step: '01',
+                    title: 'Paste your short URL',
+                    desc: 'Copy any bit.ly, tinyurl, or other shortened link.',
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 10),
+                  _HowItWorksStep(
+                    step: '02',
+                    title: 'Tap Expand & Verify',
+                    desc: 'We follow the redirect chain to find the destination.',
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 10),
+                  _HowItWorksStep(
+                    step: '03',
+                    title: 'See the full URL',
+                    desc: 'The complete original URL is revealed instantly.',
+                    isDark: isDark,
+                  ),
                 ],
               ),
             ),
@@ -130,107 +336,86 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
       ),
     );
   }
+}
 
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.expandLink,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-        ).animate().fadeIn().moveX(begin: -10, end: 0),
-        const SizedBox(height: 8),
-        Text(
-          AppLocalizations.of(context)!.expandDesc,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ).animate().fadeIn(delay: 200.ms),
-      ],
-    );
-  }
+class _HowItWorksStep extends StatelessWidget {
+  final String step;
+  final String title;
+  final String desc;
+  final bool isDark;
 
-  Widget _buildInputs() {
-    return TextField(
-      controller: _urlController,
-      decoration: InputDecoration(
-        labelText: AppLocalizations.of(context)!.shortenedUrl,
-        hintText: "https://bit.ly/example",
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        prefixIcon: const Icon(Icons.unfold_more),
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.paste),
-          onPressed: () async {
-            final data = await Clipboard.getData('text/plain');
-            if (data?.text != null) {
-              _urlController.text = data!.text!;
-            }
-          },
-        ),
+  const _HowItWorksStep({
+    required this.step,
+    required this.title,
+    required this.desc,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCard : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: isDark
+            ? Border.all(color: AppColors.darkCardBorder)
+            : Border.all(color: Colors.grey.shade200),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
-      keyboardType: TextInputType.url,
-      textInputAction: TextInputAction.done,
-      onSubmitted: (_) => _handleExpand(),
-    ).animate().fadeIn(delay: 300.ms);
-  }
-
-  Widget _buildButton(ShortenerState state) {
-    return FilledButton.icon(
-      onPressed: state.isLoading ? null : _handleExpand,
-      style: FilledButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      icon: state.isLoading
-          ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.white,
-              ),
-            )
-          : const Icon(Icons.open_in_new),
-      label: Text(
-        state.isLoading
-            ? "${AppLocalizations.of(context)!.expand}..."
-            : AppLocalizations.of(context)!.expand,
-      ),
-    ).animate().fadeIn(delay: 400.ms);
-  }
-
-  Widget _buildError(ShortenerState state) {
-    if (state.error != null) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 24),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.errorContainer,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.error_outline,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  state.error!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onErrorContainer,
-                  ),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: AppColors.accent.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                step,
+                style: const TextStyle(
+                  color: AppColors.accent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ],
+            ),
           ),
-        ).animate().shake(),
-      );
-    }
-    return const SizedBox.shrink();
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  desc,
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.textSecondary
+                        : Colors.grey.shade600,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

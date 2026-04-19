@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_shortly/l10n/app_localizations.dart';
+import '../../core/theme.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
 
@@ -13,227 +13,529 @@ class MenuScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      body: CustomScrollView(
+    return Container(
+      color: Colors.transparent,
+      child: CustomScrollView(
         slivers: [
-          SliverAppBar.large(
-            title: Text(AppLocalizations.of(context)!.settings),
+          // ── App Bar ──────────────────────────────────────────────────
+          SliverAppBar(
+            pinned: true,
+            backgroundColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu_rounded, size: 24),
+                onPressed: () => Scaffold.maybeOf(context)?.openDrawer(),
+              ),
+            ),
+            title: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Settings',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color:
+                              isDark ? AppColors.textPrimary : Colors.black87,
+                        ),
+                  ),
+                ],
+              ),
+            ),
           ),
+
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Appearance",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                  // ── Profile banner ─────────────────────────────────
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.accent.withValues(alpha: 0.25),
+                          AppColors.accent.withValues(alpha: 0.08),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                          color: AppColors.accent.withValues(alpha: 0.3)),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Card(
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                    child: Column(
+                    child: Row(
                       children: [
-                        RadioListTile<ThemeMode>(
-                          title: Text(AppLocalizations.of(context)!.system),
-                          secondary: const Icon(Icons.brightness_auto),
-                          value: ThemeMode.system,
-                          groupValue: themeMode,
-                          onChanged: (val) =>
-                              ref.read(themeProvider.notifier).setTheme(val!),
-                        ),
-                        RadioListTile<ThemeMode>(
-                          title: Text(AppLocalizations.of(context)!.light),
-                          secondary: const Icon(Icons.light_mode),
-                          value: ThemeMode.light,
-                          groupValue: themeMode,
-                          onChanged: (val) =>
-                              ref.read(themeProvider.notifier).setTheme(val!),
-                        ),
-                        RadioListTile<ThemeMode>(
-                          title: Text(AppLocalizations.of(context)!.dark),
-                          secondary: const Icon(Icons.dark_mode),
-                          value: ThemeMode.dark,
-                          groupValue: themeMode,
-                          onChanged: (val) =>
-                              ref.read(themeProvider.notifier).setTheme(val!),
-                        ),
-                      ],
-                    ),
-                  ).animate().fadeIn().slideY(begin: 0.1),
-
-                  const SizedBox(height: 32),
-                  Text(
-                    AppLocalizations.of(context)!.options,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Card(
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                    child: Column(
-                      children: [
-                        ListTile(
-                          leading: const Icon(Icons.language),
-                          title: const Text("Language"),
-                          subtitle: Text(
-                            Localizations.localeOf(context).languageCode == 'en'
-                                ? "English"
-                                : "Español",
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: AppColors.accent,
+                            borderRadius: BorderRadius.circular(14),
                           ),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => SimpleDialog(
-                                title: const Text("Select Language"),
-                                children: [
-                                  SimpleDialogOption(
-                                    onPressed: () {
-                                      ref
-                                          .read(localeProvider.notifier)
-                                          .setLocale(const Locale('en'));
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text("English"),
-                                  ),
-                                  SimpleDialogOption(
-                                    onPressed: () {
-                                      ref
-                                          .read(localeProvider.notifier)
-                                          .setLocale(const Locale('es'));
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text("Español"),
-                                  ),
-                                ],
+                          child: const Icon(
+                            Icons.person_rounded,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Shortly User',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w700),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'Free Plan',
+                              style: TextStyle(
+                                color: AppColors.accent,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
                               ),
-                            );
-                          },
+                            ),
+                          ],
                         ),
-                        const Divider(height: 1),
-                        ListTile(
-                          leading: const Icon(Icons.feedback_outlined),
-                          title: const Text("Feedback"),
-                          onTap: () async {
-                            final Uri emailLaunchUri = Uri(
-                              scheme: 'mailto',
-                              path: 'feedback@shortly.app',
-                              query: 'subject=Sortly App Feedback',
-                            );
-                            if (await canLaunchUrl(emailLaunchUri)) {
-                              launchUrl(emailLaunchUri);
-                            }
-                          },
-                        ),
-                        const Divider(height: 1),
-                        ListTile(
-                          leading: const Icon(Icons.share),
-                          title: Text(AppLocalizations.of(context)!.share),
-                          onTap: () {
-                            Share.share(
-                              "Check out Shortly, the best URL shortener app!",
-                            );
-                          },
-                        ),
-                        const Divider(height: 1),
-                        ListTile(
-                          leading: const Icon(Icons.star_rate_rounded),
-                          title: const Text("Rate App"),
-                          onTap: () async {
-                            final Uri url = Uri.parse(
-                              "market://details?id=com.example.shortly",
-                            );
-                            if (await canLaunchUrl(url)) {
-                              launchUrl(url);
-                            } else {
-                              final webUrl = Uri.parse(
-                                "https://play.google.com/store/apps/details?id=com.example.shortly",
-                              );
-                              if (await canLaunchUrl(webUrl)) {
-                                launchUrl(
-                                  webUrl,
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              }
-                            }
-                          },
-                        ),
-                        const Divider(height: 1),
-                        ListTile(
-                          leading: const Icon(Icons.apps),
-                          title: const Text("Other Apps"),
-                          onTap: () async {
-                            final Uri url = Uri.parse(
-                              "https://play.google.com/store/apps/developer?id=ExampleDeveloper",
-                            );
-                            if (await canLaunchUrl(url)) {
-                              launchUrl(
-                                url,
-                                mode: LaunchMode.externalApplication,
-                              );
-                            }
-                          },
-                        ),
-                        const Divider(height: 1),
-                        ListTile(
-                          leading: const Icon(Icons.privacy_tip_outlined),
-                          title: const Text("Privacy Policy"),
-                          onTap: () async {
-                            final Uri url = Uri.parse(
-                              "https://example.com/privacy",
-                            );
-                            if (await canLaunchUrl(url)) {
-                              launchUrl(
-                                url,
-                                mode: LaunchMode.externalApplication,
-                              );
-                            }
-                          },
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            'Upgrade',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
-
-                  const SizedBox(height: 32),
-                  Text(
-                    "About",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Card(
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                    child: ListTile(
-                      leading: const Icon(Icons.info),
-                      title: const Text("Version"),
-                      trailing: const Text("1.0.0"),
-                    ),
-                  ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
+
+                  // ── Appearance section ─────────────────────────────
+                  _SectionHeader(label: 'Appearance', isDark: isDark),
+                  const SizedBox(height: 10),
+
+                  _SettingsCard(
+                    isDark: isDark,
+                    children: [
+                      _ThemeTile(
+                        icon: Icons.brightness_auto_rounded,
+                        label: AppLocalizations.of(context)!.system,
+                        value: ThemeMode.system,
+                        groupValue: themeMode,
+                        ref: ref,
+                        isDark: isDark,
+                      ),
+                      _Divider(isDark: isDark),
+                      _ThemeTile(
+                        icon: Icons.light_mode_rounded,
+                        label: AppLocalizations.of(context)!.light,
+                        value: ThemeMode.light,
+                        groupValue: themeMode,
+                        ref: ref,
+                        isDark: isDark,
+                      ),
+                      _Divider(isDark: isDark),
+                      _ThemeTile(
+                        icon: Icons.dark_mode_rounded,
+                        label: AppLocalizations.of(context)!.dark,
+                        value: ThemeMode.dark,
+                        groupValue: themeMode,
+                        ref: ref,
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ── Options section ────────────────────────────────
+                  _SectionHeader(label: 'Options', isDark: isDark),
+                  const SizedBox(height: 10),
+
+                  _SettingsCard(
+                    isDark: isDark,
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.language_rounded,
+                        label: 'Language',
+                        trailing: Text(
+                          Localizations.localeOf(context).languageCode == 'en'
+                              ? 'English'
+                              : 'Español',
+                          style: const TextStyle(
+                              color: AppColors.textMuted, fontSize: 13),
+                        ),
+                        isDark: isDark,
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => SimpleDialog(
+                              title: const Text('Select Language'),
+                              children: [
+                                SimpleDialogOption(
+                                  onPressed: () {
+                                    ref
+                                        .read(localeProvider.notifier)
+                                        .setLocale(const Locale('en'));
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('English'),
+                                ),
+                                SimpleDialogOption(
+                                  onPressed: () {
+                                    ref
+                                        .read(localeProvider.notifier)
+                                        .setLocale(const Locale('es'));
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Español'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      _Divider(isDark: isDark),
+                      _SettingsTile(
+                        icon: Icons.feedback_outlined,
+                        label: 'Feedback',
+                        isDark: isDark,
+                        onTap: () async {
+                          final Uri emailLaunchUri = Uri(
+                            scheme: 'mailto',
+                            path: 'feedback@shortly.app',
+                            query: 'subject=Shortly App Feedback',
+                          );
+                          if (await canLaunchUrl(emailLaunchUri)) {
+                            launchUrl(emailLaunchUri);
+                          }
+                        },
+                      ),
+                      _Divider(isDark: isDark),
+                      _SettingsTile(
+                        icon: Icons.share_rounded,
+                        label: AppLocalizations.of(context)!.share,
+                        isDark: isDark,
+                        onTap: () {
+                          SharePlus.instance.share(
+                            ShareParams(text: 'Check out Shortly, the best URL shortener app!'),
+                          );
+                        },
+                      ),
+                      _Divider(isDark: isDark),
+                      _SettingsTile(
+                        icon: Icons.star_rate_rounded,
+                        label: 'Rate App',
+                        isDark: isDark,
+                        onTap: () async {
+                          final Uri url = Uri.parse(
+                              'market://details?id=com.example.shortly');
+                          if (!await launchUrl(url)) {
+                            final webUrl = Uri.parse(
+                              'https://play.google.com/store/apps/details?id=com.example.shortly',
+                            );
+                            if (await canLaunchUrl(webUrl)) {
+                              launchUrl(webUrl,
+                                  mode: LaunchMode.externalApplication);
+                            }
+                          }
+                        },
+                      ),
+                      _Divider(isDark: isDark),
+                      _SettingsTile(
+                        icon: Icons.privacy_tip_outlined,
+                        label: 'Privacy Policy',
+                        isDark: isDark,
+                        onTap: () async {
+                          final Uri url =
+                              Uri.parse('https://example.com/privacy');
+                          if (await canLaunchUrl(url)) {
+                            launchUrl(url,
+                                mode: LaunchMode.externalApplication);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ── About section ──────────────────────────────────
+                  _SectionHeader(label: 'About', isDark: isDark),
+                  const SizedBox(height: 10),
+
+                  _SettingsCard(
+                    isDark: isDark,
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.info_outline_rounded,
+                        label: 'Version',
+                        isDark: isDark,
+                        trailing: const Text(
+                          '1.0.0',
+                          style: TextStyle(
+                              color: AppColors.textMuted, fontSize: 13),
+                        ),
+                      ),
+                      _Divider(isDark: isDark),
+                      _SettingsTile(
+                        icon: Icons.apps_rounded,
+                        label: 'Other Apps',
+                        isDark: isDark,
+                        onTap: () async {
+                          final Uri url = Uri.parse(
+                            'https://play.google.com/store/apps/developer?id=ExampleDeveloper',
+                          );
+                          if (await canLaunchUrl(url)) {
+                            launchUrl(url,
+                                mode: LaunchMode.externalApplication);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 28),
                   Center(
                     child: Text(
-                      "Made with ❤️ by Flutter",
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                      'Made with ❤️ using Flutter',
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.textMuted
+                            : Colors.grey.shade400,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 32),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String label;
+  final bool isDark;
+  const _SectionHeader({required this.label, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label.toUpperCase(),
+      style: TextStyle(
+        color: isDark ? AppColors.textMuted : Colors.grey.shade500,
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 1.2,
+      ),
+    );
+  }
+}
+
+class _SettingsCard extends StatelessWidget {
+  final List<Widget> children;
+  final bool isDark;
+  const _SettingsCard({required this.children, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCard : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: isDark
+            ? Border.all(color: AppColors.darkCardBorder)
+            : Border.all(color: Colors.grey.shade200),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
+      child: Column(children: children),
+    );
+  }
+}
+
+class _Divider extends StatelessWidget {
+  final bool isDark;
+  const _Divider({required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: isDark ? AppColors.darkCardBorder : Colors.grey.shade100,
+      indent: 58,
+      endIndent: 0,
+    );
+  }
+}
+
+class _SettingsTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+  final Widget? trailing;
+  final bool isDark;
+
+  const _SettingsTile({
+    required this.icon,
+    required this.label,
+    required this.isDark,
+    this.onTap,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Icon(icon, size: 18, color: AppColors.accent),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? AppColors.textPrimary : Colors.black87,
+                  ),
+                ),
+              ),
+              trailing ??
+                  (onTap != null
+                      ? Icon(
+                          Icons.chevron_right_rounded,
+                          size: 18,
+                          color: isDark
+                              ? AppColors.textMuted
+                              : Colors.grey.shade400,
+                        )
+                      : const SizedBox.shrink()),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ThemeTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final ThemeMode value;
+  final ThemeMode groupValue;
+  final WidgetRef ref;
+  final bool isDark;
+
+  const _ThemeTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.groupValue,
+    required this.ref,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = value == groupValue;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => ref.read(themeProvider.notifier).setTheme(value),
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.accent.withValues(alpha: 0.15)
+                      : AppColors.accent.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Icon(
+                  icon,
+                  size: 18,
+                  color: isSelected
+                      ? AppColors.accent
+                      : (isDark ? AppColors.textMuted : Colors.grey.shade500),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14.5,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected
+                        ? AppColors.accent
+                        : (isDark ? AppColors.textPrimary : Colors.black87),
+                  ),
+                ),
+              ),
+              if (isSelected)
+                const Icon(Icons.check_circle_rounded,
+                    color: AppColors.accent, size: 20)
+              else
+                Icon(
+                  Icons.radio_button_unchecked_rounded,
+                  size: 20,
+                  color:
+                      isDark ? AppColors.textMuted : Colors.grey.shade300,
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

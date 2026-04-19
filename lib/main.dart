@@ -6,24 +6,24 @@ import 'core/theme.dart';
 import 'presentation/screens/main_screen.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'presentation/providers/locale_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Set edge-to-edge mode
+
+  // Edge-to-edge display
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  // Initial system UI overlay (will be updated by theme)
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       systemNavigationBarColor: Colors.transparent,
       systemNavigationBarDividerColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarIconBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
+
   runApp(const ProviderScope(child: ShortlyApp()));
 }
 
