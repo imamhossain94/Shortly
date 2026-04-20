@@ -20,6 +20,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
     with AutomaticKeepAliveClientMixin {
   final TextEditingController _urlController = TextEditingController();
   String _selectedProvider = AppConstants.tinyUrl;
+  bool _isFocused = false;
 
   final List<String> _providers = [
     AppConstants.tinyUrl,
@@ -69,179 +70,256 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final history = ref.watch(filteredHistoryProvider);
 
-    return Container(
-      color: Colors.transparent,
-      child: CustomScrollView(
-        slivers: [
-          // ── App Bar ──────────────────────────────────────────────────
-          SliverAppBar(
-            pinned: true,
-            floating: false,
-            backgroundColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-            leading: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu_rounded, size: 24),
-                onPressed: () => Scaffold.maybeOf(context)?.openDrawer(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Header (fixed, non-scrollable) ────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Short',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? AppColors.textPrimary : Colors.black87,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'ly',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            title: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Short',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
+              Builder(
+                builder: (context) => GestureDetector(
+                  onTap: () => Scaffold.maybeOf(context)?.openDrawer(),
+                  child: Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkCard : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(11),
+                      border: isDark
+                          ? Border.all(color: AppColors.darkCardBorder)
+                          : Border.all(color: Colors.grey.shade200),
+                    ),
+                    child: Icon(
+                      Icons.menu_rounded,
+                      size: 20,
                       color: isDark ? AppColors.textPrimary : Colors.black87,
                     ),
                   ),
-                  TextSpan(
-                    text: 'ly',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.accent,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              Container(
-                margin: const EdgeInsets.only(right: 12),
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.bookmark_rounded,
-                  color: AppColors.accent,
-                  size: 20,
                 ),
               ),
             ],
           ),
+        ),
 
-          // ── URL Input + Button ────────────────────────────────────────
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        // ── URL Input + Button (fixed, non-scrollable) ────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Section label
+              Row(
                 children: [
-                  Text(
-                    'Enter Long URL',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: isDark
-                          ? AppColors.textSecondary
-                          : Colors.grey.shade600,
+                  Container(
+                    width: 4,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: AppColors.accent,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Paste your long URL',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? AppColors.textSecondary
+                          : Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
 
-                  // Provider + URL input card
-                  Container(
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkCard : Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: isDark
+              // ── URL input card ──────────────────────────────────────────
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkCard : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: _isFocused
+                      ? Border.all(color: AppColors.accent, width: 2)
+                      : isDark
                           ? Border.all(color: AppColors.darkCardBorder)
                           : Border.all(color: Colors.grey.shade200),
-                      boxShadow: isDark
+                  boxShadow: _isFocused
+                      ? [
+                          BoxShadow(
+                            color: AppColors.accent.withValues(alpha: 0.12),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : isDark
                           ? null
                           : [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.03),
+                                color: Colors.black.withValues(alpha: 0.04),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
                             ],
-                    ),
-                    child: Column(
-                      children: [
-                        // URL TextField
-                        TextField(
-                          controller: _urlController,
-                          style: TextStyle(
-                            color: isDark
-                                ? AppColors.textPrimary
-                                : Colors.black87,
-                            fontSize: 15,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'https://example.com/long-link',
-                            hintStyle: const TextStyle(
-                              color: AppColors.textMuted,
-                              fontSize: 14,
-                            ),
-                            prefixIcon: const Icon(
-                              Icons.link_rounded,
-                              color: AppColors.textMuted,
-                              size: 20,
-                            ),
-                            suffixIcon: IconButton(
-                              icon: const Icon(
-                                Icons.content_paste_rounded,
-                                size: 18,
-                              ),
-                              color: AppColors.textMuted,
-                              onPressed: () async {
-                                final data = await Clipboard.getData(
-                                  'text/plain',
-                                );
-                                if (data?.text != null) {
-                                  _urlController.text = data!.text!;
-                                }
-                              },
-                            ),
-                            filled: false,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 18,
-                            ),
-                          ),
-                          keyboardType: TextInputType.url,
-                          textInputAction: TextInputAction.done,
-                          onSubmitted: (_) => _handleShorten(),
-                        ),
-
-                        // Provider selector row
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 14, 8, 0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: 36,
+                            height: 36,
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? AppColors.darkBg.withValues(alpha: 0.5)
-                                  : Colors.grey.shade50,
+                              color: _isFocused
+                                  ? AppColors.accent.withValues(alpha: 0.12)
+                                  : (isDark
+                                      ? AppColors.darkBg.withValues(alpha: 0.5)
+                                      : Colors.grey.shade100),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: isDark
-                                    ? AppColors.darkCardBorder
-                                    : Colors.grey.shade200,
+                            ),
+                            child: Icon(
+                              Icons.link_rounded,
+                              size: 18,
+                              color: _isFocused
+                                  ? AppColors.accent
+                                  : AppColors.textMuted,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Focus(
+                              onFocusChange: (focused) =>
+                                  setState(() => _isFocused = focused),
+                              child: TextField(
+                                controller: _urlController,
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.textPrimary
+                                      : Colors.black87,
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText:
+                                      'https://example.com/very-long-url...',
+                                  hintStyle: TextStyle(
+                                    color: isDark
+                                        ? AppColors.textMuted
+                                        : Colors.grey.shade400,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  filled: false,
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                ),
+                                keyboardType: TextInputType.url,
+                                textInputAction: TextInputAction.done,
+                                onSubmitted: (_) => _handleShorten(),
                               ),
                             ),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.content_paste_rounded,
+                              size: 18,
+                              color: _isFocused
+                                  ? AppColors.accent
+                                  : AppColors.textMuted,
+                            ),
+                            splashRadius: 20,
+                            tooltip: 'Paste',
+                            onPressed: () async {
+                              final data =
+                                  await Clipboard.getData('text/plain');
+                              if (data?.text != null) {
+                                _urlController.text = data!.text!;
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                      child: Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: isDark
+                            ? AppColors.darkCardBorder
+                            : Colors.grey.shade100,
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 12),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.hub_outlined,
+                            size: 14,
+                            color: AppColors.textMuted,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'via',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textMuted,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 value: _selectedProvider,
                                 isExpanded: true,
+                                isDense: true,
                                 icon: const Icon(
                                   Icons.expand_more_rounded,
                                   color: AppColors.textMuted,
-                                  size: 18,
+                                  size: 16,
                                 ),
                                 dropdownColor: isDark
                                     ? AppColors.darkCard
                                     : Colors.white,
                                 style: TextStyle(
                                   color: isDark
-                                      ? AppColors.textSecondary
-                                      : Colors.grey.shade700,
+                                      ? AppColors.accent
+                                      : AppColors.accent,
                                   fontSize: 13,
+                                  fontWeight: FontWeight.w600,
                                 ),
                                 items: _providers
                                     .map(
@@ -253,82 +331,10 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                                     .toList(),
                                 onChanged: (value) {
                                   if (value != null) {
-                                    setState(() => _selectedProvider = value);
+                                    setState(
+                                        () => _selectedProvider = value);
                                   }
                                 },
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 14),
-
-                  // Shorten Now button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 54,
-                    child: ElevatedButton(
-                      onPressed: state.isLoading ? null : _handleShorten,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accent,
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: AppColors.accent.withValues(
-                          alpha: 0.5,
-                        ),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: state.isLoading
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text(
-                              'Shorten Now',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.3,
-                              ),
-                            ),
-                    ),
-                  ),
-
-                  // Error message
-                  if (state.error != null) ...[
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.red.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            color: Colors.red,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              state.error!,
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 13,
                               ),
                             ),
                           ),
@@ -336,33 +342,108 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                       ),
                     ),
                   ],
+                ),
+              ),
 
-                  const SizedBox(height: 32),
+              const SizedBox(height: 14),
 
-                  // Recent Links header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Shorten Now button
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: state.isLoading ? null : _handleShorten,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accent,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: AppColors.accent.withValues(
+                      alpha: 0.5,
+                    ),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: state.isLoading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.flash_on_rounded, size: 18),
+                            SizedBox(width: 6),
+                            Text(
+                              'Shorten Now',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+
+              // Error message
+              if (state.error != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.red.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
                     children: [
-                      Text(
-                        'Recent Links',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                      const Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          state.error!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 13,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                ],
-              ),
-            ),
-          ),
+                ),
+              ],
 
-          // ── Recent Link Cards ─────────────────────────────────────────
-          if (history.isEmpty)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40),
-                child: Center(
+              const SizedBox(height: 20),
+
+              // Recent Links header
+              Text(
+                'Recent Links',
+                style: Theme.of(context).textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        ),
+
+        // ── Scrollable list ────────────────────────────────────────────────
+        Expanded(
+          child: history.isEmpty
+              ? Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         Icons.link_off_rounded,
@@ -383,21 +464,17 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                       ),
                     ],
                   ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                  itemCount: history.length > 5 ? 5 : history.length,
+                  itemBuilder: (context, index) {
+                    final item = history[index];
+                    return _LinkCard(item: item, isDark: isDark);
+                  },
                 ),
-              ),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final item = history[index];
-                  return _LinkCard(item: item, isDark: isDark);
-                }, childCount: history.length > 5 ? 5 : history.length),
-              ),
-            ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -419,12 +496,15 @@ class _LinkCard extends ConsumerWidget {
 
     String faviconLetter = '?';
     Color faviconBg = AppColors.textMuted;
+    String? faviconUrl;
     try {
       final uri = Uri.parse(originalUrl);
       final host = uri.host;
       if (host.isNotEmpty) {
         faviconLetter = host.replaceAll('www.', '')[0].toUpperCase();
         faviconBg = _colorFromHost(host);
+        faviconUrl =
+            'https://www.google.com/s2/favicons?sz=64&domain=${uri.scheme}://$host';
       }
     } catch (_) {}
 
@@ -461,25 +541,11 @@ class _LinkCard extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Row(
               children: [
-                // Modern square rounded favicon
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: faviconBg.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: faviconBg.withValues(alpha: 0.3)),
-                  ),
-                  child: Center(
-                    child: Text(
-                      faviconLetter,
-                      style: TextStyle(
-                        color: faviconBg,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
+                // Favicon with image + letter fallback
+                _FaviconWidget(
+                  faviconUrl: faviconUrl,
+                  faviconLetter: faviconLetter,
+                  faviconBg: faviconBg,
                 ),
                 const SizedBox(width: 16),
 
@@ -580,5 +646,62 @@ class _LinkCard extends ConsumerWidget {
       const Color(0xFF00897B),
     ];
     return colors[host.hashCode.abs() % colors.length];
+  }
+}
+
+/// Smart favicon widget: tries to load image favicon, falls back to letter icon
+class _FaviconWidget extends StatelessWidget {
+  final String? faviconUrl;
+  final String faviconLetter;
+  final Color faviconBg;
+
+  const _FaviconWidget({
+    required this.faviconUrl,
+    required this.faviconLetter,
+    required this.faviconBg,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: faviconBg.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: faviconBg.withValues(alpha: 0.25)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: faviconUrl != null
+          ? Image.network(
+              faviconUrl!,
+              width: 50,
+              height: 50,
+              fit: BoxFit.contain,
+              // Add padding so favicon sits nicely inside the container
+              frameBuilder: (ctx, child, frame, wasSynchronouslyLoaded) {
+                if (frame == null) return _letterFallback();
+                return Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: child,
+                );
+              },
+              errorBuilder: (ctx, err, stack) => _letterFallback(),
+            )
+          : _letterFallback(),
+    );
+  }
+
+  Widget _letterFallback() {
+    return Center(
+      child: Text(
+        faviconLetter,
+        style: TextStyle(
+          color: faviconBg,
+          fontSize: 22,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
   }
 }

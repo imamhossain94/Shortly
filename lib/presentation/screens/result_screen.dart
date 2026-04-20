@@ -287,43 +287,146 @@ class _ResultScreenState extends State<ResultScreen>
                   ),
 
                   // QR Code tab
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (displayUrl != null)
-                          Container(
-                            padding: const EdgeInsets.all(24),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(24),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.accent.withValues(alpha: 0.1),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 8),
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 8),
+                          if (displayUrl != null) ...[
+                            // Outer card
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(28),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? AppColors.darkCard
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(28),
+                                border: Border.all(
+                                  color: isDark
+                                      ? AppColors.darkCardBorder
+                                      : Colors.grey.shade200,
+                                  width: 1.5,
                                 ),
-                              ],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.accent.withValues(
+                                        alpha: isDark ? 0.12 : 0.08),
+                                    blurRadius: 28,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  // QR with scan-frame corners
+                                  Center(
+                                    child: SizedBox(
+                                      width: 220,
+                                      height: 220,
+                                      child: Stack(
+                                        children: [
+                                          // White QR background
+                                          Container(
+                                            padding: const EdgeInsets.all(14),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            child: QrWidget(
+                                              data: displayUrl,
+                                              color: Colors.black,
+                                              backgroundColor: Colors.white,
+                                            ),
+                                          ),
+                                          // Top-left corner
+                                          Positioned(
+                                            top: 0,
+                                            left: 0,
+                                            child: _ScanCorner(
+                                                topLeft: true),
+                                          ),
+                                          // Top-right corner
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: _ScanCorner(
+                                                topRight: true),
+                                          ),
+                                          // Bottom-left corner
+                                          Positioned(
+                                            bottom: 0,
+                                            left: 0,
+                                            child: _ScanCorner(
+                                                bottomLeft: true),
+                                          ),
+                                          // Bottom-right corner
+                                          Positioned(
+                                            bottom: 0,
+                                            right: 0,
+                                            child: _ScanCorner(
+                                                bottomRight: true),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 22),
+                                  // URL chip
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.accent
+                                          .withValues(alpha: 0.08),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                          color: AppColors.accent
+                                              .withValues(alpha: 0.2)),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.link_rounded,
+                                            size: 13,
+                                            color: AppColors.accent),
+                                        const SizedBox(width: 6),
+                                        Flexible(
+                                          child: Text(
+                                            displayUrl,
+                                            style: const TextStyle(
+                                              color: AppColors.accent,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: QrWidget(
-                              data: displayUrl,
-                              color: Colors.black,
-                              backgroundColor: Colors.white,
+                            const SizedBox(height: 24),
+                            Text(
+                              'Point your camera at the QR code\nto open the link instantly.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.textSecondary
+                                    : Colors.grey.shade500,
+                                fontSize: 13,
+                                height: 1.6,
+                              ),
                             ),
-                          ),
-                        const SizedBox(height: 32),
-                        const Text(
-                          'Scan this QR code with any camera app to directly open the link.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.textMuted,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 60),
-                      ],
+                          ],
+                          const SizedBox(height: 40),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -334,4 +437,109 @@ class _ResultScreenState extends State<ResultScreen>
       ),
     );
   }
+}
+
+/// Accent-coloured L-shaped corner marker for the QR scan frame.
+class _ScanCorner extends StatelessWidget {
+  final bool topLeft;
+  final bool topRight;
+  final bool bottomLeft;
+  final bool bottomRight;
+
+  const _ScanCorner({
+    this.topLeft = false,
+    this.topRight = false,
+    this.bottomLeft = false,
+    this.bottomRight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const size = 22.0;
+    const thickness = 3.0;
+    const radius = 6.0;
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: CustomPaint(
+        painter: _CornerPainter(
+          topLeft: topLeft,
+          topRight: topRight,
+          bottomLeft: bottomLeft,
+          bottomRight: bottomRight,
+          color: AppColors.accent,
+          thickness: thickness,
+          radius: radius,
+        ),
+      ),
+    );
+  }
+}
+
+class _CornerPainter extends CustomPainter {
+  final bool topLeft;
+  final bool topRight;
+  final bool bottomLeft;
+  final bool bottomRight;
+  final Color color;
+  final double thickness;
+  final double radius;
+
+  _CornerPainter({
+    required this.topLeft,
+    required this.topRight,
+    required this.bottomLeft,
+    required this.bottomRight,
+    required this.color,
+    required this.thickness,
+    required this.radius,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = thickness
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final path = Path();
+    final w = size.width;
+    final h = size.height;
+
+    if (topLeft) {
+      path.moveTo(0, h);
+      path.lineTo(0, radius);
+      path.arcToPoint(Offset(radius, 0),
+          radius: Radius.circular(radius), clockwise: true);
+      path.lineTo(w, 0);
+    } else if (topRight) {
+      path.moveTo(0, 0);
+      path.lineTo(w - radius, 0);
+      path.arcToPoint(Offset(w, radius),
+          radius: Radius.circular(radius), clockwise: true);
+      path.lineTo(w, h);
+    } else if (bottomLeft) {
+      path.moveTo(w, h);
+      path.lineTo(radius, h);
+      path.arcToPoint(Offset(0, h - radius),
+          radius: Radius.circular(radius), clockwise: true);
+      path.lineTo(0, 0);
+    } else {
+      path.moveTo(0, h);
+      path.lineTo(w, h - 0);
+      path.lineTo(w, h);
+      path.moveTo(w, h);
+      path.lineTo(w, radius);
+      path.arcToPoint(Offset(w - radius, 0),
+          radius: Radius.circular(radius), clockwise: false);
+      path.lineTo(0, 0);
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_CornerPainter oldDelegate) => false;
 }

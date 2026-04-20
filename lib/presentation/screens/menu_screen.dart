@@ -15,111 +15,189 @@ class MenuScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      color: Colors.transparent,
-      child: CustomScrollView(
-        slivers: [
-          // ── App Bar ──────────────────────────────────────────────────
-          SliverAppBar(
-            pinned: true,
-            backgroundColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-            leading: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu_rounded, size: 24),
-                onPressed: () => Scaffold.maybeOf(context)?.openDrawer(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Header (fixed, non-scrollable) ────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Settings',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? AppColors.textPrimary : Colors.black87,
+                ),
               ),
-            ),
-            title: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Settings',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color:
-                              isDark ? AppColors.textPrimary : Colors.black87,
-                        ),
+              Builder(
+                builder: (context) => GestureDetector(
+                  onTap: () => Scaffold.maybeOf(context)?.openDrawer(),
+                  child: Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.darkCard
+                          : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(11),
+                      border: isDark
+                          ? Border.all(color: AppColors.darkCardBorder)
+                          : Border.all(color: Colors.grey.shade200),
+                    ),
+                    child: Icon(
+                      Icons.menu_rounded,
+                      size: 20,
+                      color: isDark
+                          ? AppColors.textPrimary
+                          : Colors.black87,
+                    ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
+        ),
 
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Profile banner ─────────────────────────────────
+        // ── Scrollable content ─────────────────────────────────────────────
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 60),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                  // ── Profile banner – premium redesign ──────────────
                   Container(
-                    padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.accent.withValues(alpha: 0.25),
-                          AppColors.accent.withValues(alpha: 0.08),
+                          AppColors.accent.withValues(alpha: 0.18),
+                          AppColors.accent.withValues(alpha: 0.06),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.3)),
+                          color: AppColors.accent.withValues(alpha: 0.25),
+                          width: 1.5),
                     ),
                     child: Row(
                       children: [
+                        // Gradient avatar with initial
                         Container(
-                          width: 52,
-                          height: 52,
+                          width: 54,
+                          height: 54,
                           decoration: BoxDecoration(
-                            color: AppColors.accent,
-                            borderRadius: BorderRadius.circular(14),
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.accent,
+                                AppColors.accent.withValues(alpha: 0.72),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.accent.withValues(alpha: 0.35),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          child: const Icon(
-                            Icons.person_rounded,
-                            color: Colors.white,
-                            size: 28,
+                          child: const Center(
+                            child: Text(
+                              'S',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 14),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Shortly User',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              'Free Plan',
-                              style: TextStyle(
-                                color: AppColors.accent,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Shortly User',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark
+                                          ? AppColors.textPrimary
+                                          : Colors.black87,
+                                    ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 7,
+                                    height: 7,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF4CAF50),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  const Text(
+                                    'Free Plan',
+                                    style: TextStyle(
+                                      color: AppColors.textMuted,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                        const Spacer(),
+                        // Upgrade chip with gradient + glow
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
+                              horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
-                            color: AppColors.accent,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text(
-                            'Upgrade',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.accent,
+                                AppColors.accent.withValues(alpha: 0.78),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.accent.withValues(alpha: 0.35),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.bolt_rounded,
+                                  color: Colors.white, size: 13),
+                              SizedBox(width: 3),
+                              Text(
+                                'Pro',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -313,24 +391,11 @@ class MenuScreen extends ConsumerWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 28),
-                  Center(
-                    child: Text(
-                      'Made with ❤️ using Flutter',
-                      style: TextStyle(
-                        color: isDark
-                            ? AppColors.textMuted
-                            : Colors.grey.shade400,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

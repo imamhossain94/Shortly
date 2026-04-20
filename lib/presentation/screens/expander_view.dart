@@ -57,79 +57,111 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
     final state = ref.watch(shortenerProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      color: Colors.transparent,
-      child: CustomScrollView(
-        slivers: [
-          // ── App Bar ──────────────────────────────────────────────────
-          SliverAppBar(
-            pinned: true,
-            backgroundColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-            leading: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu_rounded, size: 24),
-                onPressed: () => Scaffold.maybeOf(context)?.openDrawer(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Header (fixed, non-scrollable) ────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Verify',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? AppColors.textPrimary : Colors.black87,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' Link',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            title: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Verify',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color:
-                              isDark ? AppColors.textPrimary : Colors.black87,
-                        ),
+              Builder(
+                builder: (context) => GestureDetector(
+                  onTap: () => Scaffold.maybeOf(context)?.openDrawer(),
+                  child: Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkCard : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(11),
+                      border: isDark
+                          ? Border.all(color: AppColors.darkCardBorder)
+                          : Border.all(color: Colors.grey.shade200),
+                    ),
+                    child: Icon(
+                      Icons.menu_rounded,
+                      size: 20,
+                      color: isDark ? AppColors.textPrimary : Colors.black87,
+                    ),
                   ),
-                  TextSpan(
-                    text: ' Link',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.accent,
-                        ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
+        ),
 
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        // ── Scrollable content ─────────────────────────────────────────────
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Info card
+                  // Info card – premium redesign
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.accent.withValues(alpha: 0.15),
-                          AppColors.accent.withValues(alpha: 0.05),
+                          AppColors.accent.withValues(alpha: 0.13),
+                          AppColors.accent.withValues(alpha: 0.04),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.25), width: 1.5),
+                          color: AppColors.accent.withValues(alpha: 0.22),
+                          width: 1.5),
                     ),
                     child: Row(
                       children: [
                         Container(
-                          width: 44,
-                          height: 44,
+                          width: 50,
+                          height: 50,
                           decoration: BoxDecoration(
-                            color: AppColors.accent.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.accent,
+                                AppColors.accent.withValues(alpha: 0.75),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.accent.withValues(alpha: 0.35),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: const Icon(
-                            Icons.verified_user_rounded,
-                            color: AppColors.accent,
-                            size: 22,
+                            Icons.shield_rounded,
+                            color: Colors.white,
+                            size: 24,
                           ),
                         ),
                         const SizedBox(width: 14),
@@ -142,16 +174,22 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleSmall
-                                    ?.copyWith(fontWeight: FontWeight.w700),
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark
+                                          ? AppColors.textPrimary
+                                          : Colors.black87,
+                                    ),
                               ),
-                              const SizedBox(height: 3),
+                              const SizedBox(height: 5),
                               Text(
-                                'Reveal the full destination URL behind any shortened link.',
+                                'Safely reveal the full destination behind any shortened link.',
                                 style: TextStyle(
                                   color: isDark
                                       ? AppColors.textSecondary
                                       : Colors.grey.shade600,
                                   fontSize: 12,
+                                  height: 1.4,
                                 ),
                               ),
                             ],
@@ -332,8 +370,7 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
               ),
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 }

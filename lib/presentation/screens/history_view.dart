@@ -58,204 +58,218 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
       );
     }
 
-    return Container(
-      color: Colors.transparent,
-      child: CustomScrollView(
-        slivers: [
-          // ── App Bar ──────────────────────────────────────────────────
-          SliverAppBar(
-            pinned: true,
-            floating: true,
-            backgroundColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-            leading: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu_rounded, size: 24),
-                onPressed: () => Scaffold.maybeOf(context)?.openDrawer(),
-              ),
-            ),
-            title: RichText(
-              text: TextSpan(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Header + Search (fixed, non-scrollable) ──────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextSpan(
-                    text: 'My ',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color:
-                              isDark ? AppColors.textPrimary : Colors.black87,
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'My ',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: isDark ? AppColors.textPrimary : Colors.black87,
+                          ),
                         ),
+                        TextSpan(
+                          text: 'Links',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.accent,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  TextSpan(
-                    text: 'Links',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.accent,
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => ref.read(historyProvider.notifier).refresh(),
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.darkCard : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(11),
+                            border: isDark
+                                ? Border.all(color: AppColors.darkCardBorder)
+                                : Border.all(color: Colors.grey.shade200),
+                          ),
+                          child: Icon(
+                            Icons.refresh_rounded,
+                            size: 20,
+                            color: isDark ? AppColors.textSecondary : Colors.grey.shade600,
+                          ),
                         ),
+                      ),
+                      const SizedBox(width: 8),
+                      Builder(
+                        builder: (context) => GestureDetector(
+                          onTap: () => Scaffold.maybeOf(context)?.openDrawer(),
+                          child: Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: isDark ? AppColors.darkCard : Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(11),
+                              border: isDark
+                                  ? Border.all(color: AppColors.darkCardBorder)
+                                  : Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: Icon(
+                              Icons.menu_rounded,
+                              size: 20,
+                              color: isDark ? AppColors.textPrimary : Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.refresh_rounded, size: 22),
-                color: isDark ? AppColors.textSecondary : null,
-                onPressed: () =>
-                    ref.read(historyProvider.notifier).refresh(),
+              const SizedBox(height: 14),
+              // Search bar
+              Container(
+                height: 46,
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkCard : Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(14),
+                  border: isDark
+                      ? Border.all(color: AppColors.darkCardBorder)
+                      : Border.all(color: Colors.grey.shade200),
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  style: TextStyle(
+                    color: isDark ? AppColors.textPrimary : Colors.black87,
+                    fontSize: 14,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Search links...',
+                    hintStyle: const TextStyle(
+                        color: AppColors.textMuted, fontSize: 13),
+                    prefixIcon: const Icon(Icons.search_rounded,
+                        color: AppColors.textMuted, size: 19),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.close_rounded, size: 17),
+                            color: AppColors.textMuted,
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _searchQuery = '';
+                              });
+                            },
+                          )
+                        : PopupMenuButton<String?>(
+                            icon: const Icon(Icons.filter_list_rounded,
+                                size: 18, color: AppColors.textMuted),
+                            onSelected: (value) {
+                              setState(() {
+                                _filterType = value;
+                              });
+                            },
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 'all',
+                                child: Text(AppLocalizations.of(context)!.all),
+                              ),
+                              PopupMenuItem(
+                                value: 'shorten',
+                                child: Text(AppLocalizations.of(context)!.shortenedUrl),
+                              ),
+                              PopupMenuItem(
+                                value: 'expand',
+                                child: Text(AppLocalizations.of(context)!.expanded),
+                              ),
+                            ],
+                          ),
+                    filled: false,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 13),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+
+        // ── Summary chips (fixed, non-scrollable) ──────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: Row(
+            children: [
+              _SummaryChip(
+                label: '${history.length} Links',
+                isDark: isDark,
+                isAccent: false,
+              ),
+              const SizedBox(width: 8),
+              _SummaryChip(
+                label:
+                    '${history.where((i) => i.provider != null).length} Shortened',
+                isDark: isDark,
+                isAccent: true,
               ),
             ],
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(60),
-              child: Padding(
-                padding:
-                    const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: Container(
-                  height: 46,
-                  decoration: BoxDecoration(
-                    color:
-                        isDark ? AppColors.darkCard : Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(14),
-                    border: isDark
-                        ? Border.all(color: AppColors.darkCardBorder)
-                        : Border.all(color: Colors.grey.shade200),
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    style: TextStyle(
-                      color:
-                          isDark ? AppColors.textPrimary : Colors.black87,
-                      fontSize: 14,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Search links...',
-                      hintStyle: const TextStyle(
-                          color: AppColors.textMuted, fontSize: 13),
-                      prefixIcon: const Icon(Icons.search_rounded,
-                          color: AppColors.textMuted, size: 19),
-                      suffixIcon: _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.close_rounded,
-                                  size: 17),
-                              color: AppColors.textMuted,
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() {
-                                  _searchQuery = '';
-                                });
-                              },
-                            )
-                          : PopupMenuButton<String?>(
-                              icon: const Icon(Icons.filter_list_rounded,
-                                  size: 18, color: AppColors.textMuted),
-                              onSelected: (value) {
-                                setState(() {
-                                  _filterType = value;
-                                });
-                              },
-
-                              itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  value: 'all',
-                                  child: Text(
-                                      AppLocalizations.of(context)!.all),
-                                ),
-                                PopupMenuItem(
-                                  value: 'shorten',
-                                  child: Text(AppLocalizations.of(context)!
-                                      .shortenedUrl),
-                                ),
-                                PopupMenuItem(
-                                  value: 'expand',
-                                  child: Text(
-                                      AppLocalizations.of(context)!
-                                          .expanded),
-                                ),
-                              ],
-                            ),
-                      filled: false,
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 13),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _searchQuery = value;
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ),
           ),
+        ),
 
-          // ── Summary chip row ──────────────────────────────────────────
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-              child: Row(
-                children: [
-                  _SummaryChip(
-                    label: '${history.length} Links',
-                    isDark: isDark,
-                    isAccent: false,
-                  ),
-                  const SizedBox(width: 8),
-                  _SummaryChip(
-                    label:
-                        '${history.where((i) => i.provider != null).length} Shortened',
-                    isDark: isDark,
-                    isAccent: true,
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // ── List ──────────────────────────────────────────────────────
-          if (history.isEmpty)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.history_toggle_off_rounded,
-                      size: 56,
-                      color: isDark
-                          ? AppColors.textMuted
-                          : Colors.grey.shade300,
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      AppLocalizations.of(context)!.noHistory,
-                      style: TextStyle(
+        // ── Scrollable list ─────────────────────────────────────────────
+        Expanded(
+          child: history.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.history_toggle_off_rounded,
+                        size: 56,
                         color: isDark
                             ? AppColors.textMuted
-                            : Colors.grey.shade500,
-                        fontSize: 15,
+                            : Colors.grey.shade300,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
+                      const SizedBox(height: 14),
+                      Text(
+                        AppLocalizations.of(context)!.noHistory,
+                        style: TextStyle(
+                          color: isDark
+                              ? AppColors.textMuted
+                              : Colors.grey.shade500,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                  itemCount: history.length,
+                  itemBuilder: (context, index) {
                     final item = history[index];
-                    return _HistoryLinkCard(
-                        item: item, isDark: isDark, ref: ref);
+                    return _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
                   },
-                  childCount: history.length,
                 ),
-              ),
-            ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -339,12 +353,15 @@ class _HistoryLinkCard extends StatelessWidget {
 
     String faviconLetter = '?';
     Color faviconBg = AppColors.textMuted;
+    String? faviconUrl;
     try {
       final uri = Uri.parse(originalUrl);
       final host = uri.host;
       if (host.isNotEmpty) {
         faviconLetter = host.replaceAll('www.', '')[0].toUpperCase();
         faviconBg = _colorFromHost(host);
+        faviconUrl =
+            'https://www.google.com/s2/favicons?sz=64&domain=${uri.scheme}://$host';
       }
     } catch (_) {}
 
@@ -399,25 +416,61 @@ class _HistoryLinkCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Row(
                 children: [
-                  // Modern square rounded favicon
+                  // Favicon with image + letter fallback
                   Container(
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: faviconBg.withValues(alpha: 0.15),
+                      color: faviconBg.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: faviconBg.withValues(alpha: 0.3)),
+                      border: Border.all(color: faviconBg.withValues(alpha: 0.25)),
                     ),
-                    child: Center(
-                      child: Text(
-                        faviconLetter,
-                        style: TextStyle(
-                          color: faviconBg,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: faviconUrl != null
+                        ? Image.network(
+                            faviconUrl!,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.contain,
+                            frameBuilder: (ctx, child, frame, wasSynchronouslyLoaded) {
+                              if (frame == null) {
+                                return Center(
+                                  child: Text(
+                                    faviconLetter,
+                                    style: TextStyle(
+                                      color: faviconBg,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: child,
+                              );
+                            },
+                            errorBuilder: (ctx, err, stack) => Center(
+                              child: Text(
+                                faviconLetter,
+                                style: TextStyle(
+                                  color: faviconBg,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: Text(
+                              faviconLetter,
+                              style: TextStyle(
+                                color: faviconBg,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
                   ),
                   const SizedBox(width: 16),
 
