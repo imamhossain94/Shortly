@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_shortly/l10n/app_localizations.dart';
 import '../../core/theme.dart';
+import '../widgets/app_custom_bar.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
 
@@ -19,46 +20,7 @@ class MenuScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Header (fixed, non-scrollable) ────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.textPrimary : Colors.black87,
-                ),
-              ),
-              Builder(
-                builder: (context) => GestureDetector(
-                  onTap: () => Scaffold.maybeOf(context)?.openDrawer(),
-                  child: Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? AppColors.darkCard
-                          : Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(11),
-                      border: isDark
-                          ? Border.all(color: AppColors.darkCardBorder)
-                          : Border.all(color: Colors.grey.shade200),
-                    ),
-                    child: Icon(
-                      Icons.menu_rounded,
-                      size: 20,
-                      color: isDark
-                          ? AppColors.textPrimary
-                          : Colors.black87,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        const AppCustomBar(title: 'Settings'),
 
         // ── Scrollable content ─────────────────────────────────────────────
         Expanded(
@@ -67,141 +29,241 @@ class MenuScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                  // ── Profile banner – premium redesign ──────────────
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.accent.withValues(alpha: 0.18),
-                          AppColors.accent.withValues(alpha: 0.06),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.25),
-                          width: 1.5),
-                    ),
-                    child: Row(
-                      children: [
-                        // Gradient avatar with initial
-                        Container(
-                          width: 54,
-                          height: 54,
+                  // ── Profile Header – minimalist redesign ──────────────
+                  // ── Profile / Upgrade Section ─────────────────────────────
+                  Builder(
+                    builder: (context) {
+                      // Mock Pro state for demonstration
+                      const bool isPro = true;
+
+                      if (isPro) {
+                        return Container(
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.accent,
-                                AppColors.accent.withValues(alpha: 0.72),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
+                            color: isDark ? AppColors.darkCard : Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: isDark ? Border.all(color: AppColors.darkCardBorder) : Border.all(color: Colors.grey.shade200),
+                            boxShadow: isDark ? null : [
                               BoxShadow(
-                                color: AppColors.accent.withValues(alpha: 0.35),
+                                color: Colors.black.withValues(alpha: 0.04),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: const Center(
-                            child: Text(
-                              'S',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Shortly User',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: isDark
-                                          ? AppColors.textPrimary
-                                          : Colors.black87,
-                                    ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Shortly Pro',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w800,
+                                          color: isDark ? AppColors.textPrimary : Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.accent.withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: const Text(
+                                          'Active',
+                                          style: TextStyle(
+                                            color: AppColors.accent,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Icon(
+                                    Icons.verified_user_rounded,
+                                    color: AppColors.accent.withValues(alpha: 0.6),
+                                    size: 20,
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 5),
+                              const SizedBox(height: 20),
                               Row(
                                 children: [
+                                  // Clean Avatar with accent border
                                   Container(
-                                    width: 7,
-                                    height: 7,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF4CAF50),
+                                    width: 52,
+                                    height: 52,
+                                    decoration: BoxDecoration(
                                       shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: AppColors.accent.withValues(alpha: 0.15),
+                                        width: 2.5,
+                                      ),
+                                    ),
+                                    child: Container(
+                                      margin: const EdgeInsets.all(2),
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.accent,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          'S',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 5),
-                                  const Text(
-                                    'Free Plan',
-                                    style: TextStyle(
-                                      color: AppColors.textMuted,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Shortly User',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: isDark ? AppColors.textPrimary : Colors.black87,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          'Enjoying ad-free experience',
+                                          style: TextStyle(
+                                            color: isDark ? AppColors.textSecondary : Colors.grey.shade600,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
+                        );
+                      }
+
+                      // ── Upgrade Card (Non-Pro UI) based on attachment ────
+                      return Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: isDark ? AppColors.darkCard : Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: isDark ? Border.all(color: AppColors.darkCardBorder) : null,
                         ),
-                        // Upgrade chip with gradient + glow
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.accent,
-                                AppColors.accent.withValues(alpha: 0.78),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Shortly Pro',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800,
+                                        color: isDark ? AppColors.textPrimary : Colors.black87,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF007A87).withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: const Text(
+                                        'Free',
+                                        style: TextStyle(
+                                          color: Color(0xFF007A87),
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  '\$4.99 /mo',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: isDark ? AppColors.textSecondary : Colors.black54,
+                                  ),
+                                ),
                               ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
                             ),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.accent.withValues(alpha: 0.35),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.bolt_rounded,
-                                  color: Colors.white, size: 13),
-                              SizedBox(width: 3),
-                              Text(
-                                'Pro',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.check_rounded,
+                                  size: 16,
+                                  color: isDark ? AppColors.accent : Colors.black87,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Upgrade pro to remove ads, enjoy seamless experience.',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: isDark ? AppColors.textSecondary : Colors.black54,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black87,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: isDark ? BorderSide.none : BorderSide(color: Colors.grey.shade300),
+                                  ),
+                                ),
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Upgrade Now',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(Icons.chevron_right_rounded, size: 18),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 24),

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants.dart';
 import '../../core/theme.dart';
+import '../widgets/app_custom_bar.dart';
 import '../providers/shortener_provider.dart';
 import '../providers/history_provider.dart';
 import 'result_screen.dart';
@@ -74,55 +75,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Header (fixed, non-scrollable) ────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Short',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: isDark ? AppColors.textPrimary : Colors.black87,
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'ly',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.accent,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Builder(
-                builder: (context) => GestureDetector(
-                  onTap: () => Scaffold.maybeOf(context)?.openDrawer(),
-                  child: Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkCard : Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(11),
-                      border: isDark
-                          ? Border.all(color: AppColors.darkCardBorder)
-                          : Border.all(color: Colors.grey.shade200),
-                    ),
-                    child: Icon(
-                      Icons.menu_rounded,
-                      size: 20,
-                      color: isDark ? AppColors.textPrimary : Colors.black87,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        const AppCustomBar(title: 'Short', accentTitle: 'ly'),
 
         // ── URL Input + Button (fixed, non-scrollable) ────────────────────
         Padding(
@@ -164,8 +117,8 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                   border: _isFocused
                       ? Border.all(color: AppColors.accent, width: 2)
                       : isDark
-                          ? Border.all(color: AppColors.darkCardBorder)
-                          : Border.all(color: Colors.grey.shade200),
+                      ? Border.all(color: AppColors.darkCardBorder)
+                      : Border.all(color: Colors.grey.shade200),
                   boxShadow: _isFocused
                       ? [
                           BoxShadow(
@@ -175,14 +128,14 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                           ),
                         ]
                       : isDark
-                          ? null
-                          : [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.02),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                 ),
                 child: Column(
                   children: [
@@ -199,8 +152,10 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                               color: _isFocused
                                   ? AppColors.accent.withValues(alpha: 0.12)
                                   : (isDark
-                                      ? AppColors.darkBg.withValues(alpha: 0.5)
-                                      : Colors.grey.shade100),
+                                        ? AppColors.darkBg.withValues(
+                                            alpha: 0.5,
+                                          )
+                                        : Colors.grey.shade100),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(
@@ -259,8 +214,9 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                             splashRadius: 20,
                             tooltip: 'Paste',
                             onPressed: () async {
-                              final data =
-                                  await Clipboard.getData('text/plain');
+                              final data = await Clipboard.getData(
+                                'text/plain',
+                              );
                               if (data?.text != null) {
                                 _urlController.text = data!.text!;
                               }
@@ -331,8 +287,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                                     .toList(),
                                 onChanged: (value) {
                                   if (value != null) {
-                                    setState(
-                                        () => _selectedProvider = value);
+                                    setState(() => _selectedProvider = value);
                                   }
                                 },
                               ),
@@ -348,6 +303,16 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
               const SizedBox(height: 14),
 
               // Shorten Now button
+              /*
+                gradient: const LinearGradient(
+                  colors: [
+                    AppColors.accent,
+                    Color(0xFF1557B0),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              */
               SizedBox(
                 width: double.infinity,
                 height: 54,
@@ -360,24 +325,22 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                       alpha: 0.5,
                     ),
                     elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+                    shape: const StadiumBorder(),
                   ),
                   child: state.isLoading
                       ? const SizedBox(
                           width: 22,
                           height: 22,
                           child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
+                            strokeWidth: 2,
                             color: Colors.white,
                           ),
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
-                            Icon(Icons.flash_on_rounded, size: 18),
-                            SizedBox(width: 6),
+                            Icon(Icons.bolt_rounded, size: 18),
+                            SizedBox(width: 8),
                             Text(
                               'Shorten Now',
                               style: TextStyle(
@@ -430,8 +393,9 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
               // Recent Links header
               Text(
                 'Recent Links',
-                style: Theme.of(context).textTheme.titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 12),
             ],
@@ -681,10 +645,7 @@ class _FaviconWidget extends StatelessWidget {
               // Add padding so favicon sits nicely inside the container
               frameBuilder: (ctx, child, frame, wasSynchronouslyLoaded) {
                 if (frame == null) return _letterFallback();
-                return Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: child,
-                );
+                return Padding(padding: const EdgeInsets.all(10), child: child);
               },
               errorBuilder: (ctx, err, stack) => _letterFallback(),
             )

@@ -113,111 +113,236 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   Widget _buildNavigationDrawer(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return NavigationDrawer(
-      backgroundColor: isDark ? AppColors.darkSurface : null,
-      selectedIndex: _currentIndex,
-      onDestinationSelected: (index) {
-        _onTabTapped(index);
-        Navigator.pop(context);
-      },
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 48, 20, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Logo row
-              Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: AppColors.accent,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.link_rounded,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Short',
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: isDark
-                                    ? AppColors.textPrimary
-                                    : Colors.black87,
-                              ),
-                        ),
-                        TextSpan(
-                          text: 'ly',
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.accent,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
+    
+    return Drawer(
+      backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Premium Header
+          Container(
+            padding: const EdgeInsets.fromLTRB(24, 60, 24, 32),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.accent,
+                  AppColors.accent.withValues(alpha: 0.8),
                 ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                'URL Shortener & Expander',
-                style: Theme.of(
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.link_rounded,
+                    color: AppColors.accent,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: 'Short',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'ly',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Premium URL Shortener',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              children: [
+                _buildDrawerItem(
                   context,
-                ).textTheme.bodySmall?.copyWith(color: AppColors.textMuted),
+                  icon: Icons.home_rounded,
+                  label: 'Home',
+                  isSelected: _currentIndex == 0,
+                  onTap: () => _onTabTapped(0),
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.link_rounded,
+                  label: 'My Links',
+                  isSelected: _currentIndex == 1,
+                  onTap: () => _onTabTapped(1),
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.verified_user_rounded,
+                  label: 'Verify Link',
+                  isSelected: _currentIndex == 2,
+                  onTap: () => _onTabTapped(2),
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.settings_rounded,
+                  label: 'Settings',
+                  isSelected: _currentIndex == 3,
+                  onTap: () => _onTabTapped(3),
+                ),
+                
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  child: Divider(),
+                ),
+                
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  child: Text(
+                    'SUPPORT',
+                    style: TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.help_outline_rounded,
+                  label: 'Help & FAQ',
+                  onTap: () {},
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.info_outline_rounded,
+                  label: 'About Shortly',
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+          
+          // Bottom section
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              children: [
+                const Divider(),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'v3.0.2',
+                      style: TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Icon(
+                      Icons.copyright_rounded,
+                      size: 14,
+                      color: AppColors.textMuted,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    bool isSelected = false,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: InkWell(
+        onTap: () {
+          onTap();
+          Navigator.pop(context);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected 
+                ? AppColors.accent.withValues(alpha: 0.1) 
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected 
+                    ? AppColors.accent 
+                    : (isDark ? AppColors.textSecondary : Colors.black54),
+                size: 22,
+              ),
+              const SizedBox(width: 16),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected 
+                      ? AppColors.accent 
+                      : (isDark ? AppColors.textPrimary : Colors.black87),
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  fontSize: 15,
+                ),
               ),
             ],
           ),
         ),
-        const Divider(height: 1),
-        const SizedBox(height: 8),
-        NavigationDrawerDestination(
-          icon: const Icon(Icons.home_rounded),
-          label: const Text('Home'),
-        ),
-        NavigationDrawerDestination(
-          icon: const Icon(Icons.link_rounded),
-          label: const Text('My Links'),
-        ),
-        NavigationDrawerDestination(
-          icon: const Icon(Icons.verified_user_rounded),
-          label: const Text('Verify / Expand'),
-        ),
-        NavigationDrawerDestination(
-          icon: const Icon(Icons.flag_rounded),
-          label: const Text('Report / Settings'),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Divider(height: 1),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            'Support',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: AppColors.textMuted,
-              letterSpacing: 0.8,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        NavigationDrawerDestination(
-          icon: const Icon(Icons.help_outline_rounded),
-          label: const Text('Help & FAQ'),
-        ),
-        const SizedBox(height: 8),
-      ],
+      ),
     );
   }
 

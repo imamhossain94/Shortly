@@ -4,6 +4,7 @@ import 'package:flutter_shortly/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme.dart';
+import '../widgets/app_custom_bar.dart';
 import '../providers/history_provider.dart';
 import 'result_screen.dart';
 
@@ -62,153 +63,97 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Header + Search (fixed, non-scrollable) ──────────────────────
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'My ',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: isDark ? AppColors.textPrimary : Colors.black87,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'Links',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.accent,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => ref.read(historyProvider.notifier).refresh(),
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkCard : Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(11),
-                            border: isDark
-                                ? Border.all(color: AppColors.darkCardBorder)
-                                : Border.all(color: Colors.grey.shade200),
-                          ),
-                          child: Icon(
-                            Icons.refresh_rounded,
-                            size: 20,
-                            color: isDark ? AppColors.textSecondary : Colors.grey.shade600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Builder(
-                        builder: (context) => GestureDetector(
-                          onTap: () => Scaffold.maybeOf(context)?.openDrawer(),
-                          child: Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: isDark ? AppColors.darkCard : Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(11),
-                              border: isDark
-                                  ? Border.all(color: AppColors.darkCardBorder)
-                                  : Border.all(color: Colors.grey.shade200),
-                            ),
-                            child: Icon(
-                              Icons.menu_rounded,
-                              size: 20,
-                              color: isDark ? AppColors.textPrimary : Colors.black87,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              // Search bar
-              Container(
-                height: 46,
+        AppCustomBar(
+          title: 'My ',
+          accentTitle: 'Links',
+          actions: [
+            GestureDetector(
+              onTap: () => ref.read(historyProvider.notifier).refresh(),
+              child: Container(
+                width: 38,
+                height: 38,
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkCard : Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(14),
+                  color: isDark ? AppColors.darkCard : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(11),
                   border: isDark
                       ? Border.all(color: AppColors.darkCardBorder)
                       : Border.all(color: Colors.grey.shade200),
                 ),
-                child: TextField(
-                  controller: _searchController,
-                  style: TextStyle(
-                    color: isDark ? AppColors.textPrimary : Colors.black87,
-                    fontSize: 14,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Search links...',
-                    hintStyle: const TextStyle(
-                        color: AppColors.textMuted, fontSize: 13),
-                    prefixIcon: const Icon(Icons.search_rounded,
-                        color: AppColors.textMuted, size: 19),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.close_rounded, size: 17),
-                            color: AppColors.textMuted,
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {
-                                _searchQuery = '';
-                              });
-                            },
-                          )
-                        : PopupMenuButton<String?>(
-                            icon: const Icon(Icons.filter_list_rounded,
-                                size: 18, color: AppColors.textMuted),
-                            onSelected: (value) {
-                              setState(() {
-                                _filterType = value;
-                              });
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'all',
-                                child: Text(AppLocalizations.of(context)!.all),
-                              ),
-                              PopupMenuItem(
-                                value: 'shorten',
-                                child: Text(AppLocalizations.of(context)!.shortenedUrl),
-                              ),
-                              PopupMenuItem(
-                                value: 'expand',
-                                child: Text(AppLocalizations.of(context)!.expanded),
-                              ),
-                            ],
-                          ),
-                    filled: false,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 13),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value;
-                    });
-                  },
+                child: Icon(
+                  Icons.refresh_rounded,
+                  size: 20,
+                  color: isDark ? AppColors.textSecondary : Colors.grey.shade600,
                 ),
               ),
-              const SizedBox(height: 10),
-            ],
+            ),
+          ],
+          bottom: Container(
+            height: 48,
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkCard : Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(14),
+              border: isDark
+                  ? Border.all(color: AppColors.darkCardBorder)
+                  : Border.all(color: Colors.grey.shade200),
+            ),
+            child: TextField(
+              controller: _searchController,
+              style: TextStyle(
+                color: isDark ? AppColors.textPrimary : Colors.black87,
+                fontSize: 14,
+              ),
+              decoration: InputDecoration(
+                hintText: 'Search links...',
+                hintStyle: const TextStyle(
+                    color: AppColors.textMuted, fontSize: 13),
+                prefixIcon: const Icon(Icons.search_rounded,
+                    color: AppColors.textMuted, size: 19),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.close_rounded, size: 17),
+                        color: AppColors.textMuted,
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                          });
+                        },
+                      )
+                    : PopupMenuButton<String?>(
+                        icon: const Icon(Icons.filter_list_rounded,
+                            size: 18, color: AppColors.textMuted),
+                        onSelected: (value) {
+                          setState(() {
+                            _filterType = value;
+                          });
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'all',
+                            child: Text(AppLocalizations.of(context)!.all),
+                          ),
+                          PopupMenuItem(
+                            value: 'shorten',
+                            child: Text(AppLocalizations.of(context)!.shortenedUrl),
+                          ),
+                          PopupMenuItem(
+                            value: 'expand',
+                            child: Text(AppLocalizations.of(context)!.expanded),
+                          ),
+                        ],
+                      ),
+                filled: false,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
           ),
         ),
 
