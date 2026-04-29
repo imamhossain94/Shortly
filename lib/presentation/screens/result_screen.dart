@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../data/models/url_data.dart';
 import '../../core/theme.dart';
+import '../../core/services/ad_service.dart';
 import '../widgets/qr_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -57,7 +58,10 @@ class _ResultScreenState extends State<ResultScreen>
             Icons.arrow_back_rounded,
             color: isDark ? AppColors.textPrimary : Colors.black87,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+            AdService().showInterstitialAd();
+          },
         ),
       ),
       body: SafeArea(
@@ -526,15 +530,12 @@ class _CornerPainter extends CustomPainter {
       path.arcToPoint(Offset(0, h - radius),
           radius: Radius.circular(radius), clockwise: true);
       path.lineTo(0, 0);
-    } else {
-      path.moveTo(0, h);
-      path.lineTo(w, h - 0);
-      path.lineTo(w, h);
-      path.moveTo(w, h);
-      path.lineTo(w, radius);
-      path.arcToPoint(Offset(w - radius, 0),
-          radius: Radius.circular(radius), clockwise: false);
-      path.lineTo(0, 0);
+    } else if (bottomRight) {
+      path.moveTo(w, 0);
+      path.lineTo(w, h - radius);
+      path.arcToPoint(Offset(w - radius, h),
+          radius: Radius.circular(radius), clockwise: true);
+      path.lineTo(0, h);
     }
 
     canvas.drawPath(path, paint);

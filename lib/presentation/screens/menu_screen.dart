@@ -4,9 +4,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_shortly/l10n/app_localizations.dart';
 import '../../core/theme.dart';
+import '../../core/constants.dart';
+import '../../core/services/iap_service.dart';
 import '../widgets/app_custom_bar.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
+import 'feedback_screen.dart';
 
 class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
@@ -29,140 +32,29 @@ class MenuScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                  // ── Profile Header – minimalist redesign ──────────────
-                  // ── Profile / Upgrade Section ─────────────────────────────
-                  Builder(
-                    builder: (context) {
-                      // Mock Pro state for demonstration
-                      const bool isPro = true;
+                // ── Profile / Upgrade Section ─────────────────────────────
+                Builder(
+                  builder: (context) {
+                    final bool isPro = IapService().isPremium;
 
-                      if (isPro) {
-                        return Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkCard : Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: isDark ? Border.all(color: AppColors.darkCardBorder) : Border.all(color: Colors.grey.shade200),
-                            boxShadow: isDark ? null : [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Shortly Pro',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w800,
-                                          color: isDark ? AppColors.textPrimary : Colors.black87,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.accent.withValues(alpha: 0.15),
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                        child: const Text(
-                                          'Active',
-                                          style: TextStyle(
-                                            color: AppColors.accent,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Icon(
-                                    Icons.verified_user_rounded,
-                                    color: AppColors.accent.withValues(alpha: 0.6),
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  // Clean Avatar with accent border
-                                  Container(
-                                    width: 52,
-                                    height: 52,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: AppColors.accent.withValues(alpha: 0.15),
-                                        width: 2.5,
-                                      ),
-                                    ),
-                                    child: Container(
-                                      margin: const EdgeInsets.all(2),
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.accent,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                          'S',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 14),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Shortly User',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w700,
-                                            color: isDark ? AppColors.textPrimary : Colors.black87,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          'Enjoying ad-free experience',
-                                          style: TextStyle(
-                                            color: isDark ? AppColors.textSecondary : Colors.grey.shade600,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-
-                      // ── Upgrade Card (Non-Pro UI) based on attachment ────
+                    if (isPro) {
                       return Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: isDark ? AppColors.darkCard : Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: isDark ? Border.all(color: AppColors.darkCardBorder) : null,
+                          border: isDark
+                              ? Border.all(color: AppColors.darkCardBorder)
+                              : Border.all(color: Colors.grey.shade200),
+                          boxShadow: isDark
+                              ? null
+                              : [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.04),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,20 +69,27 @@ class MenuScreen extends ConsumerWidget {
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w800,
-                                        color: isDark ? AppColors.textPrimary : Colors.black87,
+                                        color: isDark
+                                            ? AppColors.textPrimary
+                                            : Colors.black87,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF007A87).withValues(alpha: 0.15),
+                                        color: AppColors.accent.withValues(
+                                          alpha: 0.15,
+                                        ),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: const Text(
-                                        'Free',
+                                        'Active',
                                         style: TextStyle(
-                                          color: Color(0xFF007A87),
+                                          color: AppColors.accent,
                                           fontSize: 11,
                                           fontWeight: FontWeight.w700,
                                         ),
@@ -198,261 +97,408 @@ class MenuScreen extends ConsumerWidget {
                                     ),
                                   ],
                                 ),
-                                Text(
-                                  '\$4.99 /mo',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: isDark ? AppColors.textSecondary : Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
                                 Icon(
-                                  Icons.check_rounded,
-                                  size: 16,
-                                  color: isDark ? AppColors.accent : Colors.black87,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    'Upgrade pro to remove ads, enjoy seamless experience.',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: isDark ? AppColors.textSecondary : Colors.black54,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                  Icons.verified_user_rounded,
+                                  color: AppColors.accent.withValues(
+                                    alpha: 0.6,
                                   ),
+                                  size: 20,
                                 ),
                               ],
                             ),
                             const SizedBox(height: 20),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.black87,
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    side: isDark ? BorderSide.none : BorderSide(color: Colors.grey.shade300),
+                            Row(
+                              children: [
+                                // Clean Avatar with accent border
+                                Container(
+                                  width: 52,
+                                  height: 52,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: AppColors.accent.withValues(
+                                        alpha: 0.15,
+                                      ),
+                                      width: 2.5,
+                                    ),
                                   ),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Upgrade Now',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 14,
+                                  child: Container(
+                                    margin: const EdgeInsets.all(2),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.accent,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        'S',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w800,
+                                        ),
                                       ),
                                     ),
-                                    SizedBox(width: 8),
-                                    Icon(Icons.chevron_right_rounded, size: 18),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Shortly User',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          color: isDark
+                                              ? AppColors.textPrimary
+                                              : Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        'Enjoying ad-free experience',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? AppColors.textSecondary
+                                              : Colors.grey.shade600,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       );
-                    },
-                  ),
+                    }
 
-                  const SizedBox(height: 24),
-
-                  // ── Appearance section ─────────────────────────────
-                  _SectionHeader(label: 'Appearance', isDark: isDark),
-                  const SizedBox(height: 10),
-
-                  _SettingsCard(
-                    isDark: isDark,
-                    children: [
-                      _ThemeTile(
-                        icon: Icons.brightness_auto_rounded,
-                        label: AppLocalizations.of(context)!.system,
-                        value: ThemeMode.system,
-                        groupValue: themeMode,
-                        ref: ref,
-                        isDark: isDark,
+                    // ── Upgrade Card (Non-Pro UI) based on attachment ────
+                    return Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: isDark
+                            ? Border.all(color: AppColors.darkCardBorder)
+                            : null,
                       ),
-                      _Divider(isDark: isDark),
-                      _ThemeTile(
-                        icon: Icons.light_mode_rounded,
-                        label: AppLocalizations.of(context)!.light,
-                        value: ThemeMode.light,
-                        groupValue: themeMode,
-                        ref: ref,
-                        isDark: isDark,
-                      ),
-                      _Divider(isDark: isDark),
-                      _ThemeTile(
-                        icon: Icons.dark_mode_rounded,
-                        label: AppLocalizations.of(context)!.dark,
-                        value: ThemeMode.dark,
-                        groupValue: themeMode,
-                        ref: ref,
-                        isDark: isDark,
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ── Options section ────────────────────────────────
-                  _SectionHeader(label: 'Options', isDark: isDark),
-                  const SizedBox(height: 10),
-
-                  _SettingsCard(
-                    isDark: isDark,
-                    children: [
-                      _SettingsTile(
-                        icon: Icons.language_rounded,
-                        label: 'Language',
-                        trailing: Text(
-                          Localizations.localeOf(context).languageCode == 'en'
-                              ? 'English'
-                              : 'Español',
-                          style: const TextStyle(
-                              color: AppColors.textMuted, fontSize: 13),
-                        ),
-                        isDark: isDark,
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => SimpleDialog(
-                              title: const Text('Select Language'),
-                              children: [
-                                SimpleDialogOption(
-                                  onPressed: () {
-                                    ref
-                                        .read(localeProvider.notifier)
-                                        .setLocale(const Locale('en'));
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('English'),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Shortly Pro',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark
+                                          ? AppColors.textPrimary
+                                          : Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF007A87,
+                                      ).withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: const Text(
+                                      'Free',
+                                      style: TextStyle(
+                                        color: Color(0xFF007A87),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                '\$4.99 /mo',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark
+                                      ? AppColors.textSecondary
+                                      : Colors.black54,
                                 ),
-                                SimpleDialogOption(
-                                  onPressed: () {
-                                    ref
-                                        .read(localeProvider.notifier)
-                                        .setLocale(const Locale('es'));
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Español'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.check_rounded,
+                                size: 16,
+                                color: isDark
+                                    ? AppColors.accent
+                                    : Colors.black87,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Upgrade pro to remove ads, enjoy seamless experience.',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: isDark
+                                        ? AppColors.textSecondary
+                                        : Colors.black54,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () => IapService().buyRemoveAds(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.accent,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.workspace_premium_rounded,
+                                    size: 16,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Upgrade Now – Remove Ads',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          );
-                        },
+                          ),
+                        ],
                       ),
-                      _Divider(isDark: isDark),
-                      _SettingsTile(
-                        icon: Icons.feedback_outlined,
-                        label: 'Feedback',
-                        isDark: isDark,
-                        onTap: () async {
-                          final Uri emailLaunchUri = Uri(
-                            scheme: 'mailto',
-                            path: 'feedback@shortly.app',
-                            query: 'subject=Shortly App Feedback',
-                          );
-                          if (await canLaunchUrl(emailLaunchUri)) {
-                            launchUrl(emailLaunchUri);
-                          }
-                        },
-                      ),
-                      _Divider(isDark: isDark),
-                      _SettingsTile(
-                        icon: Icons.share_rounded,
-                        label: AppLocalizations.of(context)!.share,
-                        isDark: isDark,
-                        onTap: () {
-                          SharePlus.instance.share(
-                            ShareParams(text: 'Check out Shortly, the best URL shortener app!'),
-                          );
-                        },
-                      ),
-                      _Divider(isDark: isDark),
-                      _SettingsTile(
-                        icon: Icons.star_rate_rounded,
-                        label: 'Rate App',
-                        isDark: isDark,
-                        onTap: () async {
-                          final Uri url = Uri.parse(
-                              'market://details?id=com.example.shortly');
-                          if (!await launchUrl(url)) {
-                            final webUrl = Uri.parse(
-                              'https://play.google.com/store/apps/details?id=com.example.shortly',
-                            );
-                            if (await canLaunchUrl(webUrl)) {
-                              launchUrl(webUrl,
-                                  mode: LaunchMode.externalApplication);
-                            }
-                          }
-                        },
-                      ),
-                      _Divider(isDark: isDark),
-                      _SettingsTile(
-                        icon: Icons.privacy_tip_outlined,
-                        label: 'Privacy Policy',
-                        isDark: isDark,
-                        onTap: () async {
-                          final Uri url =
-                              Uri.parse('https://example.com/privacy');
-                          if (await canLaunchUrl(url)) {
-                            launchUrl(url,
-                                mode: LaunchMode.externalApplication);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                    );
+                  },
+                ),
 
-                  const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-                  // ── About section ──────────────────────────────────
-                  _SectionHeader(label: 'About', isDark: isDark),
-                  const SizedBox(height: 10),
+                // ── Appearance section ─────────────────────────────
+                _SectionHeader(label: 'Appearance', isDark: isDark),
+                const SizedBox(height: 10),
 
-                  _SettingsCard(
-                    isDark: isDark,
-                    children: [
-                      _SettingsTile(
-                        icon: Icons.info_outline_rounded,
-                        label: 'Version',
-                        isDark: isDark,
-                        trailing: const Text(
-                          '1.0.0',
-                          style: TextStyle(
-                              color: AppColors.textMuted, fontSize: 13),
+                _SettingsCard(
+                  isDark: isDark,
+                  children: [
+                    _ThemeTile(
+                      icon: Icons.brightness_auto_rounded,
+                      label: AppLocalizations.of(context)!.system,
+                      value: ThemeMode.system,
+                      groupValue: themeMode,
+                      ref: ref,
+                      isDark: isDark,
+                    ),
+                    _Divider(isDark: isDark),
+                    _ThemeTile(
+                      icon: Icons.light_mode_rounded,
+                      label: AppLocalizations.of(context)!.light,
+                      value: ThemeMode.light,
+                      groupValue: themeMode,
+                      ref: ref,
+                      isDark: isDark,
+                    ),
+                    _Divider(isDark: isDark),
+                    _ThemeTile(
+                      icon: Icons.dark_mode_rounded,
+                      label: AppLocalizations.of(context)!.dark,
+                      value: ThemeMode.dark,
+                      groupValue: themeMode,
+                      ref: ref,
+                      isDark: isDark,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Options section ────────────────────────────────
+                _SectionHeader(label: 'Options', isDark: isDark),
+                const SizedBox(height: 10),
+
+                _SettingsCard(
+                  isDark: isDark,
+                  children: [
+                    _SettingsTile(
+                      icon: Icons.language_rounded,
+                      label: 'Language',
+                      trailing: Text(
+                        Localizations.localeOf(context).languageCode == 'en'
+                            ? 'English'
+                            : 'Español',
+                        style: const TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 13,
                         ),
                       ),
-                      _Divider(isDark: isDark),
-                      _SettingsTile(
-                        icon: Icons.apps_rounded,
-                        label: 'Other Apps',
-                        isDark: isDark,
-                        onTap: () async {
-                          final Uri url = Uri.parse(
-                            'https://play.google.com/store/apps/developer?id=ExampleDeveloper',
+                      isDark: isDark,
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => SimpleDialog(
+                            title: const Text('Select Language'),
+                            children: [
+                              SimpleDialogOption(
+                                onPressed: () {
+                                  ref
+                                      .read(localeProvider.notifier)
+                                      .setLocale(const Locale('en'));
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('English'),
+                              ),
+                              SimpleDialogOption(
+                                onPressed: () {
+                                  ref
+                                      .read(localeProvider.notifier)
+                                      .setLocale(const Locale('es'));
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Español'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    _Divider(isDark: isDark),
+                    _SettingsTile(
+                      icon: Icons.feedback_outlined,
+                      label: 'Feedback',
+                      isDark: isDark,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FeedbackScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _Divider(isDark: isDark),
+                    _SettingsTile(
+                      icon: Icons.share_rounded,
+                      label: AppLocalizations.of(context)!.share,
+                      isDark: isDark,
+                      onTap: () {
+                        SharePlus.instance.share(
+                          ShareParams(
+                            text:
+                                'Check out Shortly, the best URL shortener app! https://play.google.com/store/apps/details?id=com.newagedevs.url_shortener',
+                          ),
+                        );
+                      },
+                    ),
+                    _Divider(isDark: isDark),
+                    _SettingsTile(
+                      icon: Icons.star_rate_rounded,
+                      label: 'Rate App',
+                      isDark: isDark,
+                      onTap: () async {
+                        final Uri url = Uri.parse(
+                          'market://details?id=com.newagedevs.url_shortener',
+                        );
+                        if (!await launchUrl(url)) {
+                          final webUrl = Uri.parse(
+                            'https://play.google.com/store/apps/details?id=com.newagedevs.url_shortener',
                           );
-                          if (await canLaunchUrl(url)) {
-                            launchUrl(url,
-                                mode: LaunchMode.externalApplication);
+                          if (await canLaunchUrl(webUrl)) {
+                            launchUrl(
+                              webUrl,
+                              mode: LaunchMode.externalApplication,
+                            );
                           }
-                        },
-                      ),
-                    ],
-                  ),
+                        }
+                      },
+                    ),
+                    _Divider(isDark: isDark),
+                    _SettingsTile(
+                      icon: Icons.privacy_tip_outlined,
+                      label: 'Privacy Policy',
+                      isDark: isDark,
+                      onTap: () async {
+                        final Uri url = Uri.parse(
+                          AppConstants.privacyPolicyUrl,
+                        );
+                        if (await canLaunchUrl(url)) {
+                          launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                    ),
+                  ],
+                ),
 
+                const SizedBox(height: 20),
+
+                // ── About section ──────────────────────────────────
+                _SectionHeader(label: 'About', isDark: isDark),
+                const SizedBox(height: 10),
+
+                _SettingsCard(
+                  isDark: isDark,
+                  children: [
+                    _SettingsTile(
+                      icon: Icons.info_outline_rounded,
+                      label: 'Version',
+                      isDark: isDark,
+                      trailing: const Text(
+                        '1.0.0',
+                        style: TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    _Divider(isDark: isDark),
+                    _SettingsTile(
+                      icon: Icons.apps_rounded,
+                      label: 'Other Apps',
+                      isDark: isDark,
+                      onTap: () async {
+                        final Uri url = Uri.parse(
+                          'https://play.google.com/store/apps/dev?id=5785086860664884952',
+                        );
+                        if (await canLaunchUrl(url)) {
+                          launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -642,8 +688,7 @@ class _ThemeTile extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontSize: 14.5,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected
                         ? AppColors.accent
                         : (isDark ? AppColors.textPrimary : Colors.black87),
@@ -651,14 +696,16 @@ class _ThemeTile extends StatelessWidget {
                 ),
               ),
               if (isSelected)
-                const Icon(Icons.check_circle_rounded,
-                    color: AppColors.accent, size: 20)
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: AppColors.accent,
+                  size: 20,
+                )
               else
                 Icon(
                   Icons.radio_button_unchecked_rounded,
                   size: 20,
-                  color:
-                      isDark ? AppColors.textMuted : Colors.grey.shade300,
+                  color: isDark ? AppColors.textMuted : Colors.grey.shade300,
                 ),
             ],
           ),

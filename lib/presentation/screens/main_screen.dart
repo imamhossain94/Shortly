@@ -6,6 +6,8 @@ import 'expander_view.dart';
 import 'history_view.dart';
 import 'menu_screen.dart';
 import '../../core/theme.dart';
+import '../../core/services/ad_service.dart';
+import '../../core/services/iap_service.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -28,6 +30,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   void _onTabTapped(int index) {
     setState(() => _currentIndex = index);
     _pageController.jumpToPage(index);
+    // Show interstitial on navigation (respects frequency & cooldown)
+    AdService().showInterstitialAd();
   }
 
   @override
@@ -105,7 +109,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               MenuScreen(),
             ],
           ),
-          bottomNavigationBar: _buildBottomNav(context, isDark),
+          bottomNavigationBar: _buildBottomNavWithBanner(context, isDark),
         ),
       ],
     );
@@ -343,6 +347,18 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBottomNavWithBanner(BuildContext context, bool isDark) {
+    final isPremium = IapService().isPremium;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Banner ad sits directly above the nav bar (hidden for premium)
+        if (!isPremium) AdService().getBannerAdWidget(),
+        _buildBottomNav(context, isDark),
+      ],
     );
   }
 

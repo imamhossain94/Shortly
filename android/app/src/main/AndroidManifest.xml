@@ -1,8 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Required for Google Play Billing (in_app_purchase) -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <!-- Required for AppLovin MAX -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
-        android:label="flutter_shortly"
+        android:label="Shortly"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+
+        <!-- AppLovin MAX SDK Key -->
+        <meta-data
+            android:name="applovin.sdk.key"
+            android:value="XRxMdnfvaLm2OZ877ldfTZoymnppJEUmR5PF9ybBtHgH6M25gTqFTWWuooyLrMh7oTxNdJdslTA207sFpRXeFX" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -31,6 +44,7 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
@@ -40,6 +54,20 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Required for url_launcher mailto: scheme -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO"/>
+            <data android:scheme="mailto"/>
+        </intent>
+        <!-- Required for url_launcher http/https -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="market"/>
         </intent>
     </queries>
 </manifest>

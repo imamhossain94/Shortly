@@ -373,7 +373,7 @@ class _HistoryLinkCard extends StatelessWidget {
                     clipBehavior: Clip.antiAlias,
                     child: faviconUrl != null
                         ? Image.network(
-                            faviconUrl!,
+                            faviconUrl,
                             width: 50,
                             height: 50,
                             fit: BoxFit.contain,

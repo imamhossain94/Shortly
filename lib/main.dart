@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_shortly/l10n/app_localizations.dart';
 import 'core/theme.dart';
+import 'core/services/iap_service.dart';
+import 'core/services/ad_service.dart';
 import 'presentation/screens/main_screen.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -23,6 +25,10 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
+
+  // ── Initialize services ──────────────────────────────────────────────────
+  await IapService().init();   // restores purchases + listens to stream
+  await AdService().init();    // inits AppLovin MAX (skipped if premium)
 
   runApp(const ProviderScope(child: ShortlyApp()));
 }

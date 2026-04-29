@@ -46,6 +46,8 @@ dependencies:
   url_launcher: ^6.3.2
   qr_flutter: ^4.1.0
   shared_preferences: ^2.5.4
+  applovin_max: ^4.6.3
+  in_app_purchase: ^3.2.3
   flutter_localizations:
     sdk: flutter
 

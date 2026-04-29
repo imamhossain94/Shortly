@@ -1,4 +1,4 @@
-package com.example.flutter_shortly
+package com.newagedevs.url_shortener
 
 import io.flutter.embedding.android.FlutterActivity
 

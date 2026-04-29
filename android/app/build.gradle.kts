@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.flutter_shortly"
+    namespace = "com.newagedevs.url_shortener"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,10 +20,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.flutter_shortly"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        applicationId = "com.newagedevs.url_shortener"
+        // AppLovin MAX requires minSdk >= 21
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -33,7 +31,6 @@ android {
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -41,4 +38,14 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("androidx.core:core-splashscreen:1.2.0")
+    // AppLovin mediation adapters
+    implementation("com.applovin.mediation:inmobi-adapter:+")
+    implementation("com.squareup.picasso:picasso:2.8")
+    implementation("androidx.recyclerview:recyclerview:1.1.0")
+    implementation("com.applovin.mediation:vungle-adapter:+")
+    implementation("com.applovin.mediation:facebook-adapter:+")
 }
