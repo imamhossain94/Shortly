@@ -10,3 +10,7 @@
 -dontwarn com.facebook.infer.annotation.Nullsafe
 -dontwarn com.facebook.infer.annotation.Nullsafe$Mode
 -keep class com.facebook.infer.annotation.** { *; }
+
+# Google Play Core / Flutter deferred components
+-dontwarn com.google.android.play.core.**
+-keep class com.google.android.play.core.** { *; }
