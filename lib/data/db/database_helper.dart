@@ -46,10 +46,15 @@ CREATE TABLE url_data (
   }
 
   Future<List<UrlData>> getAllUrls() async {
-    final db = await instance.database;
-    const orderBy = 'timestamp DESC';
-    final result = await db.query('url_data', orderBy: orderBy);
-    return result.map((json) => UrlData.fromMap(json)).toList();
+    try {
+      final db = await instance.database;
+      const orderBy = 'timestamp DESC';
+      final result = await db.query('url_data', orderBy: orderBy);
+      return result.map((json) => UrlData.fromMap(json)).toList();
+    } catch (e) {
+      print('Error getting all urls: $e');
+      return [];
+    }
   }
 
   Future<int> delete(int id) async {

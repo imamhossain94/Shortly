@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'iap_service.dart';
 import '../constants.dart';
 
-class AdService extends ChangeNotifier {
+class AdService extends ChangeNotifier with WidgetsBindingObserver {
   static final AdService _instance = AdService._internal();
   factory AdService() => _instance;
   AdService._internal();
@@ -18,9 +18,9 @@ class AdService extends ChangeNotifier {
   bool _initStarted = false; // guard against double-init
 
   static const String _lastAppOpenAdKey = 'last_app_open_ad_time';
-  static const int _appOpenAdCooldownMinutes = 10;
-  static const int _interstitialCooldownSeconds = 60;
-  static const int _interstitialFrequency = 3;
+  static const int _appOpenAdCooldownMinutes = 60; // Increased from 10
+  static const int _interstitialCooldownSeconds = 300; // Increased from 60
+  static const int _interstitialFrequency = 8; // Increased from 3
 
   bool _isFirstLaunch = true;
   int _interstitialRetryAttempt = 0;
@@ -40,6 +40,7 @@ class AdService extends ChangeNotifier {
     try {
       await AppLovinMAX.initialize(AppConstants.appLovinSdkKey);
       _isInitialized = true;
+      WidgetsBinding.instance.addObserver(this);
       _attachAdListeners();
       loadInterstitial();
       loadAppOpenAd();
@@ -47,6 +48,26 @@ class AdService extends ChangeNotifier {
       debugPrint('AdService: AppLovin MAX initialized successfully.');
     } catch (e) {
       debugPrint('AdService: AppLovin init failed: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        await _showAdIfReady();
+        break;
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        break;
     }
   }
 
@@ -74,7 +95,10 @@ class AdService extends ChangeNotifier {
       AppOpenAdListener(
         onAdLoadedCallback: (ad) {
           _appOpenRetryAttempt = 0;
-          if (_isFirstLaunch) _tryShowColdStartAppOpenAd();
+          if (_isFirstLaunch) {
+            _isFirstLaunch = false;
+            _showAdIfReady();
+          }
         },
         onAdLoadFailedCallback: (adUnitId, error) {
           _appOpenRetryAttempt++;
@@ -83,12 +107,10 @@ class AdService extends ChangeNotifier {
         },
         onAdDisplayedCallback: (ad) {},
         onAdDisplayFailedCallback: (ad, error) {
-          _isFirstLaunch = false;
           loadAppOpenAd();
         },
         onAdClickedCallback: (ad) {},
         onAdHiddenCallback: (ad) {
-          _isFirstLaunch = false;
           loadAppOpenAd();
         },
         onAdRevenuePaidCallback: (ad) {},
@@ -102,13 +124,8 @@ class AdService extends ChangeNotifier {
     AppLovinMAX.loadAppOpenAd(AppConstants.adUnitIdAppOpen);
   }
 
-  Future<void> _tryShowColdStartAppOpenAd() async {
-    if (_iapService.isPremium) return;
-
-    final isReady =
-        (await AppLovinMAX.isAppOpenAdReady(AppConstants.adUnitIdAppOpen)) ??
-        false;
-    if (!isReady) return;
+  Future<void> _showAdIfReady() async {
+    if (!_isInitialized || _iapService.isPremium) return;
 
     final prefs = await SharedPreferences.getInstance();
     final String? lastTimeString = prefs.getString(_lastAppOpenAdKey);
@@ -117,14 +134,17 @@ class AdService extends ChangeNotifier {
     if (lastTimeString != null) {
       final lastTime = DateTime.parse(lastTimeString);
       if (now.difference(lastTime).inMinutes < _appOpenAdCooldownMinutes) {
-        _isFirstLaunch = false;
         return;
       }
     }
 
-    AppLovinMAX.showAppOpenAd(AppConstants.adUnitIdAppOpen);
-    await prefs.setString(_lastAppOpenAdKey, now.toIso8601String());
-    _isFirstLaunch = false;
+    bool isReady = (await AppLovinMAX.isAppOpenAdReady(AppConstants.adUnitIdAppOpen)) ?? false;
+    if (isReady) {
+      AppLovinMAX.showAppOpenAd(AppConstants.adUnitIdAppOpen);
+      await prefs.setString(_lastAppOpenAdKey, now.toIso8601String());
+    } else {
+      AppLovinMAX.loadAppOpenAd(AppConstants.adUnitIdAppOpen);
+    }
   }
 
   // ── Interstitial Ad ──────────────────────────────────────────────────────
@@ -227,12 +247,6 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
   final MaxNativeAdViewController _controller = MaxNativeAdViewController();
 
   @override
-  void initState() {
-    super.initState();
-    _controller.loadAd();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AnimatedContainer(
@@ -246,7 +260,7 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
               border: Border.all(color: theme.dividerColor),
             )
           : null,
-      clipBehavior: Clip.hardEdge,
+      clipBehavior: _isAdLoaded ? Clip.hardEdge : Clip.none,
       child: MaxNativeAdView(
         adUnitId: widget.adUnitId,
         controller: _controller,

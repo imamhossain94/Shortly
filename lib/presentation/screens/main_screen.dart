@@ -30,8 +30,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   void _onTabTapped(int index) {
     setState(() => _currentIndex = index);
     _pageController.jumpToPage(index);
-    // Show interstitial on navigation (respects frequency & cooldown)
-    AdService().showInterstitialAd();
   }
 
   @override

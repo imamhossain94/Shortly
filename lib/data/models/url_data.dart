@@ -18,8 +18,7 @@ class UrlData {
   });
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
+    final map = <String, dynamic>{
       'provider': provider,
       'originalUrl': originalUrl,
       'shortenedUrl': shortenedUrl,
@@ -27,17 +26,21 @@ class UrlData {
       'success': success == true ? 1 : 0,
       'timestamp': timestamp,
     };
+    if (id != null) {
+      map['id'] = id;
+    }
+    return map;
   }
 
   factory UrlData.fromMap(Map<String, dynamic> map) {
     return UrlData(
-      id: map['id'],
-      provider: map['provider'],
-      originalUrl: map['originalUrl'],
-      shortenedUrl: map['shortenedUrl'],
-      expandedUrl: map['expandedUrl'],
-      success: map['success'] == 1,
-      timestamp: map['timestamp'],
+      id: map['id'] as int?,
+      provider: map['provider']?.toString(),
+      originalUrl: map['originalUrl']?.toString(),
+      shortenedUrl: map['shortenedUrl']?.toString(),
+      expandedUrl: map['expandedUrl']?.toString(),
+      success: map['success'] == 1 || map['success'] == true,
+      timestamp: (map['timestamp'] as num?)?.toInt() ?? DateTime.now().millisecondsSinceEpoch,
     );
   }
 

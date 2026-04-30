@@ -286,6 +286,10 @@ class _ResultScreenState extends State<ResultScreen>
                             ),
                           ],
                         ),
+                        
+                        const SizedBox(height: 32),
+                        AdService().getNativeAdWidget(),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),

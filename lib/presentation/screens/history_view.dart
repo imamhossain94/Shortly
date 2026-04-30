@@ -7,6 +7,7 @@ import '../../core/theme.dart';
 import '../widgets/app_custom_bar.dart';
 import '../providers/history_provider.dart';
 import 'result_screen.dart';
+import '../../core/services/ad_service.dart';
 
 class HistoryView extends ConsumerStatefulWidget {
   const HistoryView({super.key});
@@ -210,7 +211,18 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                   itemCount: history.length,
                   itemBuilder: (context, index) {
                     final item = history[index];
-                    return _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
+                    final card = _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
+
+                    // Show a native ad after every 4 items to monetize without being intrusive
+                    if (index > 0 && (index + 1) % 4 == 0) {
+                      return Column(
+                        children: [
+                          card,
+                          AdService().getNativeAdWidget(),
+                        ],
+                      );
+                    }
+                    return card;
                   },
                 ),
         ),
