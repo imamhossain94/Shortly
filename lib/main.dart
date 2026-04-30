@@ -9,6 +9,7 @@ import 'presentation/screens/main_screen.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'presentation/providers/locale_provider.dart';
+import 'data/db/database_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,13 @@ void main() async {
   // ── Initialize services ──────────────────────────────────────────────────
   await IapService().init();   // restores purchases + listens to stream
   await AdService().init();    // inits AppLovin MAX (skipped if premium)
+
+  // Seed data if empty
+  final dbHelper = DatabaseHelper.instance;
+  final history = await dbHelper.getAllUrls();
+  if (history.isEmpty) {
+    await dbHelper.seedData();
+  }
 
   runApp(const ProviderScope(child: ShortlyApp()));
 }
