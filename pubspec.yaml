@@ -1,4 +1,4 @@
-name: flutter_shortly
+name: url_shortener
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.9.0
+  sdk: ^3.11.5
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -34,6 +34,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  rename_app: ^1.6.3 # dart run rename_app:main all="Shortly"
   flutter_riverpod: ^3.0.3
   http: ^1.6.0
   html: ^0.15.6
@@ -61,20 +62,18 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-  flutter_launcher_icons: ^0.14.2
-  flutter_native_splash: ^2.4.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  generate: true
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -106,18 +105,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/images/app_logo.png"
-  min_sdk_android: 21
-  adaptive_icon_background: "#007AFF"
-  adaptive_icon_foreground: "assets/images/app_logo.png"
-
-flutter_native_splash:
-  color: "#FFFFFF"
-  image: "assets/images/app_logo.png"
-  android_12:
-    image: "assets/images/app_logo.png"
-    color: "#FFFFFF"

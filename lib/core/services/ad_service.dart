@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'iap_service.dart';
 import '../constants.dart';
+import '../theme.dart';
 
 class AdService extends ChangeNotifier with WidgetsBindingObserver {
   static final AdService _instance = AdService._internal();
@@ -247,17 +248,36 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
   final MaxNativeAdViewController _controller = MaxNativeAdViewController();
 
   @override
+  void initState() {
+    super.initState();
+    _controller.loadAd();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      margin: _isAdLoaded ? const EdgeInsets.only(bottom: 8) : EdgeInsets.zero,
+      margin: _isAdLoaded ? const EdgeInsets.only(bottom: 12) : EdgeInsets.zero,
       height: _isAdLoaded ? 140 : 0,
       decoration: _isAdLoaded
           ? BoxDecoration(
-              color: theme.cardColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: theme.dividerColor),
+              color: isDark ? AppColors.darkCard : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: isDark
+                  ? Border.all(color: AppColors.darkCardBorder, width: 1.5)
+                  : Border.all(color: Colors.grey.shade200, width: 1.5),
+              boxShadow: isDark
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
             )
           : null,
       clipBehavior: _isAdLoaded ? Clip.hardEdge : Clip.none,
@@ -274,15 +294,15 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
           onAdClickedCallback: (ad) {},
           onAdRevenuePaidCallback: (ad) {},
         ),
-        child: _isAdLoaded ? _buildNativeAdContent(theme) : const SizedBox.shrink(),
+        child: _isAdLoaded ? _buildNativeAdContent(theme, isDark) : const SizedBox.shrink(),
       ),
     );
   }
 
-  Widget _buildNativeAdContent(ThemeData theme) {
+  Widget _buildNativeAdContent(ThemeData theme, bool isDark) {
     return Container(
-      color: theme.cardColor,
-      padding: const EdgeInsets.all(12),
+      color: Colors.transparent,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

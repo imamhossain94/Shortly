@@ -11,11 +11,17 @@ class ShortenerState {
 
   ShortenerState({this.isLoading = false, this.result, this.error});
 
-  ShortenerState copyWith({bool? isLoading, UrlData? result, String? error}) {
+  ShortenerState copyWith({
+    bool? isLoading,
+    UrlData? result,
+    String? error,
+    bool clearResult = false,
+    bool clearError = false,
+  }) {
     return ShortenerState(
       isLoading: isLoading ?? this.isLoading,
-      result: result ?? this.result,
-      error: error ?? this.error,
+      result: clearResult ? null : (result ?? this.result),
+      error: clearError ? null : (error ?? this.error),
     );
   }
 }
@@ -30,7 +36,7 @@ class ShortenerNotifier extends Notifier<ShortenerState> {
   }
 
   Future<void> shorten(String provider, String url) async {
-    state = state.copyWith(isLoading: true, error: null, result: null);
+    state = state.copyWith(isLoading: true, clearError: true, clearResult: true);
     try {
       final result = await _repository.shortenUrl(provider, url);
       state = state.copyWith(isLoading: false, result: result);
@@ -47,7 +53,7 @@ class ShortenerNotifier extends Notifier<ShortenerState> {
   }
 
   Future<void> expand(String url) async {
-    state = state.copyWith(isLoading: true, error: null, result: null);
+    state = state.copyWith(isLoading: true, clearError: true, clearResult: true);
     try {
       final result = await _repository.expandUrl(url);
       state = state.copyWith(isLoading: false, result: result);

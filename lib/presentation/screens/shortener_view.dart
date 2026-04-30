@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shortly/l10n/app_localizations.dart';
+import 'package:url_shortener/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants.dart';
@@ -69,7 +69,8 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
 
     final state = ref.watch(shortenerProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final history = ref.watch(filteredHistoryProvider);
+    final historyAsync = ref.watch(historyProvider);
+    final history = historyAsync.value ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,335 +78,331 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
         // ── Header (fixed, non-scrollable) ────────────────────────────────
         const AppCustomBar(title: 'Short', accentTitle: 'ly'),
 
-        // ── URL Input + Button (fixed, non-scrollable) ────────────────────
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        // ── Scrollable Content ───────────────────────────────────────────
+        Expanded(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            physics: const BouncingScrollPhysics(),
             children: [
-              // Section label
-              Row(
-                children: [
-                  Container(
-                    width: 4,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: AppColors.accent,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Paste your long URL',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: isDark
-                          ? AppColors.textSecondary
-                          : Colors.grey.shade700,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // ── URL input card ──────────────────────────────────────────
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkCard : Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: _isFocused
-                      ? Border.all(color: AppColors.accent, width: 2)
-                      : isDark
-                      ? Border.all(color: AppColors.darkCardBorder)
-                      : Border.all(color: Colors.grey.shade200),
-                  boxShadow: _isFocused
-                      ? [
-                          BoxShadow(
-                            color: AppColors.accent.withValues(alpha: 0.12),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                      : isDark
-                      ? null
-                      : [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 14, 8, 0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: _isFocused
-                                  ? AppColors.accent.withValues(alpha: 0.12)
-                                  : (isDark
-                                        ? AppColors.darkBg.withValues(
-                                            alpha: 0.5,
-                                          )
-                                        : Colors.grey.shade100),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Icon(
-                              Icons.link_rounded,
-                              size: 18,
-                              color: _isFocused
-                                  ? AppColors.accent
-                                  : AppColors.textMuted,
-                            ),
+                    // Section label
+                    Row(
+                      children: [
+                        Container(
+                          width: 4,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: AppColors.accent,
+                            borderRadius: BorderRadius.circular(2),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Focus(
-                              onFocusChange: (focused) =>
-                                  setState(() => _isFocused = focused),
-                              child: TextField(
-                                controller: _urlController,
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColors.textPrimary
-                                      : Colors.black87,
-                                  fontSize: 14.5,
-                                  fontWeight: FontWeight.w500,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Paste your long URL',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.textSecondary
+                                : Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    // ── URL input card ──────────────────────────────────────────
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: _isFocused
+                            ? Border.all(color: AppColors.accent, width: 2)
+                            : isDark
+                            ? Border.all(color: AppColors.darkCardBorder)
+                            : Border.all(color: Colors.grey.shade200),
+                        boxShadow: _isFocused
+                            ? [
+                                BoxShadow(
+                                  color: AppColors.accent.withValues(alpha: 0.12),
+                                  blurRadius: 16,
+                                  offset: const Offset(0, 4),
                                 ),
-                                decoration: InputDecoration(
-                                  hintText:
-                                      'https://example.com/very-long-url...',
-                                  hintStyle: TextStyle(
-                                    color: isDark
-                                        ? AppColors.textMuted
-                                        : Colors.grey.shade400,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
+                              ]
+                            : isDark
+                            ? null
+                            : [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.02),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 14, 8, 0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: _isFocused
+                                        ? AppColors.accent.withValues(alpha: 0.12)
+                                        : (isDark
+                                              ? AppColors.darkBg.withValues(
+                                                  alpha: 0.5,
+                                                )
+                                              : Colors.grey.shade100),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  filled: false,
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
+                                  child: Icon(
+                                    Icons.link_rounded,
+                                    size: 18,
+                                    color: _isFocused
+                                        ? AppColors.accent
+                                        : AppColors.textMuted,
+                                  ),
                                 ),
-                                keyboardType: TextInputType.url,
-                                textInputAction: TextInputAction.done,
-                                onSubmitted: (_) => _handleShorten(),
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.content_paste_rounded,
-                              size: 18,
-                              color: _isFocused
-                                  ? AppColors.accent
-                                  : AppColors.textMuted,
-                            ),
-                            splashRadius: 20,
-                            tooltip: 'Paste',
-                            onPressed: () async {
-                              final data = await Clipboard.getData(
-                                'text/plain',
-                              );
-                              if (data?.text != null) {
-                                _urlController.text = data!.text!;
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                      child: Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: isDark
-                            ? AppColors.darkCardBorder
-                            : Colors.grey.shade100,
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 12),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.hub_outlined,
-                            size: 14,
-                            color: AppColors.textMuted,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'via',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textMuted,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: _selectedProvider,
-                                isExpanded: true,
-                                isDense: true,
-                                icon: const Icon(
-                                  Icons.expand_more_rounded,
-                                  color: AppColors.textMuted,
-                                  size: 16,
-                                ),
-                                dropdownColor: isDark
-                                    ? AppColors.darkCard
-                                    : Colors.white,
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColors.accent
-                                      : AppColors.accent,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                items: _providers
-                                    .map(
-                                      (p) => DropdownMenuItem(
-                                        value: p,
-                                        child: Text(p),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Focus(
+                                    onFocusChange: (focused) =>
+                                        setState(() => _isFocused = focused),
+                                    child: TextField(
+                                      controller: _urlController,
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? AppColors.textPrimary
+                                            : Colors.black87,
+                                        fontSize: 14.5,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                    )
-                                    .toList(),
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    setState(() => _selectedProvider = value);
-                                  }
-                                },
-                              ),
+                                      decoration: InputDecoration(
+                                        hintText:
+                                            'https://example.com/very-long-url...',
+                                        hintStyle: TextStyle(
+                                          color: isDark
+                                              ? AppColors.textMuted
+                                              : Colors.grey.shade400,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        filled: false,
+                                        border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                      keyboardType: TextInputType.url,
+                                      textInputAction: TextInputAction.done,
+                                      onSubmitted: (_) => _handleShorten(),
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.content_paste_rounded,
+                                    size: 18,
+                                    color: _isFocused
+                                        ? AppColors.accent
+                                        : AppColors.textMuted,
+                                  ),
+                                  splashRadius: 20,
+                                  tooltip: 'Paste',
+                                  onPressed: () async {
+                                    final data = await Clipboard.getData(
+                                      'text/plain',
+                                    );
+                                    if (data?.text != null) {
+                                      _urlController.text = data!.text!;
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                            child: Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: isDark
+                                  ? AppColors.darkCardBorder
+                                  : Colors.grey.shade100,
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(14, 8, 14, 12),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.hub_outlined,
+                                  size: 14,
+                                  color: AppColors.textMuted,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'via',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.textMuted,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: _selectedProvider,
+                                      isExpanded: true,
+                                      isDense: true,
+                                      icon: const Icon(
+                                        Icons.expand_more_rounded,
+                                        color: AppColors.textMuted,
+                                        size: 16,
+                                      ),
+                                      dropdownColor: isDark
+                                          ? AppColors.darkCard
+                                          : Colors.white,
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? AppColors.accent
+                                            : AppColors.accent,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      items: _providers
+                                          .map(
+                                            (p) => DropdownMenuItem(
+                                              value: p,
+                                              child: Text(p),
+                                            ),
+                                          )
+                                          .toList(),
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          setState(() => _selectedProvider = value);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ),
 
-              const SizedBox(height: 14),
+                    const SizedBox(height: 14),
 
-              // Shorten Now button
-              /*
-                gradient: const LinearGradient(
-                  colors: [
-                    AppColors.accent,
-                    Color(0xFF1557B0),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              */
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: ElevatedButton(
-                  onPressed: state.isLoading ? null : _handleShorten,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: AppColors.accent.withValues(
-                      alpha: 0.5,
-                    ),
-                    elevation: 0,
-                    shape: const StadiumBorder(),
-                  ),
-                  child: state.isLoading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
+                    // Shorten Now button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 54,
+                      child: ElevatedButton(
+                        onPressed: state.isLoading ? null : _handleShorten,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accent,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: AppColors.accent.withValues(
+                            alpha: 0.5,
                           ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.bolt_rounded, size: 18),
-                            SizedBox(width: 8),
-                            Text(
-                              'Shorten Now',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.3,
+                          elevation: 0,
+                          shape: const StadiumBorder(),
+                        ),
+                        child: state.isLoading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(Icons.bolt_rounded, size: 18),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Shorten Now',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
+
+                    // Error message
+                    if (state.error != null) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.red.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.error_outline,
+                              color: Colors.red,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                state.error!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                ),
-              ),
-
-              // Error message
-              if (state.error != null) ...[
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.red.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: Colors.red,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          state.error!,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 13,
-                          ),
-                        ),
                       ),
                     ],
-                  ),
+
+                    const SizedBox(height: 24),
+
+                    // Recent Links header
+                    Text(
+                      'Recent Links',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                 ),
-              ],
-
-              const SizedBox(height: 20),
-
-              // Recent Links header
-              Text(
-                'Recent Links',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
-              const SizedBox(height: 12),
-            ],
-          ),
-        ),
 
-        // ── Scrollable list ────────────────────────────────────────────────
-        Expanded(
-          child: history.isEmpty
-              ? Center(
+              // Recent Links List
+              if (history.isEmpty)
+                Container(
+                  height: 200,
+                  alignment: Alignment.center,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -429,15 +426,21 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                     ],
                   ),
                 )
-              : ListView.builder(
+              else
+                ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: history.length > 5 ? 5 : history.length,
                   itemBuilder: (context, index) {
                     final item = history[index];
                     return _LinkCard(item: item, isDark: isDark);
                   },
                 ),
+            ],
+          ),
         ),
+      
       ],
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shortly/l10n/app_localizations.dart';
+import 'package:url_shortener/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../data/models/url_data.dart';
