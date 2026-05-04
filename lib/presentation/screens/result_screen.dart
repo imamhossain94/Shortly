@@ -6,6 +6,7 @@ import '../../core/theme.dart';
 import '../../core/services/ad_service.dart';
 import '../widgets/qr_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_shortener/l10n/app_localizations.dart';
 
 class ResultScreen extends StatefulWidget {
   final UrlData result;
@@ -47,7 +48,7 @@ class _ResultScreenState extends State<ResultScreen>
         elevation: 0,
         centerTitle: true,
         title: Text(
-          isShorten ? 'Shortened Link' : 'Expanded Link',
+          isShorten ? AppLocalizations.of(context)!.shortenedLink : AppLocalizations.of(context)!.expandedLink,
           style: TextStyle(
             fontWeight: FontWeight.w700,
             color: isDark ? AppColors.textPrimary : Colors.black87,
@@ -60,7 +61,6 @@ class _ResultScreenState extends State<ResultScreen>
           ),
           onPressed: () {
             Navigator.pop(context);
-            AdService().showInterstitialAd();
           },
         ),
       ),
@@ -189,7 +189,7 @@ class _ResultScreenState extends State<ResultScreen>
                                   if (displayUrl != null) {
                                     Clipboard.setData(ClipboardData(text: displayUrl));
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Copied to clipboard')),
+                                      SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
                                     );
                                   }
                                 },
@@ -242,7 +242,7 @@ class _ResultScreenState extends State<ResultScreen>
                                   }
                                 },
                                 icon: const Icon(Icons.share_rounded, size: 20),
-                                label: const Text('Share Link', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                                label: Text(AppLocalizations.of(context)!.shareLink, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.accent,
                                   foregroundColor: Colors.white,
@@ -270,7 +270,7 @@ class _ResultScreenState extends State<ResultScreen>
                                   }
                                 },
                                 icon: const Icon(Icons.open_in_browser_rounded, size: 20),
-                                label: const Text('Open in Browser', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                                label: Text(AppLocalizations.of(context)!.openInBrowser, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: isDark ? AppColors.textPrimary : Colors.black87,
                                   side: BorderSide(

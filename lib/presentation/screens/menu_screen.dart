@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:url_shortener/l10n/app_localizations.dart';
 import '../../core/theme.dart';
 import '../../core/constants.dart';
@@ -10,6 +11,7 @@ import '../widgets/app_custom_bar.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
 import 'feedback_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
@@ -23,7 +25,7 @@ class MenuScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Header (fixed, non-scrollable) ────────────────────────────────
-        const AppCustomBar(title: 'Settings'),
+        AppCustomBar(title: AppLocalizations.of(context)!.settings),
 
         // ── Scrollable content ─────────────────────────────────────────────
         Expanded(
@@ -65,7 +67,7 @@ class MenuScreen extends ConsumerWidget {
                                 Row(
                                   children: [
                                     Text(
-                                      'Shortly Pro',
+                                      AppLocalizations.of(context)!.shortlyPro,
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w800,
@@ -86,9 +88,9 @@ class MenuScreen extends ConsumerWidget {
                                         ),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
-                                      child: const Text(
-                                        'Active',
-                                        style: TextStyle(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.active,
+                                        style: const TextStyle(
                                           color: AppColors.accent,
                                           fontSize: 11,
                                           fontWeight: FontWeight.w700,
@@ -147,7 +149,7 @@ class MenuScreen extends ConsumerWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Shortly User',
+                                        AppLocalizations.of(context)!.shortlyUser,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
@@ -158,7 +160,7 @@ class MenuScreen extends ConsumerWidget {
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
-                                        'Enjoying ad-free experience',
+                                        AppLocalizations.of(context)!.enjoyingAdFree,
                                         style: TextStyle(
                                           color: isDark
                                               ? AppColors.textSecondary
@@ -196,7 +198,7 @@ class MenuScreen extends ConsumerWidget {
                               Row(
                                 children: [
                                   Text(
-                                    'Shortly Pro',
+                                    AppLocalizations.of(context)!.shortlyPro,
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w800,
@@ -217,9 +219,9 @@ class MenuScreen extends ConsumerWidget {
                                       ).withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    child: const Text(
-                                      'Free',
-                                      style: TextStyle(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.free,
+                                      style: const TextStyle(
                                         color: Color(0xFF007A87),
                                         fontSize: 11,
                                         fontWeight: FontWeight.w700,
@@ -253,7 +255,7 @@ class MenuScreen extends ConsumerWidget {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Upgrade pro to remove ads, enjoy seamless experience.',
+                                  AppLocalizations.of(context)!.upgradeProDesc,
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: isDark
@@ -281,7 +283,7 @@ class MenuScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
@@ -290,7 +292,7 @@ class MenuScreen extends ConsumerWidget {
                                   ),
                                   SizedBox(width: 8),
                                   Text(
-                                    'Upgrade Now – Remove Ads',
+                                    AppLocalizations.of(context)!.upgradeNow,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14,
@@ -309,7 +311,7 @@ class MenuScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
 
                 // ── Appearance section ─────────────────────────────
-                _SectionHeader(label: 'Appearance', isDark: isDark),
+                _SectionHeader(label: AppLocalizations.of(context)!.appearance, isDark: isDark),
                 const SizedBox(height: 10),
 
                 _SettingsCard(
@@ -347,7 +349,7 @@ class MenuScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
 
                 // ── Options section ────────────────────────────────
-                _SectionHeader(label: 'Options', isDark: isDark),
+                _SectionHeader(label: AppLocalizations.of(context)!.options, isDark: isDark),
                 const SizedBox(height: 10),
 
                 _SettingsCard(
@@ -355,11 +357,9 @@ class MenuScreen extends ConsumerWidget {
                   children: [
                     _SettingsTile(
                       icon: Icons.language_rounded,
-                      label: 'Language',
+                      label: AppLocalizations.of(context)!.language,
                       trailing: Text(
-                        Localizations.localeOf(context).languageCode == 'en'
-                            ? 'English'
-                            : 'Español',
+                        _getLanguageName(context),
                         style: const TextStyle(
                           color: AppColors.textMuted,
                           fontSize: 13,
@@ -367,28 +367,32 @@ class MenuScreen extends ConsumerWidget {
                       ),
                       isDark: isDark,
                       onTap: () {
+                        final currentLocale = ref.read(localeProvider);
                         showDialog(
                           context: context,
-                          builder: (context) => SimpleDialog(
-                            title: const Text('Select Language'),
-                            children: [
-                              SimpleDialogOption(
-                                onPressed: () {
-                                  ref
-                                      .read(localeProvider.notifier)
-                                      .setLocale(const Locale('en'));
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('English'),
+                          builder: (context) => AlertDialog(
+                            title: Text(AppLocalizations.of(context)!.selectLanguage),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                            content: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  _buildLangRadio(context, ref, 'en', AppLocalizations.of(context)!.english, currentLocale),
+                                  _buildLangRadio(context, ref, 'es', AppLocalizations.of(context)!.espanol, currentLocale),
+                                  _buildLangRadio(context, ref, 'fr', AppLocalizations.of(context)!.french, currentLocale),
+                                  _buildLangRadio(context, ref, 'de', AppLocalizations.of(context)!.german, currentLocale),
+                                  _buildLangRadio(context, ref, 'pt', AppLocalizations.of(context)!.portuguese, currentLocale),
+                                  _buildLangRadio(context, ref, 'it', AppLocalizations.of(context)!.italian, currentLocale),
+                                  _buildLangRadio(context, ref, 'hi', AppLocalizations.of(context)!.hindi, currentLocale),
+                                  _buildLangRadio(context, ref, 'zh', AppLocalizations.of(context)!.chinese, currentLocale),
+                                  _buildLangRadio(context, ref, 'ar', AppLocalizations.of(context)!.arabic, currentLocale),
+                                ],
                               ),
-                              SimpleDialogOption(
-                                onPressed: () {
-                                  ref
-                                      .read(localeProvider.notifier)
-                                      .setLocale(const Locale('es'));
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Español'),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(AppLocalizations.of(context)!.close),
                               ),
                             ],
                           ),
@@ -398,7 +402,7 @@ class MenuScreen extends ConsumerWidget {
                     _Divider(isDark: isDark),
                     _SettingsTile(
                       icon: Icons.feedback_outlined,
-                      label: 'Feedback',
+                      label: AppLocalizations.of(context)!.feedback,
                       isDark: isDark,
                       onTap: () {
                         Navigator.push(
@@ -426,18 +430,20 @@ class MenuScreen extends ConsumerWidget {
                     _Divider(isDark: isDark),
                     _SettingsTile(
                       icon: Icons.star_rate_rounded,
-                      label: 'Rate App',
+                      label: AppLocalizations.of(context)!.rateApp,
                       isDark: isDark,
                       onTap: () async {
-                        final Uri url = Uri.parse(
-                          'market://details?id=com.newagedevs.url_shortener',
-                        );
-                        if (!await launchUrl(url)) {
+                        final InAppReview inAppReview = InAppReview.instance;
+                        if (await inAppReview.isAvailable()) {
+                          // openStoreListing directly takes the user to the app's store page
+                          await inAppReview.openStoreListing(appStoreId: 'com.newagedevs.url_shortener');
+                        } else {
+                          // Fallback: open Play Store in browser
                           final webUrl = Uri.parse(
                             'https://play.google.com/store/apps/details?id=com.newagedevs.url_shortener',
                           );
                           if (await canLaunchUrl(webUrl)) {
-                            launchUrl(
+                            await launchUrl(
                               webUrl,
                               mode: LaunchMode.externalApplication,
                             );
@@ -448,7 +454,7 @@ class MenuScreen extends ConsumerWidget {
                     _Divider(isDark: isDark),
                     _SettingsTile(
                       icon: Icons.privacy_tip_outlined,
-                      label: 'Privacy Policy',
+                      label: AppLocalizations.of(context)!.privacyPolicy,
                       isDark: isDark,
                       onTap: () async {
                         final Uri url = Uri.parse(
@@ -465,28 +471,33 @@ class MenuScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
 
                 // ── About section ──────────────────────────────────
-                _SectionHeader(label: 'About', isDark: isDark),
+                _SectionHeader(label: AppLocalizations.of(context)!.about, isDark: isDark),
                 const SizedBox(height: 10),
 
                 _SettingsCard(
                   isDark: isDark,
                   children: [
-                    _SettingsTile(
-                      icon: Icons.info_outline_rounded,
-                      label: 'Version',
-                      isDark: isDark,
-                      trailing: const Text(
-                        '1.0.0',
-                        style: TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 13,
-                        ),
-                      ),
+                    FutureBuilder<PackageInfo>(
+                      future: PackageInfo.fromPlatform(),
+                      builder: (context, snapshot) {
+                        return _SettingsTile(
+                          icon: Icons.info_outline_rounded,
+                          label: AppLocalizations.of(context)!.version,
+                          isDark: isDark,
+                          trailing: Text(
+                            snapshot.hasData ? 'v${snapshot.data!.version}' : 'Loading...',
+                            style: const TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 13,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     _Divider(isDark: isDark),
                     _SettingsTile(
                       icon: Icons.apps_rounded,
-                      label: 'Other Apps',
+                      label: AppLocalizations.of(context)!.otherApps,
                       isDark: isDark,
                       onTap: () async {
                         final Uri url = Uri.parse(
@@ -504,6 +515,38 @@ class MenuScreen extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  String _getLanguageName(BuildContext context) {
+    final langCode = Localizations.localeOf(context).languageCode;
+    switch (langCode) {
+      case 'es': return AppLocalizations.of(context)!.espanol;
+      case 'fr': return AppLocalizations.of(context)!.french;
+      case 'de': return AppLocalizations.of(context)!.german;
+      case 'pt': return AppLocalizations.of(context)!.portuguese;
+      case 'it': return AppLocalizations.of(context)!.italian;
+      case 'hi': return AppLocalizations.of(context)!.hindi;
+      case 'zh': return AppLocalizations.of(context)!.chinese;
+      case 'ar': return AppLocalizations.of(context)!.arabic;
+      case 'en':
+      default:
+        return AppLocalizations.of(context)!.english;
+    }
+  }
+
+  Widget _buildLangRadio(BuildContext context, WidgetRef ref, String langCode, String langName, Locale currentLocale) {
+    return RadioListTile<String>(
+      value: langCode,
+      groupValue: currentLocale.languageCode,
+      activeColor: AppColors.accent,
+      title: Text(langName, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+      onChanged: (value) {
+        if (value != null) {
+          ref.read(localeProvider.notifier).setLocale(Locale(value));
+          Navigator.pop(context);
+        }
+      },
     );
   }
 }

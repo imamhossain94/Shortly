@@ -65,8 +65,8 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
       children: [
         // ── Header + Search (fixed, non-scrollable) ──────────────────────
         AppCustomBar(
-          title: 'My ',
-          accentTitle: 'Links',
+          title: '${AppLocalizations.of(context)!.myLinks.split(' ')[0]} ',
+          accentTitle: AppLocalizations.of(context)!.myLinks.split(' ').skip(1).join(' '),
           actions: [
             GestureDetector(
               onTap: () => ref.read(historyProvider.notifier).refresh(),
@@ -104,7 +104,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                 fontSize: 14,
               ),
               decoration: InputDecoration(
-                hintText: 'Search links...',
+                hintText: AppLocalizations.of(context)!.searchLinks,
                 hintStyle: const TextStyle(
                     color: AppColors.textMuted, fontSize: 13),
                 prefixIcon: const Icon(Icons.search_rounded,
@@ -164,14 +164,13 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
           child: Row(
             children: [
               _SummaryChip(
-                label: '${history.length} Links',
+                label: AppLocalizations.of(context)!.linksCount(history.length),
                 isDark: isDark,
                 isAccent: false,
               ),
               const SizedBox(width: 8),
               _SummaryChip(
-                label:
-                    '${history.where((i) => i.provider != null).length} Shortened',
+                label: AppLocalizations.of(context)!.shortenedCount(history.where((i) => i.provider != null).length),
                 isDark: isDark,
                 isAccent: true,
               ),
@@ -488,7 +487,7 @@ class _HistoryLinkCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                isShorten ? 'Shortened' : 'Expanded',
+                                isShorten ? AppLocalizations.of(context)!.shortenedLink.split(' ')[0] : AppLocalizations.of(context)!.expanded,
                                 style: TextStyle(
                                   fontSize: 9,
                                   color: isShorten
@@ -512,7 +511,7 @@ class _HistoryLinkCard extends StatelessWidget {
                       onTap: () {
                         Clipboard.setData(ClipboardData(text: shortUrl));
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Copied to clipboard')),
+                          SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
                         );
                       },
                       child: Container(

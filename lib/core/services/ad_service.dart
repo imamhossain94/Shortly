@@ -96,10 +96,6 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
       AppOpenAdListener(
         onAdLoadedCallback: (ad) {
           _appOpenRetryAttempt = 0;
-          if (_isFirstLaunch) {
-            _isFirstLaunch = false;
-            _showAdIfReady();
-          }
         },
         onAdLoadFailedCallback: (adUnitId, error) {
           _appOpenRetryAttempt++;
@@ -261,7 +257,7 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: _isAdLoaded ? const EdgeInsets.only(bottom: 12) : EdgeInsets.zero,
-      height: _isAdLoaded ? 140 : 0,
+      height: _isAdLoaded ? 140 : 1,
       decoration: _isAdLoaded
           ? BoxDecoration(
               color: isDark ? AppColors.darkCard : Colors.white,
@@ -279,8 +275,8 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
                       ),
                     ],
             )
-          : null,
-      clipBehavior: _isAdLoaded ? Clip.hardEdge : Clip.none,
+          : const BoxDecoration(color: Colors.transparent),
+      clipBehavior: Clip.hardEdge,
       child: MaxNativeAdView(
         adUnitId: widget.adUnitId,
         controller: _controller,

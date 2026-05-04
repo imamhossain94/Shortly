@@ -32,5 +32,68 @@
   "all": "All",
   "refresh": "Refresh",
   "options": "Options",
-  "close": "Close"
+  "close": "Close",
+  "shareLink": "Share Link",
+  "openInBrowser": "Open in Browser",
+  "selectLanguage": "Select Language",
+  "english": "English",
+  "espanol": "Español",
+  "french": "French",
+  "german": "German",
+  "portuguese": "Portuguese",
+  "italian": "Italian",
+  "hindi": "Hindi",
+  "chinese": "Chinese",
+  "arabic": "Arabic",
+  "searchLinks": "Search links...",
+  "tellUsMore": "Tell us more about the issue...",
+  "exampleUrl": "https://bit.ly/example",
+  "shortenedLink": "Shortened Link",
+  "expandedLink": "Expanded Link",
+  "pasteLongUrl": "Paste your long URL",
+  "shortenNow": "Shorten Now",
+  "recentLinks": "Recent Links",
+  "noLinksShortened": "No links shortened yet",
+  "expandShortenedLink": "Expand Shortened Link",
+  "expandShortenedLinkDesc": "Safely reveal the full destination behind any shortened link.",
+  "expandAndVerify": "Expand & Verify",
+  "howItWorks": "How it works",
+  "pasteShortUrlTitle": "Paste your short URL",
+  "pasteShortUrlDesc": "Copy any bit.ly, tinyurl, or other shortened link.",
+  "tapExpandVerifyTitle": "Tap Expand & Verify",
+  "tapExpandVerifyDesc": "We follow the redirect chain to find the destination.",
+  "seeFullUrlTitle": "See the full URL",
+  "seeFullUrlDesc": "The complete original URL is revealed instantly.",
+  "shortlyPro": "Shortly Pro",
+  "active": "Active",
+  "shortlyUser": "Shortly User",
+  "enjoyingAdFree": "Enjoying ad-free experience",
+  "free": "Free",
+  "upgradeProDesc": "Upgrade pro to remove ads, enjoy seamless experience.",
+  "upgradeNow": "Upgrade Now – Remove Ads",
+  "appearance": "Appearance",
+  "language": "Language",
+  "feedback": "Feedback",
+  "rateApp": "Rate App",
+  "privacyPolicy": "Privacy Policy",
+  "about": "About",
+  "version": "Version",
+  "otherApps": "Other Apps",
+  "myLinks": "My Links",
+  "linksCount": "{count} Links",
+  "@linksCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shortenedCount": "{count} Shortened",
+  "@shortenedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -38,7 +38,7 @@ abstract class AppConstants {
   static const String adUnitIdAppOpen = '6a7b65e0faa88597';
   static const String adUnitIdBanner = 'bd2455da86aa9d29';
   static const String adUnitIdInterstitial = '9163b11a017694fe';
-  static const String adUnitIdNative = '6180b722491dfba0';
+  static const String adUnitIdNative = '441ef9da57393e3d';
 
   // IAP Product IDs
   static const String productRemoveAds = 'remove_ads';

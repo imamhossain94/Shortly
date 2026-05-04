@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme.dart';
+import 'package:url_shortener/l10n/app_localizations.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -57,7 +58,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'Feedback',
+          AppLocalizations.of(context)!.feedback,
           style: TextStyle(
             fontWeight: FontWeight.w700,
             color: isDark ? AppColors.textPrimary : Colors.black87,
@@ -150,7 +151,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   color: isDark ? AppColors.textPrimary : Colors.black87,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Tell us more about the issue...',
+                  hintText: AppLocalizations.of(context)!.tellUsMore,
                   hintStyle: TextStyle(
                     color: isDark ? AppColors.textSecondary : Colors.grey.shade500,
                   ),

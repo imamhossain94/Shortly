@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -5,7 +6,9 @@ import 'package:url_shortener/l10n/app_localizations.dart';
 import 'core/theme.dart';
 import 'core/services/iap_service.dart';
 import 'core/services/ad_service.dart';
+import 'core/services/update_service.dart';
 import 'presentation/screens/main_screen.dart';
+import 'presentation/screens/onboarding_screen.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'presentation/providers/locale_provider.dart';
@@ -30,6 +33,7 @@ void main() async {
   // ── Initialize services ──────────────────────────────────────────────────
   await IapService().init();   // restores purchases + listens to stream
   await AdService().init();    // inits AppLovin MAX (skipped if premium)
+  unawaited(UpdateService().checkForUpdate()); // non-blocking update check
 
   // Seed data if empty
   final dbHelper = DatabaseHelper.instance;
@@ -62,8 +66,31 @@ class ShortlyApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('en'), Locale('es')],
-      home: const MainScreen(),
+      supportedLocales: const [
+        Locale('en'),
+        Locale('es'),
+        Locale('fr'),
+        Locale('de'),
+        Locale('pt'),
+        Locale('it'),
+        Locale('hi'),
+        Locale('zh'),
+        Locale('ar'),
+      ],
+      home: FutureBuilder<bool>(
+        future: OnboardingScreen.hasSeenOnboarding(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            // Show a minimal splash while the future resolves
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(color: AppColors.accent),
+              ),
+            );
+          }
+          return snapshot.data! ? const MainScreen() : const OnboardingScreen();
+        },
+      ),
     );
   }
 }
