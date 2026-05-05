@@ -633,10 +633,10 @@ packages:
     dependency: "direct main"
     description:
       name: rename_app
-      sha256: "387a88335f853674b39bed7943955388bbaf6aae4ffdc812e2ef275ce119abc7"
+      sha256: "9df79b531a59124f3ec60316385809f79835eccf934a1ca7051f602a988acade"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.5"
+    version: "1.6.6"
   riverpod:
     dependency: transitive
     description:
