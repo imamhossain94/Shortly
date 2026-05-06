@@ -233,8 +233,8 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                     final item = history[index];
                     final card = _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
 
-                    // Show a native ad after every 4 items to monetize without being intrusive
-                    if (index > 0 && (index + 1) % 4 == 0) {
+                    // Show first ad after 2 items, then every 4 items
+                    if (index >= 1 && (index - 1) % 4 == 0) {
                       return Column(
                         children: [
                           card,

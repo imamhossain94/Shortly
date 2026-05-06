@@ -31,7 +31,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
 
   final List<String> _providers = [
     AppConstants.tinyUrl,
-    AppConstants.chilpIt,
+    AppConstants.cleanUri,
     AppConstants.clckRu,
     AppConstants.daGd,
     AppConstants.isGd,
@@ -524,7 +524,8 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                     final item = history[index];
                     final card = _LinkCard(item: item, isDark: isDark);
                     
-                    if (index > 0 && (index + 1) % 4 == 0) {
+                    // Show first ad after 2 items, then every 4 items
+                    if (index >= 1 && (index - 1) % 4 == 0) {
                       return Column(
                         children: [
                           card,
