@@ -25,10 +25,18 @@ class _ResultScreenState extends State<ResultScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
     super.dispose();
   }
@@ -354,7 +362,7 @@ class _ResultScreenState extends State<ResultScreen>
                         ),
                         
                         const SizedBox(height: 32),
-                        AdService().getNativeAdWidget(),
+                        AdService().getNativeAdWidget(key: UniqueKey()),
                         const SizedBox(height: 16),
                       ],
                     ),

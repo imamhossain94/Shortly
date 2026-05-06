@@ -184,9 +184,9 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   // ── Native Ad Widget ─────────────────────────────────────────────────────
-  Widget getNativeAdWidget({bool isListCard = false}) {
+  Widget getNativeAdWidget({Key? key, bool isListCard = false}) {
     if (_iapService.isPremium) return const SizedBox.shrink();
-    return _NativeAdWidget(adUnitId: AppConstants.adUnitIdNative, isListCard: isListCard);
+    return _NativeAdWidget(key: key, adUnitId: AppConstants.adUnitIdNative, isListCard: isListCard);
   }
 }
 
@@ -234,7 +234,7 @@ class _BannerAdWidgetState extends State<_BannerAdWidget> {
 class _NativeAdWidget extends StatefulWidget {
   final String adUnitId;
   final bool isListCard;
-  const _NativeAdWidget({required this.adUnitId, this.isListCard = false});
+  const _NativeAdWidget({super.key, required this.adUnitId, this.isListCard = false});
 
   @override
   State<_NativeAdWidget> createState() => _NativeAdWidgetState();

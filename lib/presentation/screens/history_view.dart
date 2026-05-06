@@ -20,6 +20,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String? _filterType;
+  bool _isScrolling = false;
 
   @override
   void dispose() {
@@ -226,24 +227,35 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                     ],
                   ),
                 )
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                  itemCount: history.length,
-                  itemBuilder: (context, index) {
-                    final item = history[index];
-                    final card = _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
-
-                    // Show first ad after 2 items, then every 4 items
-                    if (index >= 1 && (index - 1) % 4 == 0) {
-                      return Column(
-                        children: [
-                          card,
-                          AdService().getNativeAdWidget(isListCard: true),
-                        ],
-                      );
+              : NotificationListener<ScrollNotification>(
+                  onNotification: (scrollInfo) {
+                    if (scrollInfo is ScrollStartNotification) {
+                      if (!_isScrolling) setState(() => _isScrolling = true);
+                    } else if (scrollInfo is ScrollEndNotification) {
+                      if (_isScrolling) setState(() => _isScrolling = false);
                     }
-                    return card;
+                    return false;
                   },
+                  child: ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                    itemCount: history.length,
+                    itemBuilder: (context, index) {
+                      final item = history[index];
+                      final card = _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
+
+                      // Show first ad after 2 items, then every 4 items
+                      if (index >= 1 && (index - 1) % 4 == 0) {
+                        return Column(
+                          children: [
+                            card,
+                            if (!_isScrolling)
+                              AdService().getNativeAdWidget(isListCard: true),
+                          ],
+                        );
+                      }
+                      return card;
+                    },
+                  ),
                 ),
         ),
       ],
@@ -357,6 +369,41 @@ class _HistoryLinkCard extends StatelessWidget {
         child:
             const Icon(Icons.delete_rounded, color: Colors.red, size: 24),
       ),
+      confirmDismiss: (direction) async {
+        return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Text(
+                'Delete Link',
+                style: TextStyle(color: isDark ? AppColors.textPrimary : Colors.black87),
+              ),
+              content: Text(
+                'Are you sure you want to delete this link?',
+                style: TextStyle(color: isDark ? AppColors.textSecondary : Colors.grey.shade700),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.textMuted),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
       onDismissed: (_) {
         ref.read(historyProvider.notifier).deleteUrl(item.id!);
       },

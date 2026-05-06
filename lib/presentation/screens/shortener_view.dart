@@ -574,7 +574,59 @@ class _LinkCard extends ConsumerWidget {
       }
     } catch (_) {}
 
-    return Container(
+    return Dismissible(
+      key: Key(item.id.toString()),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 24),
+        decoration: BoxDecoration(
+          color: Colors.red.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+        ),
+        child: const Icon(Icons.delete_rounded, color: Colors.red, size: 24),
+      ),
+      confirmDismiss: (direction) async {
+        return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Text(
+                'Delete Link',
+                style: TextStyle(color: isDark ? AppColors.textPrimary : Colors.black87),
+              ),
+              content: Text(
+                'Are you sure you want to delete this link?',
+                style: TextStyle(color: isDark ? AppColors.textSecondary : Colors.grey.shade700),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.textMuted),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      onDismissed: (_) {
+        ref.read(historyProvider.notifier).deleteUrl(item.id!);
+      },
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : Colors.white,
@@ -696,8 +748,9 @@ class _LinkCard extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Color _colorFromHost(String host) {
     final colors = [
