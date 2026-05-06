@@ -319,22 +319,49 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                                         color: AppColors.textMuted,
                                         size: 16,
                                       ),
+                                      borderRadius: BorderRadius.circular(16),
                                       dropdownColor: isDark
-                                          ? AppColors.darkCard
+                                          ? AppColors.darkSurface
                                           : Colors.white,
                                       style: TextStyle(
-                                        color: isDark
-                                            ? AppColors.accent
-                                            : AppColors.accent,
+                                        color: AppColors.accent,
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                       ),
+                                      selectedItemBuilder: (BuildContext context) {
+                                        return _providers.map<Widget>((String p) {
+                                          return Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(p),
+                                          );
+                                        }).toList();
+                                      },
                                       items: _providers
                                           .map(
-                                            (p) => DropdownMenuItem(
-                                              value: p,
-                                              child: Text(p),
-                                            ),
+                                            (p) {
+                                              final isSelected = p == _selectedProvider;
+                                              return DropdownMenuItem(
+                                                value: p,
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected 
+                                                        ? AppColors.accent.withValues(alpha: 0.1) 
+                                                        : Colors.transparent,
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                  child: Text(
+                                                    p,
+                                                    style: TextStyle(
+                                                      color: isSelected 
+                                                          ? AppColors.accent 
+                                                          : (isDark ? AppColors.textPrimary : Colors.black87),
+                                                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
                                           )
                                           .toList(),
                                       onChanged: (value) {
@@ -357,42 +384,57 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                     // Shorten Now button
                     SizedBox(
                       width: double.infinity,
-                      height: 54,
-                      child: ElevatedButton(
-                        onPressed: state.isLoading ? null : _handleShorten,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accent,
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: AppColors.accent.withValues(
-                            alpha: 0.5,
+                      height: 58,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 400),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.accent, AppColors.accentLight],
                           ),
-                          elevation: 0,
-                          shape: const StadiumBorder(),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.accent.withValues(alpha: 0.4),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                         ),
-                        child: state.isLoading
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.bolt_rounded, size: 18),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    AppLocalizations.of(context)!.shortenNow,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.3,
+                        child: Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: state.isLoading ? null : _handleShorten,
+                            child: Center(
+                              child: state.isLoading
+                                  ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.bolt_rounded, size: 18, color: Colors.white),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          AppLocalizations.of(context)!.shortenNow,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: 0.3,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
 

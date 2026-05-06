@@ -7,6 +7,7 @@ import 'history_view.dart';
 import 'menu_screen.dart';
 import 'help_faq_screen.dart';
 import 'about_screen.dart';
+import 'feedback_screen.dart';
 import '../../core/theme.dart';
 import '../../core/services/ad_service.dart';
 import '../../core/services/iap_service.dart';
@@ -134,29 +135,16 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       elevation: 0,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topRight: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+          topRight: Radius.circular(16),
+          bottomRight: Radius.circular(16),
         ),
       ),
       child: Column(
         children: [
           // Premium Header
           Container(
-            padding: const EdgeInsets.fromLTRB(28, 64, 28, 36),
+            padding: const EdgeInsets.fromLTRB(28, 64, 28, 24),
             width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF1A73E8),
-                  Color(0xFF0D47A1),
-                ],
-              ),
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(32),
-              ),
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -165,52 +153,49 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(16),
+                        color: AppColors.accent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(18),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: AppColors.accent.withValues(alpha: 0.2),
                           width: 1.5,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 16,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
                       ),
                       child: const Icon(
                         Icons.bolt_rounded,
-                        color: Colors.white,
-                        size: 32,
+                        color: AppColors.accent,
+                        size: 28,
                       ),
                     ),
                     if (IapService().isPremium)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.amber.shade300,
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFFFD700), Color(0xFFF5A623)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.amber.withValues(alpha: 0.3),
+                              color: const Color(0xFFF5A623).withValues(alpha: 0.25),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.workspace_premium_rounded, size: 14, color: Colors.black87),
-                            const SizedBox(width: 4),
-                            const Text(
+                            Icon(Icons.workspace_premium_rounded, size: 14, color: Colors.black87),
+                            SizedBox(width: 4),
+                            Text(
                               'PRO',
                               style: TextStyle(
                                 color: Colors.black87,
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 0.5,
                               ),
@@ -224,12 +209,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 RichText(
                   text: TextSpan(
                     children: [
-                      const TextSpan(
+                      TextSpan(
                         text: 'Short',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: isDark ? Colors.white : Colors.black87,
                           letterSpacing: -0.5,
                         ),
                       ),
@@ -238,18 +223,18 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white.withValues(alpha: 0.7),
+                          color: AppColors.accent,
                           letterSpacing: -0.5,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   'Premium Link Management',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: isDark ? AppColors.textSecondary : Colors.black54,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -321,6 +306,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 ),
                 _buildDrawerItem(
                   context,
+                  icon: Icons.feedback_outlined,
+                  label: AppLocalizations.of(context)!.feedback,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const FeedbackScreen()),
+                    );
+                  },
+                ),
+                _buildDrawerItem(
+                  context,
                   icon: Icons.info_outline_rounded,
                   label: AppLocalizations.of(context)!.about,
                   onTap: () {
@@ -379,8 +375,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: InkWell(
         onTap: () {
-          onTap();
           Navigator.pop(context);
+          onTap();
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(

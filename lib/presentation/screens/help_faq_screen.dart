@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
-import '../widgets/app_custom_bar.dart';
 
 class HelpFaqScreen extends StatelessWidget {
   const HelpFaqScreen({super.key});
@@ -28,12 +27,68 @@ class HelpFaqScreen extends StatelessWidget {
       },
     ];
 
-    return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBg : Colors.white,
-      body: Column(
-        children: [
-          const AppCustomBar(title: 'Help & FAQ'),
-          Expanded(
+    return Stack(
+      children: [
+        // Base background
+        Container(color: isDark ? AppColors.darkBg : Colors.white),
+
+        // Primary Dynamic Glow - Shifted Top-Left for natural lighting
+        Container(
+          decoration: const BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment(-0.4, -0.6),
+              radius: 1.5,
+              colors: [
+                Color(0x4064B5F6),
+                Color(0x2042A5F5),
+                Colors.transparent,
+              ],
+              stops: [0.0, 0.5, 1.0],
+            ),
+          ),
+        ),
+
+        // Secondary Soft Glow - Bottom-Right to balance composition
+        Container(
+          decoration: const BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment(0.8, 0.8),
+              radius: 1.8,
+              colors: [
+                Color(0x1564B5F6),
+                Color(0x0A42A5F5),
+                Colors.transparent,
+              ],
+              stops: [0.0, 0.5, 1.0],
+            ),
+          ),
+        ),
+
+        // Foreground Content
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            centerTitle: true,
+            title: Text(
+              'Help & FAQ',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                color: isDark ? AppColors.textPrimary : Colors.black87,
+              ),
+            ),
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                color: isDark ? AppColors.textPrimary : Colors.black87,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          body: Column(
+            children: [
+              Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: faqs.length,
@@ -81,6 +136,8 @@ class HelpFaqScreen extends StatelessWidget {
           ),
         ],
       ),
+    ),
+      ],
     );
   }
 }

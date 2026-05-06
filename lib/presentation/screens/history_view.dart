@@ -123,25 +123,46 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                     : PopupMenuButton<String?>(
                         icon: const Icon(Icons.filter_list_rounded,
                             size: 18, color: AppColors.textMuted),
+                        color: isDark ? AppColors.darkSurface : Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
                         onSelected: (value) {
                           setState(() {
                             _filterType = value;
                           });
                         },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'all',
-                            child: Text(AppLocalizations.of(context)!.all),
-                          ),
-                          PopupMenuItem(
-                            value: 'shorten',
-                            child: Text(AppLocalizations.of(context)!.shortenedUrl),
-                          ),
-                          PopupMenuItem(
-                            value: 'expand',
-                            child: Text(AppLocalizations.of(context)!.expanded),
-                          ),
-                        ],
+                        itemBuilder: (context) {
+                          final items = [
+                            {'value': 'all', 'label': AppLocalizations.of(context)!.all},
+                            {'value': 'shorten', 'label': AppLocalizations.of(context)!.shortenedUrl},
+                            {'value': 'expand', 'label': AppLocalizations.of(context)!.expanded},
+                          ];
+                          return items.map((item) {
+                            final isSelected = _filterType == item['value'];
+                            return PopupMenuItem<String?>(
+                              value: item['value'],
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? AppColors.accent.withValues(alpha: 0.1) : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  item['label']!,
+                                  style: TextStyle(
+                                    color: isSelected ? AppColors.accent : (isDark ? AppColors.textPrimary : Colors.black87),
+                                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList();
+                        },
                       ),
                 filled: false,
                 border: InputBorder.none,

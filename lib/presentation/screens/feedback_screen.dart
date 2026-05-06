@@ -51,8 +51,46 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBg : Colors.white,
+    return Stack(
+      children: [
+        // Base background
+        Container(color: isDark ? AppColors.darkBg : Colors.white),
+
+        // Primary Dynamic Glow - Shifted Top-Left for natural lighting
+        Container(
+          decoration: const BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment(-0.4, -0.6),
+              radius: 1.5,
+              colors: [
+                Color(0x4064B5F6),
+                Color(0x2042A5F5),
+                Colors.transparent,
+              ],
+              stops: [0.0, 0.5, 1.0],
+            ),
+          ),
+        ),
+
+        // Secondary Soft Glow - Bottom-Right to balance composition
+        Container(
+          decoration: const BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment(0.8, 0.8),
+              radius: 1.8,
+              colors: [
+                Color(0x1564B5F6),
+                Color(0x0A42A5F5),
+                Colors.transparent,
+              ],
+              stops: [0.0, 0.5, 1.0],
+            ),
+          ),
+        ),
+
+        // Foreground Content
+        Scaffold(
+          backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -181,23 +219,43 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _selectedIssue == null ? null : _sendEmail,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: isDark ? AppColors.darkCardBorder : Colors.grey.shade300,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                height: 58,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: _selectedIssue == null
+                          ? [Colors.grey.shade400, Colors.grey.shade400]
+                          : [AppColors.accent, AppColors.accentLight],
                     ),
-                    elevation: 0,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: _selectedIssue == null
+                        ? []
+                        : [
+                            BoxShadow(
+                              color: AppColors.accent.withValues(alpha: 0.4),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                   ),
-                  child: const Text(
-                    'Continue',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: _selectedIssue == null ? null : _sendEmail,
+                      child: const Center(
+                        child: Text(
+                          'Continue',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -206,6 +264,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           ),
         ),
       ),
+    ),
+      ],
     );
   }
 }

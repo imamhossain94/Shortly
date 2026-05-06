@@ -270,35 +270,48 @@ class MenuScreen extends ConsumerWidget {
                           const SizedBox(height: 20),
                           SizedBox(
                             width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () => IapService().buyRemoveAds(),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.accent,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
+                            height: 54,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 400),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [AppColors.accent, AppColors.accentLight],
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.workspace_premium_rounded,
-                                    size: 16,
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    AppLocalizations.of(context)!.upgradeNow,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 14,
-                                    ),
+                                borderRadius: BorderRadius.circular(14),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.accent.withValues(alpha: 0.4),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 6),
                                   ),
                                 ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(14),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(14),
+                                  onTap: () => IapService().buyRemoveAds(),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.workspace_premium_rounded,
+                                        size: 18,
+                                        color: Colors.white,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        AppLocalizations.of(context)!.upgradeNow,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
