@@ -36,11 +36,11 @@ void main() async {
   unawaited(UpdateService().checkForUpdate()); // non-blocking update check
 
   // Seed data if empty
-  final dbHelper = DatabaseHelper.instance;
-  final history = await dbHelper.getAllUrls();
-  if (history.isEmpty) {
-    await dbHelper.seedData();
-  }
+  // final dbHelper = DatabaseHelper.instance;
+  // final history = await dbHelper.getAllUrls();
+  // if (history.isEmpty) {
+  //   await dbHelper.seedData();
+  // }
 
   runApp(const ProviderScope(child: ShortlyApp()));
 }

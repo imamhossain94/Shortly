@@ -38,7 +38,6 @@ CREATE TABLE url_data (
   timestamp $integerType
   )
 ''');
-    // await seedData(db);
   }
 
   Future<int> insert(UrlData urlData) async {

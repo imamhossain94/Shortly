@@ -41,5 +41,5 @@ abstract class AppConstants {
   static const String adUnitIdNative = '441ef9da57393e3d';
 
   // IAP Product IDs
-  static const String productRemoveAds = 'remove_ads';
+  static const String productRemoveAds = 'removeads';
 }
