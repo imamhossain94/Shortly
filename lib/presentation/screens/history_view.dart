@@ -238,7 +238,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                       return Column(
                         children: [
                           card,
-                          AdService().getNativeAdWidget(),
+                          AdService().getNativeAdWidget(isListCard: true),
                         ],
                       );
                     }

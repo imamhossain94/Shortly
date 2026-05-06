@@ -184,9 +184,9 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   // ── Native Ad Widget ─────────────────────────────────────────────────────
-  Widget getNativeAdWidget() {
+  Widget getNativeAdWidget({bool isListCard = false}) {
     if (_iapService.isPremium) return const SizedBox.shrink();
-    return _NativeAdWidget(adUnitId: AppConstants.adUnitIdNative);
+    return _NativeAdWidget(adUnitId: AppConstants.adUnitIdNative, isListCard: isListCard);
   }
 }
 
@@ -233,7 +233,8 @@ class _BannerAdWidgetState extends State<_BannerAdWidget> {
 // ─────────────────────────────────────────────────────────────────────────────
 class _NativeAdWidget extends StatefulWidget {
   final String adUnitId;
-  const _NativeAdWidget({required this.adUnitId});
+  final bool isListCard;
+  const _NativeAdWidget({required this.adUnitId, this.isListCard = false});
 
   @override
   State<_NativeAdWidget> createState() => _NativeAdWidgetState();
@@ -260,12 +261,17 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
       height: _isAdLoaded ? 140 : 1,
       decoration: _isAdLoaded
           ? BoxDecoration(
-              color: isDark ? AppColors.darkCard : Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              color: isDark
+                  ? AppColors.darkCard
+                  : (widget.isListCard ? Colors.white : Colors.grey.shade50),
+              borderRadius: BorderRadius.circular(widget.isListCard ? 20 : 16),
               border: isDark
                   ? Border.all(color: AppColors.darkCardBorder, width: 1.5)
-                  : Border.all(color: Colors.grey.shade200, width: 1.5),
-              boxShadow: isDark
+                  : Border.all(
+                      color: Colors.grey.shade200,
+                      width: widget.isListCard ? 1.5 : 1.0,
+                    ),
+              boxShadow: isDark || !widget.isListCard
                   ? null
                   : [
                       BoxShadow(
@@ -310,8 +316,8 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
               children: [
                 Row(
                   children: [
-                    const MaxNativeAdIconView(width: 36, height: 36),
-                    const SizedBox(width: 8),
+                    // const MaxNativeAdIconView(width: 36, height: 36),
+                    // const SizedBox(width: 8),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -337,17 +343,17 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(4),
+                        color: AppColors.accent.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Ad',
                         style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onPrimaryContainer,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.accent,
                         ),
                       ),
                     ),
@@ -370,7 +376,7 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
                   child: MaxNativeAdCallToActionView(
                     style: ButtonStyle(
                       backgroundColor:
-                          WidgetStateProperty.all(theme.primaryColor),
+                          WidgetStateProperty.all(AppColors.accent),
                       foregroundColor:
                           WidgetStateProperty.all(Colors.white),
                       padding: WidgetStateProperty.all(
@@ -381,7 +387,7 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
                       ),
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       elevation: WidgetStateProperty.all(0),
@@ -393,26 +399,24 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
           ),
           const SizedBox(width: 12),
           // Right: media thumbnail
-          Card(
-            color: Colors.black,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-              side: const BorderSide(color: Colors.white24),
+          Container(
+            width: 80,
+            height: 108,
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkSurface : Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Stack(
-                clipBehavior: Clip.hardEdge,
-                children: [
-                  const MaxNativeAdMediaView(width: 80, height: 120),
-                  const Positioned(
-                    top: 4,
-                    right: 4,
-                    child: MaxNativeAdOptionsView(width: 16, height: 16),
-                  ),
-                ],
-              ),
+            clipBehavior: Clip.hardEdge,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                const MaxNativeAdMediaView(width: 80, height: 108),
+                const Positioned(
+                  top: 4,
+                  right: 4,
+                  child: MaxNativeAdOptionsView(width: 16, height: 16),
+                ),
+              ],
             ),
           ),
         ],

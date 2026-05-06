@@ -522,7 +522,17 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                   itemCount: history.length > 5 ? 5 : history.length,
                   itemBuilder: (context, index) {
                     final item = history[index];
-                    return _LinkCard(item: item, isDark: isDark);
+                    final card = _LinkCard(item: item, isDark: isDark);
+                    
+                    if (index > 0 && (index + 1) % 4 == 0) {
+                      return Column(
+                        children: [
+                          card,
+                          AdService().getNativeAdWidget(isListCard: true),
+                        ],
+                      );
+                    }
+                    return card;
                   },
                 ),
             ],
