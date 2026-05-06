@@ -5,8 +5,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_hi.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -94,8 +101,15 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('de'),
     Locale('en'),
     Locale('es'),
+    Locale('fr'),
+    Locale('hi'),
+    Locale('it'),
+    Locale('pt'),
+    Locale('zh'),
   ];
 
   /// No description provided for @appName.
@@ -301,6 +315,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
+
+  /// No description provided for @shareLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Link'**
+  String get shareLink;
+
+  /// No description provided for @openInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Browser'**
+  String get openInBrowser;
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @espanol.
+  ///
+  /// In en, this message translates to:
+  /// **'Español'**
+  String get espanol;
+
+  /// No description provided for @french.
+  ///
+  /// In en, this message translates to:
+  /// **'French'**
+  String get french;
+
+  /// No description provided for @german.
+  ///
+  /// In en, this message translates to:
+  /// **'German'**
+  String get german;
+
+  /// No description provided for @portuguese.
+  ///
+  /// In en, this message translates to:
+  /// **'Portuguese'**
+  String get portuguese;
+
+  /// No description provided for @italian.
+  ///
+  /// In en, this message translates to:
+  /// **'Italian'**
+  String get italian;
+
+  /// No description provided for @hindi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hindi'**
+  String get hindi;
+
+  /// No description provided for @chinese.
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese'**
+  String get chinese;
+
+  /// No description provided for @arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabic;
+
+  /// No description provided for @searchLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Search links...'**
+  String get searchLinks;
+
+  /// No description provided for @tellUsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us more about the issue...'**
+  String get tellUsMore;
+
+  /// No description provided for @exampleUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'https://bit.ly/example'**
+  String get exampleUrl;
+
+  /// No description provided for @shortenedLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortened Link'**
+  String get shortenedLink;
+
+  /// No description provided for @expandedLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Expanded Link'**
+  String get expandedLink;
+
+  /// No description provided for @pasteLongUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste your long URL'**
+  String get pasteLongUrl;
+
+  /// No description provided for @shortenNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Shorten Now'**
+  String get shortenNow;
+
+  /// No description provided for @recentLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Links'**
+  String get recentLinks;
+
+  /// No description provided for @noLinksShortened.
+  ///
+  /// In en, this message translates to:
+  /// **'No links shortened yet'**
+  String get noLinksShortened;
+
+  /// No description provided for @expandShortenedLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand Shortened Link'**
+  String get expandShortenedLink;
+
+  /// No description provided for @expandShortenedLinkDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Safely reveal the full destination behind any shortened link.'**
+  String get expandShortenedLinkDesc;
+
+  /// No description provided for @expandAndVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand & Verify'**
+  String get expandAndVerify;
+
+  /// No description provided for @howItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get howItWorks;
+
+  /// No description provided for @pasteShortUrlTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste your short URL'**
+  String get pasteShortUrlTitle;
+
+  /// No description provided for @pasteShortUrlDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy any bit.ly, tinyurl, or other shortened link.'**
+  String get pasteShortUrlDesc;
+
+  /// No description provided for @tapExpandVerifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Expand & Verify'**
+  String get tapExpandVerifyTitle;
+
+  /// No description provided for @tapExpandVerifyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'We follow the redirect chain to find the destination.'**
+  String get tapExpandVerifyDesc;
+
+  /// No description provided for @seeFullUrlTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See the full URL'**
+  String get seeFullUrlTitle;
+
+  /// No description provided for @seeFullUrlDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The complete original URL is revealed instantly.'**
+  String get seeFullUrlDesc;
+
+  /// No description provided for @shortlyPro.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortly Pro'**
+  String get shortlyPro;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @shortlyUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortly User'**
+  String get shortlyUser;
+
+  /// No description provided for @enjoyingAdFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoying ad-free experience'**
+  String get enjoyingAdFree;
+
+  /// No description provided for @free.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get free;
+
+  /// No description provided for @upgradeProDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade pro to remove ads, enjoy seamless experience.'**
+  String get upgradeProDesc;
+
+  /// No description provided for @upgradeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Now – Remove Ads'**
+  String get upgradeNow;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedback;
+
+  /// No description provided for @rateApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate App'**
+  String get rateApp;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// No description provided for @otherApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Apps'**
+  String get otherApps;
+
+  /// No description provided for @myLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'My Links'**
+  String get myLinks;
+
+  /// No description provided for @linksCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Links'**
+  String linksCount(int count);
+
+  /// No description provided for @shortenedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Shortened'**
+  String shortenedCount(int count);
 }
 
 class _AppLocalizationsDelegate
@@ -313,8 +621,17 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'ar',
+    'de',
+    'en',
+    'es',
+    'fr',
+    'hi',
+    'it',
+    'pt',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -323,10 +640,24 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'hi':
+      return AppLocalizationsHi();
+    case 'it':
+      return AppLocalizationsIt();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

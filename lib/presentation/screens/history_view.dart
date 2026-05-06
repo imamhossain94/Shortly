@@ -20,6 +20,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String? _filterType;
+  bool _isScrolling = false;
 
   @override
   void dispose() {
@@ -65,8 +66,8 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
       children: [
         // ── Header + Search (fixed, non-scrollable) ──────────────────────
         AppCustomBar(
-          title: 'My ',
-          accentTitle: 'Links',
+          title: '${AppLocalizations.of(context)!.myLinks.split(' ')[0]} ',
+          accentTitle: AppLocalizations.of(context)!.myLinks.split(' ').skip(1).join(' '),
           actions: [
             GestureDetector(
               onTap: () => ref.read(historyProvider.notifier).refresh(),
@@ -104,7 +105,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                 fontSize: 14,
               ),
               decoration: InputDecoration(
-                hintText: 'Search links...',
+                hintText: AppLocalizations.of(context)!.searchLinks,
                 hintStyle: const TextStyle(
                     color: AppColors.textMuted, fontSize: 13),
                 prefixIcon: const Icon(Icons.search_rounded,
@@ -123,25 +124,46 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                     : PopupMenuButton<String?>(
                         icon: const Icon(Icons.filter_list_rounded,
                             size: 18, color: AppColors.textMuted),
+                        color: isDark ? AppColors.darkSurface : Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
                         onSelected: (value) {
                           setState(() {
                             _filterType = value;
                           });
                         },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'all',
-                            child: Text(AppLocalizations.of(context)!.all),
-                          ),
-                          PopupMenuItem(
-                            value: 'shorten',
-                            child: Text(AppLocalizations.of(context)!.shortenedUrl),
-                          ),
-                          PopupMenuItem(
-                            value: 'expand',
-                            child: Text(AppLocalizations.of(context)!.expanded),
-                          ),
-                        ],
+                        itemBuilder: (context) {
+                          final items = [
+                            {'value': 'all', 'label': AppLocalizations.of(context)!.all},
+                            {'value': 'shorten', 'label': AppLocalizations.of(context)!.shortenedUrl},
+                            {'value': 'expand', 'label': AppLocalizations.of(context)!.expanded},
+                          ];
+                          return items.map((item) {
+                            final isSelected = _filterType == item['value'];
+                            return PopupMenuItem<String?>(
+                              value: item['value'],
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? AppColors.accent.withValues(alpha: 0.1) : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  item['label']!,
+                                  style: TextStyle(
+                                    color: isSelected ? AppColors.accent : (isDark ? AppColors.textPrimary : Colors.black87),
+                                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList();
+                        },
                       ),
                 filled: false,
                 border: InputBorder.none,
@@ -164,14 +186,13 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
           child: Row(
             children: [
               _SummaryChip(
-                label: '${history.length} Links',
+                label: AppLocalizations.of(context)!.linksCount(history.length),
                 isDark: isDark,
                 isAccent: false,
               ),
               const SizedBox(width: 8),
               _SummaryChip(
-                label:
-                    '${history.where((i) => i.provider != null).length} Shortened',
+                label: AppLocalizations.of(context)!.shortenedCount(history.where((i) => i.provider != null).length),
                 isDark: isDark,
                 isAccent: true,
               ),
@@ -206,24 +227,35 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                     ],
                   ),
                 )
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                  itemCount: history.length,
-                  itemBuilder: (context, index) {
-                    final item = history[index];
-                    final card = _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
-
-                    // Show a native ad after every 4 items to monetize without being intrusive
-                    if (index > 0 && (index + 1) % 4 == 0) {
-                      return Column(
-                        children: [
-                          card,
-                          AdService().getNativeAdWidget(),
-                        ],
-                      );
+              : NotificationListener<ScrollNotification>(
+                  onNotification: (scrollInfo) {
+                    if (scrollInfo is ScrollStartNotification) {
+                      if (!_isScrolling) setState(() => _isScrolling = true);
+                    } else if (scrollInfo is ScrollEndNotification) {
+                      if (_isScrolling) setState(() => _isScrolling = false);
                     }
-                    return card;
+                    return false;
                   },
+                  child: ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                    itemCount: history.length,
+                    itemBuilder: (context, index) {
+                      final item = history[index];
+                      final card = _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
+
+                      // Show first ad after 2 items, then every 4 items
+                      if (index >= 1 && (index - 1) % 4 == 0) {
+                        return Column(
+                          children: [
+                            card,
+                            if (!_isScrolling)
+                              AdService().getNativeAdWidget(isListCard: true),
+                          ],
+                        );
+                      }
+                      return card;
+                    },
+                  ),
                 ),
         ),
       ],
@@ -337,6 +369,41 @@ class _HistoryLinkCard extends StatelessWidget {
         child:
             const Icon(Icons.delete_rounded, color: Colors.red, size: 24),
       ),
+      confirmDismiss: (direction) async {
+        return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Text(
+                'Delete Link',
+                style: TextStyle(color: isDark ? AppColors.textPrimary : Colors.black87),
+              ),
+              content: Text(
+                'Are you sure you want to delete this link?',
+                style: TextStyle(color: isDark ? AppColors.textSecondary : Colors.grey.shade700),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.textMuted),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
       onDismissed: (_) {
         ref.read(historyProvider.notifier).deleteUrl(item.id!);
       },
@@ -488,7 +555,7 @@ class _HistoryLinkCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                isShorten ? 'Shortened' : 'Expanded',
+                                isShorten ? AppLocalizations.of(context)!.shortenedLink.split(' ')[0] : AppLocalizations.of(context)!.expanded,
                                 style: TextStyle(
                                   fontSize: 9,
                                   color: isShorten
@@ -512,7 +579,7 @@ class _HistoryLinkCard extends StatelessWidget {
                       onTap: () {
                         Clipboard.setData(ClipboardData(text: shortUrl));
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Copied to clipboard')),
+                          SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
                         );
                       },
                       child: Container(

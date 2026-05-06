@@ -21,10 +21,17 @@ class ApiService {
             'url': longUrl,
           });
           break;
-        case AppConstants.chilpIt:
-          shortenedUrl = await _simpleGet(AppConstants.chilpItBase, {
-            'url': longUrl,
-          });
+        case AppConstants.cleanUri:
+          final response = await client.post(
+            Uri.parse(AppConstants.cleanUriBase),
+            body: {'url': longUrl},
+          );
+          if (response.statusCode == 200) {
+            final data = jsonDecode(response.body);
+            if (data['result_url'] != null) {
+              shortenedUrl = data['result_url'];
+            }
+          }
           break;
         case AppConstants.clckRu:
           shortenedUrl = await _simpleGet(AppConstants.clckRuBase, {

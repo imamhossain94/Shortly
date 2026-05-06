@@ -20,6 +20,22 @@ subprojects {
     }
 }
 
+// Force compileSdk on all plugin subprojects to 35 so androidx deps resolve correctly.
+// This must be declared BEFORE evaluationDependsOn(":app") to avoid "already evaluated" errors.
+subprojects {
+    if (project.name != "app") {
+        afterEvaluate {
+            project.extensions.findByName("android")?.let { ext ->
+                val androidExt = ext as com.android.build.gradle.BaseExtension
+                val currentSdk = androidExt.compileSdkVersion?.removePrefix("android-")?.toIntOrNull() ?: 0
+                if (currentSdk < 35) {
+                    androidExt.compileSdkVersion(35)
+                }
+            }
+        }
+    }
+}
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

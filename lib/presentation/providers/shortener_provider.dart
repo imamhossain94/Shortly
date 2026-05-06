@@ -39,11 +39,13 @@ class ShortenerNotifier extends Notifier<ShortenerState> {
     state = state.copyWith(isLoading: true, clearError: true, clearResult: true);
     try {
       final result = await _repository.shortenUrl(provider, url);
-      state = state.copyWith(isLoading: false, result: result);
       if (result.success == true) {
+        state = state.copyWith(isLoading: false, result: result);
         ref.read(historyProvider.notifier).refresh();
       } else {
         state = state.copyWith(
+          isLoading: false,
+          result: result,
           error: "Failed to shorten URL. Please try again.",
         );
       }
@@ -56,11 +58,15 @@ class ShortenerNotifier extends Notifier<ShortenerState> {
     state = state.copyWith(isLoading: true, clearError: true, clearResult: true);
     try {
       final result = await _repository.expandUrl(url);
-      state = state.copyWith(isLoading: false, result: result);
       if (result.success == true) {
+        state = state.copyWith(isLoading: false, result: result);
         ref.read(historyProvider.notifier).refresh();
       } else {
-        state = state.copyWith(error: "Failed to expand URL.");
+        state = state.copyWith(
+          isLoading: false, 
+          result: result,
+          error: "Failed to expand URL.",
+        );
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

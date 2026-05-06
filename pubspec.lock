@@ -317,6 +317,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.8+1"
+  in_app_review:
+    dependency: "direct main"
+    description:
+      name: in_app_review
+      sha256: ab26ac54dbd802896af78c670b265eaeab7ecddd6af4d0751e9604b60574817f
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.11"
+  in_app_review_platform_interface:
+    dependency: transitive
+    description:
+      name: in_app_review_platform_interface
+      sha256: fed2c755f2125caa9ae10495a3c163aa7fab5af3585a9c62ef4a6920c5b45f10
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
+  in_app_update:
+    dependency: "direct main"
+    description:
+      name: in_app_update
+      sha256: "9924a3efe592e1c0ec89dda3683b3cfec3d4cd02d908e6de00c24b759038ddb1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.5"
   intl:
     dependency: "direct main"
     description:
@@ -461,6 +485,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  package_info_plus:
+    dependency: "direct main"
+    description:
+      name: package_info_plus
+      sha256: "468c26b4254ab01979fa5e4a98cb343ea3631b9acee6f21028997419a80e1a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.0.1"
+  package_info_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: package_info_plus_platform_interface
+      sha256: "202a487f08836a592a6bd4f901ac69b3a8f146af552bbd14407b6b41e1c3f086"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.1"
   path:
     dependency: "direct main"
     description:
@@ -573,6 +613,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  receive_sharing_intent:
+    dependency: "direct main"
+    description:
+      name: receive_sharing_intent
+      sha256: ec76056e4d258ad708e76d85591d933678625318e411564dcb9059048ca3a593
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.8.1"
   record_use:
     dependency: transitive
     description:
@@ -585,10 +633,10 @@ packages:
     dependency: "direct main"
     description:
       name: rename_app
-      sha256: "387a88335f853674b39bed7943955388bbaf6aae4ffdc812e2ef275ce119abc7"
+      sha256: "9df79b531a59124f3ec60316385809f79835eccf934a1ca7051f602a988acade"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.5"
+    version: "1.6.6"
   riverpod:
     dependency: transitive
     description:

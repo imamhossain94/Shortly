@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../data/models/url_data.dart';
 import '../../core/theme.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_shortener/l10n/app_localizations.dart';
 
 class ResultCard extends StatelessWidget {
   final UrlData result;
@@ -151,14 +152,14 @@ class ResultCard extends StatelessWidget {
                         Clipboard.setData(
                             ClipboardData(text: mainDisplayUrl));
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Copied to clipboard')),
+                          SnackBar(
+                              content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
                         );
                       }
                     },
                     icon: const Icon(Icons.copy_rounded, size: 16),
-                    label: const Text('Copy',
-                        style: TextStyle(fontSize: 13)),
+                    label: Text(AppLocalizations.of(context)!.copy,
+                        style: const TextStyle(fontSize: 13)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.accent,
                       foregroundColor: Colors.white,
@@ -178,8 +179,8 @@ class ResultCard extends StatelessWidget {
                       }
                     },
                     icon: const Icon(Icons.share_rounded, size: 16),
-                    label: const Text('Share',
-                        style: TextStyle(fontSize: 13)),
+                    label: Text(AppLocalizations.of(context)!.share,
+                        style: const TextStyle(fontSize: 13)),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.accent,
                       side: BorderSide(

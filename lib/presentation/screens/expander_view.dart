@@ -7,6 +7,7 @@ import '../widgets/app_custom_bar.dart';
 import '../providers/shortener_provider.dart';
 import '../providers/history_provider.dart';
 import 'result_screen.dart';
+import '../../core/services/ad_service.dart';
 
 class ExpanderView extends ConsumerStatefulWidget {
   const ExpanderView({super.key});
@@ -45,6 +46,7 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
 
     ref.listen(shortenerProvider, (previous, next) {
       if (next.result != null && next.error == null && !next.isLoading) {
+        AdService().showInterstitialAd();
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -102,7 +104,7 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Expand Shortened Link',
+                                AppLocalizations.of(context)!.expandShortenedLink,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w800,
                                   color: isDark ? AppColors.textPrimary : Colors.black87,
@@ -111,7 +113,7 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Safely reveal the full destination behind any shortened link.',
+                                AppLocalizations.of(context)!.expandShortenedLinkDesc,
                                 style: TextStyle(
                                   color: isDark ? AppColors.textSecondary : Colors.grey.shade600,
                                   fontSize: 12.5,
@@ -128,7 +130,7 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                   const SizedBox(height: 24),
 
                   Text(
-                    'Shortened URL',
+                    AppLocalizations.of(context)!.shortenedUrl,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: isDark
                               ? AppColors.textSecondary
@@ -163,7 +165,7 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                         fontSize: 15,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'https://bit.ly/example',
+                        hintText: AppLocalizations.of(context)!.exampleUrl,
                         hintStyle: const TextStyle(
                             color: AppColors.textMuted, fontSize: 14),
                         prefixIcon: const Icon(
@@ -201,36 +203,50 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                   // Expand button
                   SizedBox(
                     width: double.infinity,
-                    height: 54,
-                    child: ElevatedButton(
-                      onPressed: state.isLoading ? null : _handleExpand,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accent,
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor:
-                            AppColors.accent.withValues(alpha: 0.5),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                    height: 58,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 400),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [AppColors.accent, AppColors.accentLight],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.accent.withValues(alpha: 0.4),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: state.isLoading ? null : _handleExpand,
+                          child: Center(
+                            child: state.isLoading
+                                ? const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Text(
+                                    AppLocalizations.of(context)!.expandAndVerify,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                          ),
                         ),
                       ),
-                      child: state.isLoading
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text(
-                              'Expand & Verify',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.3,
-                              ),
-                            ),
                     ),
                   ),
 
@@ -266,7 +282,7 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
 
                   // How it works section
                   Text(
-                    'How it works',
+                    AppLocalizations.of(context)!.howItWorks,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
@@ -274,22 +290,22 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                   const SizedBox(height: 16),
                   _HowItWorksStep(
                     step: '01',
-                    title: 'Paste your short URL',
-                    desc: 'Copy any bit.ly, tinyurl, or other shortened link.',
+                    title: AppLocalizations.of(context)!.pasteShortUrlTitle,
+                    desc: AppLocalizations.of(context)!.pasteShortUrlDesc,
                     isDark: isDark,
                   ),
                   const SizedBox(height: 10),
                   _HowItWorksStep(
                     step: '02',
-                    title: 'Tap Expand & Verify',
-                    desc: 'We follow the redirect chain to find the destination.',
+                    title: AppLocalizations.of(context)!.tapExpandVerifyTitle,
+                    desc: AppLocalizations.of(context)!.tapExpandVerifyDesc,
                     isDark: isDark,
                   ),
                   const SizedBox(height: 10),
                   _HowItWorksStep(
                     step: '03',
-                    title: 'See the full URL',
-                    desc: 'The complete original URL is revealed instantly.',
+                    title: AppLocalizations.of(context)!.seeFullUrlTitle,
+                    desc: AppLocalizations.of(context)!.seeFullUrlDesc,
                     isDark: isDark,
                   ),
                 ],

@@ -9,6 +9,11 @@ import '../providers/shortener_provider.dart';
 import '../providers/history_provider.dart';
 import 'result_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/services/ad_service.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'dart:async';
 
 class ShortenerView extends ConsumerStatefulWidget {
   const ShortenerView({super.key});
@@ -22,10 +27,11 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
   final TextEditingController _urlController = TextEditingController();
   String _selectedProvider = AppConstants.tinyUrl;
   bool _isFocused = false;
+  StreamSubscription? _intentDataStreamSubscription;
 
   final List<String> _providers = [
     AppConstants.tinyUrl,
-    AppConstants.chilpIt,
+    AppConstants.cleanUri,
     AppConstants.clckRu,
     AppConstants.daGd,
     AppConstants.isGd,
@@ -34,10 +40,33 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Listen for shared text while app is in memory
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
+      if (value.isNotEmpty && value.first.path.isNotEmpty) {
+        setState(() {
+          _urlController.text = value.first.path;
+        });
+      }
+    });
+
+    // Listen for shared text when app is started from closed state
+    ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
+      if (value.isNotEmpty && value.first.path.isNotEmpty) {
+        setState(() {
+          _urlController.text = value.first.path;
+        });
+      }
+    });
+  }
+
+  @override
   bool get wantKeepAlive => true;
 
   @override
   void dispose() {
+    _intentDataStreamSubscription?.cancel();
     _urlController.dispose();
     super.dispose();
   }
@@ -59,11 +88,26 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
 
     ref.listen(shortenerProvider, (previous, next) {
       if (next.result != null && next.error == null && !next.isLoading) {
+        AdService().showInterstitialAd();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => ResultScreen(result: next.result!)),
         );
         ref.read(historyProvider.notifier).refresh();
+        Future.delayed(const Duration(milliseconds: 500), () async {
+          final count = ref.read(historyProvider).value?.length ?? 0;
+          if (count >= 3) {
+            final prefs = await SharedPreferences.getInstance();
+            final prompted = prefs.getBool('review_prompted') ?? false;
+            if (!prompted) {
+              await prefs.setBool('review_prompted', true);
+              final inAppReview = InAppReview.instance;
+              if (await inAppReview.isAvailable()) {
+                inAppReview.requestReview();
+              }
+            }
+          }
+        });
       }
     });
 
@@ -89,6 +133,8 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
+
                     // Section label
                     Row(
                       children: [
@@ -102,7 +148,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Paste your long URL',
+                          AppLocalizations.of(context)!.pasteLongUrl,
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isDark
@@ -218,7 +264,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                                         : AppColors.textMuted,
                                   ),
                                   splashRadius: 20,
-                                  tooltip: 'Paste',
+                                  tooltip: AppLocalizations.of(context)!.paste,
                                   onPressed: () async {
                                     final data = await Clipboard.getData(
                                       'text/plain',
@@ -273,22 +319,49 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                                         color: AppColors.textMuted,
                                         size: 16,
                                       ),
+                                      borderRadius: BorderRadius.circular(16),
                                       dropdownColor: isDark
-                                          ? AppColors.darkCard
+                                          ? AppColors.darkSurface
                                           : Colors.white,
                                       style: TextStyle(
-                                        color: isDark
-                                            ? AppColors.accent
-                                            : AppColors.accent,
+                                        color: AppColors.accent,
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                       ),
+                                      selectedItemBuilder: (BuildContext context) {
+                                        return _providers.map<Widget>((String p) {
+                                          return Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(p),
+                                          );
+                                        }).toList();
+                                      },
                                       items: _providers
                                           .map(
-                                            (p) => DropdownMenuItem(
-                                              value: p,
-                                              child: Text(p),
-                                            ),
+                                            (p) {
+                                              final isSelected = p == _selectedProvider;
+                                              return DropdownMenuItem(
+                                                value: p,
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected 
+                                                        ? AppColors.accent.withValues(alpha: 0.1) 
+                                                        : Colors.transparent,
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                  child: Text(
+                                                    p,
+                                                    style: TextStyle(
+                                                      color: isSelected 
+                                                          ? AppColors.accent 
+                                                          : (isDark ? AppColors.textPrimary : Colors.black87),
+                                                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
                                           )
                                           .toList(),
                                       onChanged: (value) {
@@ -311,42 +384,57 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                     // Shorten Now button
                     SizedBox(
                       width: double.infinity,
-                      height: 54,
-                      child: ElevatedButton(
-                        onPressed: state.isLoading ? null : _handleShorten,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accent,
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: AppColors.accent.withValues(
-                            alpha: 0.5,
+                      height: 58,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 400),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.accent, AppColors.accentLight],
                           ),
-                          elevation: 0,
-                          shape: const StadiumBorder(),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.accent.withValues(alpha: 0.4),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                         ),
-                        child: state.isLoading
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(Icons.bolt_rounded, size: 18),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Shorten Now',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.3,
+                        child: Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: state.isLoading ? null : _handleShorten,
+                            child: Center(
+                              child: state.isLoading
+                                  ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.bolt_rounded, size: 18, color: Colors.white),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          AppLocalizations.of(context)!.shortenNow,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: 0.3,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
 
@@ -388,7 +476,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
 
                     // Recent Links header
                     Text(
-                      'Recent Links',
+                      AppLocalizations.of(context)!.recentLinks,
                       style: Theme.of(
                         context,
                       ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
@@ -415,7 +503,7 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'No links shortened yet',
+                        AppLocalizations.of(context)!.noLinksShortened,
                         style: TextStyle(
                           color: isDark
                               ? AppColors.textMuted
@@ -434,7 +522,18 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                   itemCount: history.length > 5 ? 5 : history.length,
                   itemBuilder: (context, index) {
                     final item = history[index];
-                    return _LinkCard(item: item, isDark: isDark);
+                    final card = _LinkCard(item: item, isDark: isDark);
+                    
+                    // Show first ad after 2 items, then every 4 items
+                    if (index >= 1 && (index - 1) % 4 == 0) {
+                      return Column(
+                        children: [
+                          card,
+                          AdService().getNativeAdWidget(isListCard: true),
+                        ],
+                      );
+                    }
+                    return card;
                   },
                 ),
             ],
@@ -475,7 +574,59 @@ class _LinkCard extends ConsumerWidget {
       }
     } catch (_) {}
 
-    return Container(
+    return Dismissible(
+      key: Key(item.id.toString()),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 24),
+        decoration: BoxDecoration(
+          color: Colors.red.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+        ),
+        child: const Icon(Icons.delete_rounded, color: Colors.red, size: 24),
+      ),
+      confirmDismiss: (direction) async {
+        return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Text(
+                'Delete Link',
+                style: TextStyle(color: isDark ? AppColors.textPrimary : Colors.black87),
+              ),
+              content: Text(
+                'Are you sure you want to delete this link?',
+                style: TextStyle(color: isDark ? AppColors.textSecondary : Colors.grey.shade700),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.textMuted),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      onDismissed: (_) {
+        ref.read(historyProvider.notifier).deleteUrl(item.id!);
+      },
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : Colors.white,
@@ -575,7 +726,7 @@ class _LinkCard extends ConsumerWidget {
                     onTap: () {
                       Clipboard.setData(ClipboardData(text: shortUrl));
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Copied to clipboard')),
+                        SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
                       );
                     },
                     child: Container(
@@ -597,8 +748,9 @@ class _LinkCard extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Color _colorFromHost(String host) {
     final colors = [
