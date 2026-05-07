@@ -210,7 +210,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get active => '已激活';
 
   @override
-  String get shortlyUser => 'Shortly 用户';
+  String get shortlyUser => '高级用户';
 
   @override
   String get enjoyingAdFree => '享受无广告体验';

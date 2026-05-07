@@ -517,7 +517,7 @@ abstract class AppLocalizations {
   /// No description provided for @shortlyUser.
   ///
   /// In en, this message translates to:
-  /// **'Shortly User'**
+  /// **'Premium User'**
   String get shortlyUser;
 
   /// No description provided for @enjoyingAdFree.

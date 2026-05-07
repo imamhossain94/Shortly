@@ -214,7 +214,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get active => 'Active';
 
   @override
-  String get shortlyUser => 'Shortly User';
+  String get shortlyUser => 'Premium User';
 
   @override
   String get enjoyingAdFree => 'Enjoying ad-free experience';

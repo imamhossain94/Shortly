@@ -215,7 +215,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get active => 'सक्रिय';
 
   @override
-  String get shortlyUser => 'Shortly उपयोगकर्ता';
+  String get shortlyUser => 'प्रीमियम उपयोगकर्ता';
 
   @override
   String get enjoyingAdFree => 'विज्ञापन मुक्त अनुभव का आनंद ले रहे हैं';

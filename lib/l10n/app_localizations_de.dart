@@ -216,7 +216,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get active => 'Aktiv';
 
   @override
-  String get shortlyUser => 'Shortly-Benutzer';
+  String get shortlyUser => 'Premium-Benutzer';
 
   @override
   String get enjoyingAdFree => 'Genießt eine werbefreie Erfahrung';

@@ -214,7 +214,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get active => 'نشط';
 
   @override
-  String get shortlyUser => 'مستخدم Shortly';
+  String get shortlyUser => 'مستخدم بريميوم';
 
   @override
   String get enjoyingAdFree => 'الاستمتاع بتجربة خالية من الإعلانات';
