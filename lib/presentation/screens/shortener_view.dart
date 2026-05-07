@@ -88,12 +88,21 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
 
     ref.listen(shortenerProvider, (previous, next) {
       if (next.result != null && next.error == null && !next.isLoading) {
+        // Capture result and immediately clear state to prevent re-firing on rebuilds
+        final result = next.result!;
+        ref.read(shortenerProvider.notifier).clearResult();
+
         AdService().showInterstitialAd();
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => ResultScreen(result: next.result!)),
-        );
-        ref.read(historyProvider.notifier).refresh();
+          MaterialPageRoute(builder: (_) => ResultScreen(result: result)),
+        ).then((_) {
+          // Refresh history when returning from ResultScreen
+          if (mounted) {
+            ref.read(historyProvider.notifier).refresh();
+          }
+        });
+
         Future.delayed(const Duration(milliseconds: 500), () async {
           final count = ref.read(historyProvider).value?.length ?? 0;
           if (count >= 3) {

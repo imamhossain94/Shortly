@@ -28,6 +28,10 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
     super.dispose();
   }
 
+  void _refreshHistory() {
+    ref.read(historyProvider.notifier).refresh();
+  }
+
   @override
   Widget build(BuildContext context) {
     final historyState = ref.watch(historyProvider);
@@ -434,7 +438,9 @@ class _HistoryLinkCard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => ResultScreen(result: item)),
-              );
+              ).then((_) {
+                ref.read(historyProvider.notifier).refresh();
+              });
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
