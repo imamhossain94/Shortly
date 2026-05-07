@@ -18,6 +18,9 @@ class IapService extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  String _productPrice = 'USD 0.99 /lifetime';
+  String get productPrice => _productPrice;
+
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
@@ -49,6 +52,29 @@ class IapService extends ChangeNotifier {
 
     // Restore purchases in background — never block startup or crash on error
     _silentRestore();
+    _loadProductPrice();
+  }
+
+  Future<void> _loadProductPrice() async {
+    try {
+      final bool available = await _iap.isAvailable();
+      if (!available) return;
+      
+      final ProductDetailsResponse response =
+          await _iap.queryProductDetails(_productIds);
+
+      if (response.productDetails.isNotEmpty) {
+        final matches =
+            response.productDetails.where((p) => p.id == AppConstants.productRemoveAds);
+        final ProductDetails productDetails =
+            matches.isNotEmpty ? matches.first : response.productDetails.first;
+        
+        _productPrice = '${productDetails.currencyCode} ${productDetails.rawPrice} /lifetime';
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('IapService: _loadProductPrice error: $e');
+    }
   }
 
   /// Attempts a restore silently; any error is caught and logged only.

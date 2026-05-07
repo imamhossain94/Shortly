@@ -35,9 +35,11 @@ class MenuScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ── Profile / Upgrade Section ─────────────────────────────
-                Builder(
-                  builder: (context) {
+                ListenableBuilder(
+                  listenable: IapService(),
+                  builder: (context, _) {
                     final bool isPro = IapService().isPremium;
+                    final String price = IapService().productPrice;
 
                     if (isPro) {
                       return Container(
@@ -231,7 +233,7 @@ class MenuScreen extends ConsumerWidget {
                                 ],
                               ),
                               Text(
-                                '\$4.99 /mo',
+                                price,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,

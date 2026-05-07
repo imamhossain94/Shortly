@@ -174,30 +174,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             ),
           ),
 
-          // Skip button
-          if (_currentPage < _pages.length - 1)
-            SafeArea(
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextButton(
-                    onPressed: _finish,
-                    style: TextButton.styleFrom(
-                      foregroundColor: subtitleColor,
-                    ),
-                    child: const Text(
-                      'Skip',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
           // Page content
           PageView.builder(
             controller: _pageController,
@@ -276,6 +252,30 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               );
             },
           ),
+
+          // Skip button
+          if (_currentPage < _pages.length - 1)
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextButton(
+                    onPressed: _finish,
+                    style: TextButton.styleFrom(
+                      foregroundColor: subtitleColor,
+                    ),
+                    child: const Text(
+                      'Skip',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
           // Bottom controls
           SafeArea(
