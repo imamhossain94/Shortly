@@ -41,7 +41,6 @@ class ShortenerNotifier extends Notifier<ShortenerState> {
       final result = await _repository.shortenUrl(provider, url);
       if (result.success == true) {
         state = state.copyWith(isLoading: false, result: result);
-        ref.read(historyProvider.notifier).refresh();
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -60,7 +59,6 @@ class ShortenerNotifier extends Notifier<ShortenerState> {
       final result = await _repository.expandUrl(url);
       if (result.success == true) {
         state = state.copyWith(isLoading: false, result: result);
-        ref.read(historyProvider.notifier).refresh();
       } else {
         state = state.copyWith(
           isLoading: false, 

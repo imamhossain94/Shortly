@@ -16,11 +16,15 @@ class HistoryView extends ConsumerStatefulWidget {
   ConsumerState<HistoryView> createState() => _HistoryViewState();
 }
 
-class _HistoryViewState extends ConsumerState<HistoryView> {
+class _HistoryViewState extends ConsumerState<HistoryView>
+    with AutomaticKeepAliveClientMixin {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String? _filterType;
   bool _isScrolling = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
@@ -34,6 +38,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final historyState = ref.watch(historyProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final allHistory = historyState.value ?? [];

@@ -87,7 +87,8 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
     super.build(context);
 
     ref.listen(shortenerProvider, (previous, next) {
-      if (next.result != null && next.error == null && !next.isLoading) {
+      if (next.result != null && next.error == null && !next.isLoading &&
+          next.result!.provider != null) {
         // Capture result and immediately clear state to prevent re-firing on rebuilds
         final result = next.result!;
         ref.read(shortenerProvider.notifier).clearResult();
@@ -102,6 +103,9 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
             ref.read(historyProvider.notifier).refresh();
           }
         });
+
+        // Also refresh immediately so the "Recent Links" list below updates now
+        ref.read(historyProvider.notifier).refresh();
 
         Future.delayed(const Duration(milliseconds: 500), () async {
           final count = ref.read(historyProvider).value?.length ?? 0;

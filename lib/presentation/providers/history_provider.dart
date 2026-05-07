@@ -58,8 +58,9 @@ class HistoryNotifier extends AsyncNotifier<List<UrlData>> {
     });
   }
 
-  void refresh() {
-    ref.invalidateSelf();
+  Future<void> refresh() async {
+    // Keep previous data visible while refreshing (no loading flash)
+    state = await AsyncValue.guard(() => _getAllHistory());
   }
 }
 

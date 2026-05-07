@@ -45,14 +45,26 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
     super.build(context);
 
     ref.listen(shortenerProvider, (previous, next) {
-      if (next.result != null && next.error == null && !next.isLoading) {
+      if (next.result != null && next.error == null && !next.isLoading &&
+          next.result!.provider == null) {
+        // Capture result and immediately clear state to prevent re-firing on rebuilds
+        final result = next.result!;
+        ref.read(shortenerProvider.notifier).clearResult();
+
         AdService().showInterstitialAd();
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => ResultScreen(result: next.result!),
+            builder: (_) => ResultScreen(result: result),
           ),
-        );
+        ).then((_) {
+          // Refresh history when returning from ResultScreen
+          if (mounted) {
+            ref.read(historyProvider.notifier).refresh();
+          }
+        });
+
+        // Also refresh immediately so other views see the new entry
         ref.read(historyProvider.notifier).refresh();
       }
     });
