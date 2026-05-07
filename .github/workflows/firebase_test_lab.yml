@@ -1,0 +1,101 @@
+# Firebase Test Lab – Shortly Integration Tests
+# ================================================
+# .github/workflows/firebase_test_lab.yml
+#
+# Triggers:
+#   • Every push / PR to `main`
+#   • Manual dispatch from the Actions tab
+# =============================================================================
+
+name: Firebase Test Lab
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: "3.32.0"       # Pin to your project's Flutter version
+  JAVA_VERSION:    "17"
+  GCP_PROJECT_ID:  ${{ secrets.GCP_PROJECT_ID }}  # Set in repo secrets
+
+jobs:
+  integration_test:
+    name: Run Integration Tests on Firebase Test Lab
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      # ── Checkout ───────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Java ───────────────────────────────────────────────────────────────
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      # ── Flutter ────────────────────────────────────────────────────────────
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # ── Build debug APK (app under test) ───────────────────────────────────
+      - name: Build debug APK
+        run: flutter build apk --debug
+
+      # ── Build instrumentation test APK ─────────────────────────────────────
+      - name: Build test APK
+        working-directory: android
+        run: ./gradlew app:assembleAndroidTest
+
+      # ── Authenticate with Google Cloud ─────────────────────────────────────
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}  # Service-account JSON
+
+      - name: Set up gcloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      # ── Upload & run on Firebase Test Lab ──────────────────────────────────
+      - name: Run tests on Firebase Test Lab
+        run: |
+          gcloud firebase test android run \
+            --type instrumentation \
+            --app build/app/outputs/apk/debug/app-debug.apk \
+            --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk \
+            --project "$GCP_PROJECT_ID" \
+            --timeout 10m \
+            --results-dir "shortly-ci-${{ github.run_number }}" \
+            --environment-variables clearPackageData=true \
+            --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
+            --device model=SmallPhone.arm,version=30,locale=en,orientation=portrait
+
+      # ── Upload test results as artifact ────────────────────────────────────
+      - name: Download test results from GCS
+        if: always()
+        run: |
+          gsutil -m cp -r \
+            "gs://test-lab-${{ env.GCP_PROJECT_ID }}/shortly-ci-${{ github.run_number }}/" \
+            test_results/ || true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: firebase-test-results-${{ github.run_number }}
+          path: test_results/
+          retention-days: 14
