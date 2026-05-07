@@ -56,3 +56,39 @@ dependencies {
     implementation("com.applovin.mediation:vungle-adapter:+")
     implementation("com.applovin.mediation:facebook-adapter:+")
 }
+
+// ---------------------------------------------------------------------------
+// Workaround: Flutter's code-generator incorrectly includes integration_test
+// (a dev_dependency) in GeneratedPluginRegistrant.java. The class only exists
+// in the debug/test classpath, so release builds fail. This task strips the
+// offending lines automatically before every release compile.
+// Tracked upstream: https://github.com/flutter/flutter/issues/94556
+// ---------------------------------------------------------------------------
+tasks.register("stripIntegrationTestPlugin") {
+    doLast {
+        val registrant = file(
+            "src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java"
+        )
+        if (registrant.exists()) {
+            val original = registrant.readText()
+            val patched = original
+                .replace(
+                    Regex(
+                        """[ \t]*try \{\s*flutterEngine\.getPlugins\(\)\.add\(new dev\.flutter\.plugins\.integration_test\.IntegrationTestPlugin\(\)\);\s*\} catch \(Exception e\) \{\s*Log\.e\(TAG,[^\n]*integration_test[^\n]*\);\s*\}\n?"""
+                    ),
+                    ""
+                )
+            if (patched != original) {
+                registrant.writeText(patched)
+                println("stripIntegrationTestPlugin: removed IntegrationTestPlugin from GeneratedPluginRegistrant.java")
+            }
+        }
+    }
+}
+
+// Wire the strip task to run before release Java compilation
+afterEvaluate {
+    tasks.matching { it.name == "compileReleaseJavaWithJavac" }.configureEach {
+        dependsOn("stripIntegrationTestPlugin")
+    }
+}
