@@ -7,7 +7,9 @@ import '../../core/theme.dart';
 import '../widgets/app_custom_bar.dart';
 import '../providers/shortener_provider.dart';
 import '../providers/history_provider.dart';
+import '../providers/provider_keys_provider.dart';
 import 'result_screen.dart';
+import 'provider_config_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,23 +27,25 @@ class ShortenerView extends ConsumerStatefulWidget {
 class _ShortenerViewState extends ConsumerState<ShortenerView>
     with AutomaticKeepAliveClientMixin {
   final TextEditingController _urlController = TextEditingController();
-  String _selectedProvider = AppConstants.tinyUrl;
+  String _selectedProvider = AppConstants.isGd;
   bool _isFocused = false;
   StreamSubscription? _intentDataStreamSubscription;
 
   final List<String> _providers = [
+    AppConstants.isGd,
     AppConstants.tinyUrl,
+    AppConstants.cuttLy,
+    AppConstants.bitLy,
     AppConstants.cleanUri,
     AppConstants.clckRu,
     AppConstants.daGd,
-    AppConstants.isGd,
     AppConstants.osdb,
-    AppConstants.cuttLy,
   ];
 
   @override
   void initState() {
     super.initState();
+    _selectedProvider = ref.read(providerKeysProvider).defaultProvider;
     // Listen for shared text while app is in memory
     _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
       if (value.isNotEmpty && value.first.path.isNotEmpty) {
@@ -79,7 +83,162 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
       );
       return;
     }
+
+    final keys = ref.read(providerKeysProvider);
+
+    if (_selectedProvider == AppConstants.tinyUrl && keys.tinyUrlToken.isEmpty) {
+      _showTinyUrlWarningDialog(url);
+      return;
+    }
+
+    if (_selectedProvider == AppConstants.bitLy && keys.bitLyToken.isEmpty) {
+      _showBitlyWarningDialog(url);
+      return;
+    }
+
     ref.read(shortenerProvider.notifier).shorten(_selectedProvider, url);
+  }
+
+  void _showTinyUrlWarningDialog(String url) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 24),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'TinyURL Preview Warning',
+                  style: TextStyle(
+                    color: isDark ? AppColors.textPrimary : Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Shortening with TinyURL without an API token creates links that redirect through a deprecated preview countdown page.\n\nTo bypass this, we recommend either switching to Is.gd (which has seamless direct redirects) or adding a free API Token in settings.',
+            style: TextStyle(
+              color: isDark ? AppColors.textSecondary : Colors.grey.shade700,
+              fontSize: 14,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                ref.read(shortenerProvider.notifier).shorten(_selectedProvider, url);
+              },
+              child: const Text('Proceed Anyway', style: TextStyle(color: AppColors.textMuted)),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProviderConfigScreen()),
+                    );
+                  },
+                  child: const Text('Configure', style: TextStyle(color: AppColors.accent)),
+                ),
+                const SizedBox(width: 4),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      _selectedProvider = AppConstants.isGd;
+                    });
+                    ref.read(shortenerProvider.notifier).shorten(AppConstants.isGd, url);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: const Text('Use Is.gd', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showBitlyWarningDialog(String url) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              const Icon(Icons.error_outline_rounded, color: Colors.red, size: 24),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Bitly Token Required',
+                  style: TextStyle(
+                    color: isDark ? AppColors.textPrimary : Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Bit.ly requires a valid Access Token to shorten links. Please add your token in settings or switch to a free unauthenticated provider like Is.gd.',
+            style: TextStyle(
+              color: isDark ? AppColors.textSecondary : Colors.grey.shade700,
+              fontSize: 14,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProviderConfigScreen()),
+                );
+              },
+              child: const Text('Configure', style: TextStyle(color: AppColors.accent)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  _selectedProvider = AppConstants.isGd;
+                });
+                ref.read(shortenerProvider.notifier).shorten(AppConstants.isGd, url);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('Use Is.gd', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -120,6 +279,14 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
               }
             }
           }
+        });
+      }
+    });
+
+    ref.listen(providerKeysProvider.select((s) => s.defaultProvider), (previous, next) {
+      if (previous != next) {
+        setState(() {
+          _selectedProvider = next;
         });
       }
     });

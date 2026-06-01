@@ -10,7 +10,9 @@ import '../../core/services/iap_service.dart';
 import '../widgets/app_custom_bar.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
+import '../providers/provider_keys_provider.dart';
 import 'feedback_screen.dart';
+import 'provider_config_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class MenuScreen extends ConsumerWidget {
@@ -410,6 +412,41 @@ class MenuScreen extends ConsumerWidget {
                                 child: Text(AppLocalizations.of(context)!.close),
                               ),
                             ],
+                          ),
+                        );
+                      },
+                    ),
+                    _Divider(isDark: isDark),
+                    _SettingsTile(
+                      icon: Icons.tune_rounded,
+                      label: 'Configure Providers',
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            ref.watch(providerKeysProvider).defaultProvider,
+                            style: const TextStyle(
+                              color: AppColors.accent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            size: 18,
+                            color: isDark
+                                ? AppColors.textMuted
+                                : Colors.grey.shade400,
+                          ),
+                        ],
+                      ),
+                      isDark: isDark,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProviderConfigScreen(),
                           ),
                         );
                       },
