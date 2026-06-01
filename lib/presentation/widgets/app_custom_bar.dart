@@ -30,19 +30,16 @@ class AppCustomBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildTitle(context, isDark),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (actions != null) ...[
-                    ...actions!,
-                    if (showDrawerButton) const SizedBox(width: 8),
-                  ],
-                  if (showDrawerButton) _buildDrawerButton(context, isDark),
-                ],
-              ),
+              if (showDrawerButton) ...[
+                _buildDrawerButton(context, isDark),
+                const SizedBox(width: 12),
+              ],
+              Expanded(child: _buildTitle(context, isDark)),
+              if (actions != null) ...[
+                const SizedBox(width: 8),
+                ...actions!,
+              ],
             ],
           ),
           if (bottom != null) ...[

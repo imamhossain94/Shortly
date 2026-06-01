@@ -7,7 +7,9 @@ import '../../core/theme.dart';
 import '../widgets/app_custom_bar.dart';
 import '../providers/shortener_provider.dart';
 import '../providers/history_provider.dart';
+import '../providers/provider_keys_provider.dart';
 import 'result_screen.dart';
+import 'provider_config_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,23 +27,25 @@ class ShortenerView extends ConsumerStatefulWidget {
 class _ShortenerViewState extends ConsumerState<ShortenerView>
     with AutomaticKeepAliveClientMixin {
   final TextEditingController _urlController = TextEditingController();
-  String _selectedProvider = AppConstants.tinyUrl;
+  String _selectedProvider = AppConstants.daGd;
   bool _isFocused = false;
   StreamSubscription? _intentDataStreamSubscription;
 
   final List<String> _providers = [
+    AppConstants.daGd,
     AppConstants.tinyUrl,
+    AppConstants.cuttLy,
+    AppConstants.bitLy,
     AppConstants.cleanUri,
     AppConstants.clckRu,
-    AppConstants.daGd,
     AppConstants.isGd,
     AppConstants.osdb,
-    AppConstants.cuttLy,
   ];
 
   @override
   void initState() {
     super.initState();
+    _selectedProvider = ref.read(providerKeysProvider).defaultProvider;
     // Listen for shared text while app is in memory
     _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
       if (value.isNotEmpty && value.first.path.isNotEmpty) {
@@ -79,7 +83,332 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
       );
       return;
     }
+
+    final keys = ref.read(providerKeysProvider);
+
+    if (_selectedProvider == AppConstants.tinyUrl && keys.tinyUrlToken.isEmpty) {
+      _showTinyUrlWarningDialog(url);
+      return;
+    }
+
+    if (_selectedProvider == AppConstants.bitLy && keys.bitLyToken.isEmpty) {
+      _showBitlyWarningDialog(url);
+      return;
+    }
+
     ref.read(shortenerProvider.notifier).shorten(_selectedProvider, url);
+  }
+
+  // ── Provider picker (redesigned selection menu) ──────────────────────────
+  void _showProviderPicker() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Grabber
+                Container(
+                  margin: const EdgeInsets.only(top: 12, bottom: 4),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppColors.darkCardBorder
+                        : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 8, 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Choose provider',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: isDark
+                                ? AppColors.textPrimary
+                                : Colors.black87,
+                          ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.pop(sheetContext);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ProviderConfigScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.tune_rounded,
+                            size: 16, color: AppColors.accent),
+                        label: const Text(
+                          'Configure',
+                          style: TextStyle(
+                            color: AppColors.accent,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Flexible(
+                  child: ListView(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.only(bottom: 8),
+                    children: _providers
+                        .map((p) => _buildProviderOption(p, isDark))
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProviderOption(String p, bool isDark) {
+    final isSelected = p == _selectedProvider;
+    final color = _providerColor(p);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() => _selectedProvider = p);
+          Navigator.pop(context);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          color: isSelected
+              ? AppColors.accent.withValues(alpha: 0.06)
+              : Colors.transparent,
+          child: Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(color: color.withValues(alpha: 0.25)),
+                ),
+                child: Center(
+                  child: Text(
+                    p[0].toUpperCase(),
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  p,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight:
+                        isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected
+                        ? AppColors.accent
+                        : (isDark ? AppColors.textPrimary : Colors.black87),
+                  ),
+                ),
+              ),
+              if (isSelected)
+                const Icon(Icons.check_circle_rounded,
+                    color: AppColors.accent, size: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _providerColor(String name) {
+    switch (name) {
+      case AppConstants.tinyUrl:
+        return const Color(0xFF1E88E5);
+      case AppConstants.cuttLy:
+        return const Color(0xFF007A87);
+      case AppConstants.bitLy:
+        return const Color(0xFFEE6123);
+      case AppConstants.isGd:
+        return const Color(0xFF43A047);
+      case AppConstants.cleanUri:
+        return const Color(0xFF8E24AA);
+      case AppConstants.clckRu:
+        return const Color(0xFFE53935);
+      case AppConstants.daGd:
+        return const Color(0xFF00ACC1);
+      case AppConstants.osdb:
+        return const Color(0xFF5E35B1);
+      default:
+        return AppColors.accent;
+    }
+  }
+
+  void _showTinyUrlWarningDialog(String url) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 24),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'TinyURL Preview Warning',
+                  style: TextStyle(
+                    color: isDark ? AppColors.textPrimary : Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Shortening with TinyURL without an API token creates links that redirect through a deprecated preview countdown page.\n\nTo bypass this, we recommend either switching to Is.gd (which has seamless direct redirects) or adding a free API Token in settings.',
+            style: TextStyle(
+              color: isDark ? AppColors.textSecondary : Colors.grey.shade700,
+              fontSize: 14,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                ref.read(shortenerProvider.notifier).shorten(_selectedProvider, url);
+              },
+              child: const Text('Proceed Anyway', style: TextStyle(color: AppColors.textMuted)),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProviderConfigScreen()),
+                    );
+                  },
+                  child: const Text('Configure', style: TextStyle(color: AppColors.accent)),
+                ),
+                const SizedBox(width: 4),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      _selectedProvider = AppConstants.isGd;
+                    });
+                    ref.read(shortenerProvider.notifier).shorten(AppConstants.isGd, url);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: const Text('Use Is.gd', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showBitlyWarningDialog(String url) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              const Icon(Icons.error_outline_rounded, color: Colors.red, size: 24),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Bitly Token Required',
+                  style: TextStyle(
+                    color: isDark ? AppColors.textPrimary : Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Bit.ly requires a valid Access Token to shorten links. Please add your token in settings or switch to a free unauthenticated provider like Is.gd.',
+            style: TextStyle(
+              color: isDark ? AppColors.textSecondary : Colors.grey.shade700,
+              fontSize: 14,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProviderConfigScreen()),
+                );
+              },
+              child: const Text('Configure', style: TextStyle(color: AppColors.accent)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  _selectedProvider = AppConstants.isGd;
+                });
+                ref.read(shortenerProvider.notifier).shorten(AppConstants.isGd, url);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('Use Is.gd', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -120,6 +449,14 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
               }
             }
           }
+        });
+      }
+    });
+
+    ref.listen(providerKeysProvider.select((s) => s.defaultProvider), (previous, next) {
+      if (previous != next) {
+        setState(() {
+          _selectedProvider = next;
         });
       }
     });
@@ -320,68 +657,83 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 10),
+                                // Provider selector — opens the redesigned picker
                                 Expanded(
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: _selectedProvider,
-                                      isExpanded: true,
-                                      isDense: true,
-                                      icon: const Icon(
-                                        Icons.expand_more_rounded,
-                                        color: AppColors.textMuted,
-                                        size: 16,
+                                  child: GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: _showProviderPicker,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
                                       ),
-                                      borderRadius: BorderRadius.circular(16),
-                                      dropdownColor: isDark
-                                          ? AppColors.darkSurface
-                                          : Colors.white,
-                                      style: TextStyle(
-                                        color: AppColors.accent,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.accent
+                                            .withValues(alpha: 0.08),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: AppColors.accent
+                                              .withValues(alpha: 0.18),
+                                        ),
                                       ),
-                                      selectedItemBuilder: (BuildContext context) {
-                                        return _providers.map<Widget>((String p) {
-                                          return Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(p),
-                                          );
-                                        }).toList();
-                                      },
-                                      items: _providers
-                                          .map(
-                                            (p) {
-                                              final isSelected = p == _selectedProvider;
-                                              return DropdownMenuItem(
-                                                value: p,
-                                                child: Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                                  decoration: BoxDecoration(
-                                                    color: isSelected 
-                                                        ? AppColors.accent.withValues(alpha: 0.1) 
-                                                        : Colors.transparent,
-                                                    borderRadius: BorderRadius.circular(10),
-                                                  ),
-                                                  child: Text(
-                                                    p,
-                                                    style: TextStyle(
-                                                      color: isSelected 
-                                                          ? AppColors.accent 
-                                                          : (isDark ? AppColors.textPrimary : Colors.black87),
-                                                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          )
-                                          .toList(),
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          setState(() => _selectedProvider = value);
-                                        }
-                                      },
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: BoxDecoration(
+                                              color: _providerColor(
+                                                  _selectedProvider),
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              _selectedProvider,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: AppColors.accent,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ),
+                                          const Icon(
+                                            Icons.unfold_more_rounded,
+                                            size: 16,
+                                            color: AppColors.accent,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                // Quick access to provider / API-key configuration
+                                GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const ProviderConfigScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.accent
+                                          .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      Icons.tune_rounded,
+                                      size: 16,
+                                      color: AppColors.accent,
                                     ),
                                   ),
                                 ),
@@ -405,13 +757,6 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                             colors: [AppColors.accent, AppColors.accentLight],
                           ),
                           borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.accent.withValues(alpha: 0.4),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
                         ),
                         child: Material(
                           color: Colors.transparent,
@@ -542,7 +887,10 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                       return Column(
                         children: [
                           card,
-                          AdService().getNativeAdWidget(isListCard: true),
+                          AdService().getNativeAdWidget(
+                            key: ValueKey('recent_native_$index'),
+                            isListCard: true,
+                          ),
                         ],
                       );
                     }

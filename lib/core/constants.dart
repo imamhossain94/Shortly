@@ -9,6 +9,7 @@ abstract class AppConstants {
   static const String isGd = 'Is.gd';
   static const String osdb = 'Osdb';
   static const String cuttLy = 'Cutt.ly';
+  static const String bitLy = 'Bit.ly';
 
   // Base URLs
   static const String tinyUrlBase = "https://tinyurl.com/api-create.php";
@@ -18,6 +19,7 @@ abstract class AppConstants {
   static const String isGdBase = "https://is.gd/create.php";
   static const String osdbBase = "https://osdb.link/";
   static const String cuttLyBase = "https://cutt.ly/api/api.php";
+  static const String bitLyBase = "https://api-ssl.bitly.com/v4/shorten";
 
   // Contact
   static const String developerEmail = 'imamagun94@gmail.com';

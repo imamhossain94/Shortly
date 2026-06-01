@@ -260,16 +260,20 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 alignment: Alignment.topRight,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
-                  child: TextButton(
-                    onPressed: _finish,
-                    style: TextButton.styleFrom(
-                      foregroundColor: subtitleColor,
-                    ),
-                    child: const Text(
-                      'Skip',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                  child: Semantics(
+                    button: true,
+                    label: 'Skip onboarding',
+                    child: TextButton(
+                      onPressed: _finish,
+                      style: TextButton.styleFrom(
+                        foregroundColor: subtitleColor,
+                      ),
+                      child: const Text(
+                        'Skip',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -312,39 +316,45 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     SizedBox(
                       width: double.infinity,
                       height: 58,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 400),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: _pages[_currentPage].gradientColors,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: _pages[_currentPage]
-                                  .gradientColors[0]
-                                  .withValues(alpha: 0.5),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
+                      child: Semantics(
+                        button: true,
+                        label: _currentPage == _pages.length - 1
+                            ? 'Get Started'
+                            : 'Next',
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 400),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: _pages[_currentPage].gradientColors,
                             ),
-                          ],
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(16),
-                          child: InkWell(
                             borderRadius: BorderRadius.circular(16),
-                            onTap: _nextPage,
-                            child: Center(
-                              child: Text(
-                                _currentPage == _pages.length - 1
-                                    ? 'Get Started'
-                                    : 'Next',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.3,
+                            boxShadow: [
+                              BoxShadow(
+                                color: _pages[_currentPage]
+                                    .gradientColors[0]
+                                    .withValues(alpha: 0.5),
+                                blurRadius: 20,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(16),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: _nextPage,
+                              child: Center(
+                                child: Text(
+                                  _currentPage == _pages.length - 1
+                                      ? 'Get Started'
+                                      : 'Next',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.3,
+                                  ),
                                 ),
                               ),
                             ),

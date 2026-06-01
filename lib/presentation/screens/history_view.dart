@@ -21,7 +21,6 @@ class _HistoryViewState extends ConsumerState<HistoryView>
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String? _filterType;
-  bool _isScrolling = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -236,35 +235,28 @@ class _HistoryViewState extends ConsumerState<HistoryView>
                     ],
                   ),
                 )
-              : NotificationListener<ScrollNotification>(
-                  onNotification: (scrollInfo) {
-                    if (scrollInfo is ScrollStartNotification) {
-                      if (!_isScrolling) setState(() => _isScrolling = true);
-                    } else if (scrollInfo is ScrollEndNotification) {
-                      if (_isScrolling) setState(() => _isScrolling = false);
-                    }
-                    return false;
-                  },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                    itemCount: history.length,
-                    itemBuilder: (context, index) {
-                      final item = history[index];
-                      final card = _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                  itemCount: history.length,
+                  itemBuilder: (context, index) {
+                    final item = history[index];
+                    final card =
+                        _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
 
-                      // Show first ad after 2 items, then every 4 items
-                      if (index >= 1 && (index - 1) % 4 == 0) {
-                        return Column(
-                          children: [
-                            card,
-                            if (!_isScrolling)
-                              AdService().getNativeAdWidget(isListCard: true),
-                          ],
-                        );
-                      }
-                      return card;
-                    },
-                  ),
+                    // Show first ad after 2 items, then every 4 items
+                    if (index >= 1 && (index - 1) % 4 == 0) {
+                      return Column(
+                        children: [
+                          card,
+                          AdService().getNativeAdWidget(
+                            key: ValueKey('history_native_$index'),
+                            isListCard: true,
+                          ),
+                        ],
+                      );
+                    }
+                    return card;
+                  },
                 ),
         ),
       ],

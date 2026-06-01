@@ -70,60 +70,20 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       ),
     );
 
-    return Stack(
-      children: [
-        // Base background
-        Container(color: isDark ? AppColors.darkBg : Colors.white),
-
-        // Primary Dynamic Glow - Shifted Top-Left for natural lighting
-        Container(
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(
-              center: Alignment(-0.4, -0.6),
-              radius: 1.5,
-              colors: [
-                Color(0x4064B5F6),
-                Color(0x2042A5F5),
-                Colors.transparent,
-              ],
-              stops: [0.0, 0.5, 1.0],
-            ),
-          ),
-        ),
-
-        // Secondary Soft Glow - Bottom-Right to balance composition
-        Container(
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(
-              center: Alignment(0.8, 0.8),
-              radius: 1.8,
-              colors: [
-                Color(0x1564B5F6),
-                Color(0x0A42A5F5),
-                Colors.transparent,
-              ],
-              stops: [0.0, 0.5, 1.0],
-            ),
-          ),
-        ),
-
-        // Foreground Content
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          drawer: _buildNavigationDrawer(context),
-          body: PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: const [
-              ShortenerView(),
-              HistoryView(),
-              ExpanderView(),
-              MenuScreen(),
-            ],
-          ),
-          bottomNavigationBar: _buildBottomNavWithBanner(context, isDark),
-        ),
-      ],
+    return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBg : Colors.white,
+      drawer: _buildNavigationDrawer(context),
+      body: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: const [
+          ShortenerView(),
+          HistoryView(),
+          ExpanderView(),
+          MenuScreen(),
+        ],
+      ),
+      bottomNavigationBar: _buildBottomNavWithBanner(context, isDark),
     );
   }
 
@@ -419,7 +379,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!isPremium) AdService().getBannerAdWidget(),
+        // Banner only on secondary tabs — keep the Home screen clean.
+        if (!isPremium && _currentIndex != 0) AdService().getBannerAdWidget(),
         _buildBottomNav(context, isDark),
       ],
     );

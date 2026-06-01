@@ -7,10 +7,13 @@ import 'package:url_shortener/l10n/app_localizations.dart';
 import '../../core/theme.dart';
 import '../../core/constants.dart';
 import '../../core/services/iap_service.dart';
+import '../../core/services/ad_service.dart';
 import '../widgets/app_custom_bar.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
+import '../providers/provider_keys_provider.dart';
 import 'feedback_screen.dart';
+import 'provider_config_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class MenuScreen extends ConsumerWidget {
@@ -189,7 +192,16 @@ class MenuScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(20),
                         border: isDark
                             ? Border.all(color: AppColors.darkCardBorder)
-                            : null,
+                            : Border.all(color: Colors.grey.shade200),
+                        boxShadow: isDark
+                            ? null
+                            : [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.04),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,13 +292,6 @@ class MenuScreen extends ConsumerWidget {
                                   colors: [AppColors.accent, AppColors.accentLight],
                                 ),
                                 borderRadius: BorderRadius.circular(14),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.accent.withValues(alpha: 0.4),
-                                    blurRadius: 16,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
                               ),
                               child: Material(
                                 color: Colors.transparent,
@@ -416,6 +421,41 @@ class MenuScreen extends ConsumerWidget {
                     ),
                     _Divider(isDark: isDark),
                     _SettingsTile(
+                      icon: Icons.tune_rounded,
+                      label: 'Configure Providers',
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            ref.watch(providerKeysProvider).defaultProvider,
+                            style: const TextStyle(
+                              color: AppColors.accent,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            size: 18,
+                            color: isDark
+                                ? AppColors.textMuted
+                                : Colors.grey.shade400,
+                          ),
+                        ],
+                      ),
+                      isDark: isDark,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProviderConfigScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _Divider(isDark: isDark),
+                    _SettingsTile(
                       icon: Icons.feedback_outlined,
                       label: AppLocalizations.of(context)!.feedback,
                       isDark: isDark,
@@ -434,6 +474,7 @@ class MenuScreen extends ConsumerWidget {
                       label: AppLocalizations.of(context)!.share,
                       isDark: isDark,
                       onTap: () {
+                        AdService().suppressNextAppOpenAd();
                         SharePlus.instance.share(
                           ShareParams(
                             text:
@@ -448,6 +489,8 @@ class MenuScreen extends ConsumerWidget {
                       label: AppLocalizations.of(context)!.rateApp,
                       isDark: isDark,
                       onTap: () async {
+                        // Opens the Play Store (leaves the app) either way.
+                        AdService().suppressNextAppOpenAd();
                         final InAppReview inAppReview = InAppReview.instance;
                         if (await inAppReview.isAvailable()) {
                           // openStoreListing directly takes the user to the app's store page
@@ -476,6 +519,7 @@ class MenuScreen extends ConsumerWidget {
                           AppConstants.privacyPolicyUrl,
                         );
                         if (await canLaunchUrl(url)) {
+                          AdService().suppressNextAppOpenAd();
                           launchUrl(url, mode: LaunchMode.externalApplication);
                         }
                       },
@@ -519,6 +563,7 @@ class MenuScreen extends ConsumerWidget {
                           'https://play.google.com/store/apps/dev?id=5785086860664884952',
                         );
                         if (await canLaunchUrl(url)) {
+                          AdService().suppressNextAppOpenAd();
                           launchUrl(url, mode: LaunchMode.externalApplication);
                         }
                       },

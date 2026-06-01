@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme.dart';
+import '../../core/services/ad_service.dart';
 import 'package:url_shortener/l10n/app_localizations.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -37,6 +38,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     );
 
     if (await canLaunchUrl(emailLaunchUri)) {
+      AdService().suppressNextAppOpenAd();
       await launchUrl(emailLaunchUri);
     }
   }
