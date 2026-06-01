@@ -93,24 +93,24 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                     child: Row(
                       children: [
-                        Container(
-                          width: 54,
-                          height: 54,
-                          decoration: BoxDecoration(
-                            color: AppColors.accent.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: AppColors.accent.withValues(alpha: 0.2),
-                              width: 1,
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.shield_rounded,
-                            color: AppColors.accent,
-                            size: 28,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
+                        // Container(
+                        //   width: 54,
+                        //   height: 54,
+                        //   decoration: BoxDecoration(
+                        //     color: AppColors.accent.withValues(alpha: 0.1),
+                        //     borderRadius: BorderRadius.circular(16),
+                        //     border: Border.all(
+                        //       color: AppColors.accent.withValues(alpha: 0.2),
+                        //       width: 1,
+                        //     ),
+                        //   ),
+                        //   child: const Icon(
+                        //     Icons.shield_rounded,
+                        //     color: AppColors.accent,
+                        //     size: 28,
+                        //   ),
+                        // ),
+                        // const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,13 +223,6 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                           colors: [AppColors.accent, AppColors.accentLight],
                         ),
                         borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.accent.withValues(alpha: 0.4),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
                       ),
                       child: Material(
                         color: Colors.transparent,

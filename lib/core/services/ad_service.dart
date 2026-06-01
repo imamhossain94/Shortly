@@ -19,15 +19,30 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
   bool _initStarted = false; // guard against double-init
 
   static const String _lastAppOpenAdKey = 'last_app_open_ad_time';
-  static const int _appOpenAdCooldownMinutes = 60; // Increased from 10
-  static const int _interstitialCooldownSeconds = 300; // Increased from 60
-  static const int _interstitialFrequency = 8; // Increased from 3
+  static const int _appOpenAdCooldownMinutes = 60;
+  static const int _interstitialCooldownSeconds = 300;
+  static const int _interstitialFrequency = 4;
 
+  // Skip the very first `resumed` after launch so an app-open ad never
+  // slams over the cold start.
   bool _isFirstLaunch = true;
+  // True while any full-screen ad (interstitial or app-open) is on screen, so
+  // a second one can never stack on top of it.
+  bool _isShowingFullScreenAd = false;
+  // Set when the user intentionally leaves the app (tapped a link/share, or
+  // clicked an ad). Consumed by the next resume so the return isn't ambushed
+  // by an app-open ad.
+  bool _suppressNextAppOpen = false;
+
   int _interstitialRetryAttempt = 0;
   int _appOpenRetryAttempt = 0;
   int _interstitialCounter = 0;
   DateTime? _lastInterstitialShown;
+
+  /// Suppress the next app-open ad that would otherwise fire when the app
+  /// resumes. Call right before an intentional external navigation
+  /// (`launchUrl`, share sheet) or when another ad is clicked.
+  void suppressNextAppOpenAd() => _suppressNextAppOpen = true;
 
   Future<void> init() async {
     if (_initStarted) return;
@@ -62,6 +77,11 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
+        // Don't show an app-open ad over the cold start.
+        if (_isFirstLaunch) {
+          _isFirstLaunch = false;
+          break;
+        }
         await _showAdIfReady();
         break;
       case AppLifecycleState.detached:
@@ -84,10 +104,18 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
           final delay = pow(2, min(6, _interstitialRetryAttempt)).toInt();
           Future.delayed(Duration(seconds: delay), loadInterstitial);
         },
-        onAdDisplayedCallback: (ad) {},
-        onAdDisplayFailedCallback: (ad, error) => loadInterstitial(),
-        onAdClickedCallback: (ad) {},
-        onAdHiddenCallback: (ad) => loadInterstitial(),
+        onAdDisplayedCallback: (ad) => _isShowingFullScreenAd = true,
+        onAdDisplayFailedCallback: (ad, error) {
+          _isShowingFullScreenAd = false;
+          loadInterstitial();
+        },
+        // Tapping the interstitial opens external content; don't show an
+        // app-open ad on the return.
+        onAdClickedCallback: (ad) => _suppressNextAppOpen = true,
+        onAdHiddenCallback: (ad) {
+          _isShowingFullScreenAd = false;
+          loadInterstitial();
+        },
       ),
     );
 
@@ -102,12 +130,14 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
           final delay = pow(2, min(6, _appOpenRetryAttempt)).toInt();
           Future.delayed(Duration(seconds: delay), loadAppOpenAd);
         },
-        onAdDisplayedCallback: (ad) {},
+        onAdDisplayedCallback: (ad) => _isShowingFullScreenAd = true,
         onAdDisplayFailedCallback: (ad, error) {
+          _isShowingFullScreenAd = false;
           loadAppOpenAd();
         },
         onAdClickedCallback: (ad) {},
         onAdHiddenCallback: (ad) {
+          _isShowingFullScreenAd = false;
           loadAppOpenAd();
         },
         onAdRevenuePaidCallback: (ad) {},
@@ -123,6 +153,16 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> _showAdIfReady() async {
     if (!_isInitialized || _iapService.isPremium) return;
+
+    // Never stack over a full-screen ad that's already showing.
+    if (_isShowingFullScreenAd) return;
+
+    // Returning from an intentional external action (link/share/ad click) —
+    // consume the flag and skip this resume.
+    if (_suppressNextAppOpen) {
+      _suppressNextAppOpen = false;
+      return;
+    }
 
     final prefs = await SharedPreferences.getInstance();
     final String? lastTimeString = prefs.getString(_lastAppOpenAdKey);
@@ -219,7 +259,9 @@ class _BannerAdWidgetState extends State<_BannerAdWidget> {
           onAdLoadFailedCallback: (adUnitId, error) {
             if (mounted) setState(() => _isAdLoaded = false);
           },
-          onAdClickedCallback: (ad) {},
+          // Clicking the banner opens external content; don't show an
+          // app-open ad on the return.
+          onAdClickedCallback: (ad) => AdService().suppressNextAppOpenAd(),
           onAdExpandedCallback: (ad) {},
           onAdCollapsedCallback: (ad) {},
         ),
@@ -240,9 +282,15 @@ class _NativeAdWidget extends StatefulWidget {
   State<_NativeAdWidget> createState() => _NativeAdWidgetState();
 }
 
-class _NativeAdWidgetState extends State<_NativeAdWidget> {
+class _NativeAdWidgetState extends State<_NativeAdWidget>
+    with AutomaticKeepAliveClientMixin {
   bool _isAdLoaded = false;
   final MaxNativeAdViewController _controller = MaxNativeAdViewController();
+
+  // Keep the loaded ad alive when scrolled off-screen / parent rebuilds so it
+  // doesn't reload and flicker.
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -252,6 +300,7 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     
@@ -293,7 +342,9 @@ class _NativeAdWidgetState extends State<_NativeAdWidget> {
           onAdLoadFailedCallback: (adUnitId, error) {
             if (mounted) setState(() => _isAdLoaded = false);
           },
-          onAdClickedCallback: (ad) {},
+          // Clicking the native ad opens external content; don't show an
+          // app-open ad on the return.
+          onAdClickedCallback: (ad) => AdService().suppressNextAppOpenAd(),
           onAdRevenuePaidCallback: (ad) {},
         ),
         child: _isAdLoaded ? _buildNativeAdContent(theme, isDark) : const SizedBox.shrink(),

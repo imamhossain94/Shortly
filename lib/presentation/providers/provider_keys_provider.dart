@@ -43,7 +43,7 @@ class ProviderKeysNotifier extends Notifier<ProviderConfigState> {
       tinyUrlToken: '',
       cuttLyKey: '',
       bitLyToken: '',
-      defaultProvider: AppConstants.isGd, // Default out-of-the-box unauthenticated direct provider
+      defaultProvider: AppConstants.daGd, // Default out-of-the-box unauthenticated direct provider
     );
   }
 
@@ -52,7 +52,7 @@ class ProviderKeysNotifier extends Notifier<ProviderConfigState> {
     final tinyToken = prefs.getString(_tinyUrlTokenKey) ?? '';
     final cuttKey = prefs.getString(_cuttLyKeyKey) ?? '';
     final bitToken = prefs.getString(_bitLyTokenKey) ?? '';
-    final defProvider = prefs.getString(_defaultProviderKey) ?? AppConstants.isGd;
+    final defProvider = prefs.getString(_defaultProviderKey) ?? AppConstants.daGd;
 
     state = ProviderConfigState(
       tinyUrlToken: tinyToken,

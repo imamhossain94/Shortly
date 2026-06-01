@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants.dart';
 import '../../core/theme.dart';
+import '../../core/services/ad_service.dart';
 import '../providers/provider_keys_provider.dart';
 
 class ProviderConfigScreen extends ConsumerStatefulWidget {
@@ -46,6 +47,7 @@ class _ProviderConfigScreenState extends ConsumerState<ProviderConfigScreen> {
   Future<void> _launchUrlHelper(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
+      AdService().suppressNextAppOpenAd();
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
@@ -294,7 +296,9 @@ class _ProviderConfigScreenState extends ConsumerState<ProviderConfigScreen> {
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
-                                      isDefault ? Icons.star_rounded : Icons.star_outline_rounded,
+                                      isDefault
+                                          ? Icons.check_circle_rounded
+                                          : Icons.radio_button_unchecked_rounded,
                                       color: isDefault ? AppColors.accent : AppColors.textMuted,
                                       size: 22,
                                     ),
@@ -345,49 +349,99 @@ class _ProviderConfigScreenState extends ConsumerState<ProviderConfigScreen> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            // Text Input Field
-                            TextField(
-                              controller: _controllers[provider],
-                              obscureText: _obscureText[provider] ?? true,
-                              style: const TextStyle(fontSize: 14.5),
-                              decoration: InputDecoration(
-                                hintText: provider == AppConstants.tinyUrl
-                                    ? 'Enter TinyURL API token...'
-                                    : provider == AppConstants.cuttLy
-                                        ? 'Enter Cutt.ly API key...'
-                                        : 'Enter Bitly access token...',
-                                prefixIcon: const Icon(Icons.lock_rounded, size: 16),
-                                suffixIcon: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        _obscureText[provider] == true
-                                            ? Icons.visibility_rounded
-                                            : Icons.visibility_off_rounded,
-                                        size: 16,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _obscureText[provider] = !(_obscureText[provider] ?? true);
-                                        });
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.content_paste_rounded, size: 16),
-                                      onPressed: () async {
-                                        final clipData = await Clipboard.getData('text/plain');
-                                        if (clipData?.text != null) {
-                                          _controllers[provider]!.text = clipData!.text!;
-                                        }
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.clear_rounded, size: 16),
-                                      onPressed: () => _controllers[provider]!.clear(),
-                                    ),
-                                  ],
+                            // Text Input Field — redesigned card-style box
+                            Container(
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? AppColors.darkCard
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: isDark
+                                      ? AppColors.darkCardBorder
+                                      : Colors.grey.shade200,
                                 ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.fromLTRB(10, 8, 0, 8),
+                                    padding: const EdgeInsets.all(9),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.accent
+                                          .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      Icons.vpn_key_rounded,
+                                      size: 16,
+                                      color: AppColors.accent,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _controllers[provider],
+                                      obscureText:
+                                          _obscureText[provider] ?? true,
+                                      style: TextStyle(
+                                        fontSize: 14.5,
+                                        color: isDark
+                                            ? AppColors.textPrimary
+                                            : Colors.black87,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: provider ==
+                                                AppConstants.tinyUrl
+                                            ? 'Enter TinyURL API token...'
+                                            : provider == AppConstants.cuttLy
+                                                ? 'Enter Cutt.ly API key...'
+                                                : 'Enter Bitly access token...',
+                                        hintStyle: const TextStyle(
+                                          color: AppColors.textMuted,
+                                          fontSize: 13.5,
+                                        ),
+                                        isDense: true,
+                                        filled: false,
+                                        border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  _KeyActionButton(
+                                    icon: _obscureText[provider] == true
+                                        ? Icons.visibility_rounded
+                                        : Icons.visibility_off_rounded,
+                                    onTap: () {
+                                      setState(() {
+                                        _obscureText[provider] =
+                                            !(_obscureText[provider] ?? true);
+                                      });
+                                    },
+                                  ),
+                                  _KeyActionButton(
+                                    icon: Icons.content_paste_rounded,
+                                    onTap: () async {
+                                      final clipData = await Clipboard.getData(
+                                          'text/plain');
+                                      if (clipData?.text != null) {
+                                        _controllers[provider]!.text =
+                                            clipData!.text!;
+                                      }
+                                    },
+                                  ),
+                                  _KeyActionButton(
+                                    icon: Icons.clear_rounded,
+                                    onTap: () =>
+                                        _controllers[provider]!.clear(),
+                                  ),
+                                  const SizedBox(width: 6),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 14),
@@ -484,6 +538,26 @@ class _ProviderConfigScreenState extends ConsumerState<ProviderConfigScreen> {
     if (provider == AppConstants.clckRu) return const Color(0xFFE53935);
     if (provider == AppConstants.daGd) return const Color(0xFF00ACC1);
     return const Color(0xFF5E35B1);
+  }
+}
+
+/// Compact icon action used inside the redesigned API-key input box.
+class _KeyActionButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _KeyActionButton({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(icon, size: 18, color: AppColors.textMuted),
+      ),
+    );
   }
 }
 
