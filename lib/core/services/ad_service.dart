@@ -273,6 +273,10 @@ class _BannerAdWidgetState extends State<_BannerAdWidget> {
 // ─────────────────────────────────────────────────────────────────────────────
 // Native Ad Widget
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Height the native ad content is laid out at once the ad has loaded.
+const double _kNativeAdHeight = 140;
+
 class _NativeAdWidget extends StatefulWidget {
   final String adUnitId;
   final bool isListCard;
@@ -285,6 +289,7 @@ class _NativeAdWidget extends StatefulWidget {
 class _NativeAdWidgetState extends State<_NativeAdWidget>
     with AutomaticKeepAliveClientMixin {
   bool _isAdLoaded = false;
+  bool _didAdFail = false;
   final MaxNativeAdViewController _controller = MaxNativeAdViewController();
 
   // Keep the loaded ad alive when scrolled off-screen / parent rebuilds so it
@@ -304,10 +309,16 @@ class _NativeAdWidgetState extends State<_NativeAdWidget>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      margin: _isAdLoaded ? const EdgeInsets.only(bottom: 12) : EdgeInsets.zero,
-      height: _isAdLoaded ? 140 : 1,
+    // The slot keeps its full height (and builds its content) while the ad is
+    // in flight: MaxNativeAdView registers each asset view's rect with the
+    // native side as part of handling the load event, before our listener runs.
+    // If the content isn't laid out at its final size by then, no asset views
+    // are registered, the SDK logs "Failed to prepare native ad for
+    // interaction", and the media view never appears. It collapses only once a
+    // load has actually failed.
+    return Container(
+      margin: _didAdFail ? EdgeInsets.zero : const EdgeInsets.only(bottom: 12),
+      height: _didAdFail ? 1 : _kNativeAdHeight,
       decoration: _isAdLoaded
           ? BoxDecoration(
               color: isDark
@@ -337,17 +348,33 @@ class _NativeAdWidgetState extends State<_NativeAdWidget>
         controller: _controller,
         listener: NativeAdListener(
           onAdLoadedCallback: (ad) {
-            if (mounted) setState(() => _isAdLoaded = true);
+            if (mounted) {
+              setState(() {
+                _isAdLoaded = true;
+                _didAdFail = false;
+              });
+            }
           },
           onAdLoadFailedCallback: (adUnitId, error) {
-            if (mounted) setState(() => _isAdLoaded = false);
+            if (mounted) {
+              setState(() {
+                _isAdLoaded = false;
+                _didAdFail = true;
+              });
+            }
           },
           // Clicking the native ad opens external content; don't show an
           // app-open ad on the return.
           onAdClickedCallback: (ad) => AdService().suppressNextAppOpenAd(),
           onAdRevenuePaidCallback: (ad) {},
         ),
-        child: _isAdLoaded ? _buildNativeAdContent(theme, isDark) : const SizedBox.shrink(),
+        // Always built, so the asset views exist when the SDK registers them.
+        // Opacity doesn't affect layout, so fading in keeps those rects valid.
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 250),
+          opacity: _isAdLoaded ? 1 : 0,
+          child: _buildNativeAdContent(theme, isDark),
+        ),
       ),
     );
   }

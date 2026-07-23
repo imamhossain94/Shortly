@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.3.2+32
+version: 2.3.3+33
 
 environment:
   sdk: ^3.11.5
@@ -48,7 +48,7 @@ dependencies:
   qr_flutter: ^4.1.0
   shared_preferences: ^2.5.4
   applovin_max: ^4.6.3
-  in_app_purchase: ^3.2.3
+  in_app_purchase: ^3.3.0 # requires Play Billing Library 8.x (Google Play deadline Aug 31, 2026)
   in_app_review: ^2.0.9
   in_app_update: ^4.2.3
   flutter_localizations:
