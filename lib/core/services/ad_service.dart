@@ -19,9 +19,10 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
   bool _initStarted = false; // guard against double-init
 
   static const String _lastAppOpenAdKey = 'last_app_open_ad_time';
-  static const int _appOpenAdCooldownMinutes = 60;
-  static const int _interstitialCooldownSeconds = 300;
-  static const int _interstitialFrequency = 4;
+  static const int _appOpenAdCooldownMinutes = 30;
+  static const int _interstitialCooldownSeconds = 150;
+  // Show on every 2nd shorten/expand, subject to the cooldown below.
+  static const int _interstitialFrequency = 2;
 
   // Skip the very first `resumed` after launch so an app-open ad never
   // slams over the cold start.
@@ -190,19 +191,21 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
     AppLovinMAX.loadInterstitial(AppConstants.adUnitIdInterstitial);
   }
 
+  /// Call on a natural break (a completed shorten/expand). The counter is only
+  /// cleared when an ad actually displays — a slot lost to the cooldown or to
+  /// an unfilled ad carries over to the next action instead of being burned.
   Future<void> showInterstitialAd() async {
     if (_iapService.isPremium) return;
 
-    // Time-based cooldown
-    final now = DateTime.now();
-    if (_lastInterstitialShown != null) {
-      final elapsed = now.difference(_lastInterstitialShown!);
-      if (elapsed.inSeconds < _interstitialCooldownSeconds) return;
-    }
-
-    // Frequency counter
     _interstitialCounter++;
-    if (_interstitialCounter % _interstitialFrequency != 0) return;
+    if (_interstitialCounter < _interstitialFrequency) return;
+
+    final now = DateTime.now();
+    if (_lastInterstitialShown != null &&
+        now.difference(_lastInterstitialShown!).inSeconds <
+            _interstitialCooldownSeconds) {
+      return;
+    }
 
     final isReady =
         (await AppLovinMAX.isInterstitialReady(
@@ -212,15 +215,10 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
     if (isReady) {
       AppLovinMAX.showInterstitial(AppConstants.adUnitIdInterstitial);
       _lastInterstitialShown = DateTime.now();
+      _interstitialCounter = 0;
     } else {
       loadInterstitial();
     }
-  }
-
-  // ── Banner Ad Widget ─────────────────────────────────────────────────────
-  Widget getBannerAdWidget() {
-    if (_iapService.isPremium) return const SizedBox.shrink();
-    return const _BannerAdWidget();
   }
 
   // ── Native Ad Widget ─────────────────────────────────────────────────────
@@ -231,51 +229,13 @@ class AdService extends ChangeNotifier with WidgetsBindingObserver {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Banner Ad Widget
-// ─────────────────────────────────────────────────────────────────────────────
-class _BannerAdWidget extends StatefulWidget {
-  const _BannerAdWidget();
-
-  @override
-  State<_BannerAdWidget> createState() => _BannerAdWidgetState();
-}
-
-class _BannerAdWidgetState extends State<_BannerAdWidget> {
-  bool _isAdLoaded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      // Keep height 1 (NOT 0) when not loaded — height:0 prevents MaxAdView
-      // from requesting the ad. It expands to 50 once the ad is loaded.
-      height: _isAdLoaded ? 50 : 1,
-      child: MaxAdView(
-        adUnitId: AppConstants.adUnitIdBanner,
-        adFormat: AdFormat.banner,
-        listener: AdViewAdListener(
-          onAdLoadedCallback: (ad) {
-            if (mounted) setState(() => _isAdLoaded = true);
-          },
-          onAdLoadFailedCallback: (adUnitId, error) {
-            if (mounted) setState(() => _isAdLoaded = false);
-          },
-          // Clicking the banner opens external content; don't show an
-          // app-open ad on the return.
-          onAdClickedCallback: (ad) => AdService().suppressNextAppOpenAd(),
-          onAdExpandedCallback: (ad) {},
-          onAdCollapsedCallback: (ad) {},
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Native Ad Widget
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Height the native ad content is laid out at once the ad has loaded.
-const double _kNativeAdHeight = 140;
+// Height of the native ad slot. Sized so the media view gets ~1.8:1, which is
+// the shape native demand pays most for — a thumbnail-sized unit earns a
+// fraction of the eCPM of one with real media.
+const double _kNativeAdHeight = 330;
 
 class _NativeAdWidget extends StatefulWidget {
   final String adUnitId;
@@ -382,119 +342,115 @@ class _NativeAdWidgetState extends State<_NativeAdWidget>
   Widget _buildNativeAdContent(ThemeData theme, bool isDark) {
     return Container(
       color: Colors.transparent,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Row(
+      padding: const EdgeInsets.all(14),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Left: icon + text + CTA
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+          // Header: icon, title/advertiser, "Ad" badge
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: const MaxNativeAdIconView(width: 40, height: 40),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // const MaxNativeAdIconView(width: 36, height: 36),
-                    // const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          MaxNativeAdTitleView(
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: theme.textTheme.bodyLarge?.color,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          MaxNativeAdAdvertiserView(
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: theme.textTheme.bodySmall?.color,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                    MaxNativeAdTitleView(
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: theme.textTheme.bodyLarge?.color,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.accent.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(6),
+                    MaxNativeAdAdvertiserView(
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: theme.textTheme.bodySmall?.color,
                       ),
-                      child: const Text(
-                        'Ad',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.accent,
-                        ),
-                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: MaxNativeAdBodyView(
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: theme.textTheme.bodyMedium?.color,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  'Ad',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.accent,
                   ),
                 ),
-                const SizedBox(height: 4),
-                SizedBox(
-                  height: 32,
-                  child: MaxNativeAdCallToActionView(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all(AppColors.accent),
-                      foregroundColor:
-                          WidgetStateProperty.all(Colors.white),
-                      padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(horizontal: 16),
-                      ),
-                      textStyle: WidgetStateProperty.all(
-                        const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                      ),
-                      shape: WidgetStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      elevation: WidgetStateProperty.all(0),
-                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Media takes whatever height is left — roughly 1.8:1, which is what
+          // the native demand (Meta especially) bids highest on.
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              clipBehavior: Clip.hardEdge,
+              child: const Stack(
+                fit: StackFit.expand,
+                children: [
+                  MaxNativeAdMediaView(),
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: MaxNativeAdOptionsView(width: 16, height: 16),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          const SizedBox(width: 12),
-          // Right: media thumbnail
-          Container(
-            width: 80,
-            height: 108,
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.darkSurface : Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
+          const SizedBox(height: 10),
+          MaxNativeAdBodyView(
+            style: TextStyle(
+              fontSize: 12,
+              color: theme.textTheme.bodyMedium?.color,
             ),
-            clipBehavior: Clip.hardEdge,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                const MaxNativeAdMediaView(width: 80, height: 108),
-                const Positioned(
-                  top: 4,
-                  right: 4,
-                  child: MaxNativeAdOptionsView(width: 16, height: 16),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 40,
+            width: double.infinity,
+            child: MaxNativeAdCallToActionView(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(AppColors.accent),
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+                padding: WidgetStateProperty.all(
+                  const EdgeInsets.symmetric(horizontal: 16),
                 ),
-              ],
+                textStyle: WidgetStateProperty.all(
+                  const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+                shape: WidgetStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                elevation: WidgetStateProperty.all(0),
+              ),
             ),
           ),
         ],

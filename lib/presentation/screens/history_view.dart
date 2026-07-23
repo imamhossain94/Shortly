@@ -243,8 +243,9 @@ class _HistoryViewState extends ConsumerState<HistoryView>
                     final card =
                         _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
 
-                    // Show first ad after 2 items, then every 4 items
-                    if (index >= 1 && (index - 1) % 4 == 0) {
+                    // Show first ad after 3 items, then every 6 items. The
+                    // native card is large now, so it's spaced out further.
+                    if (index >= 2 && (index - 2) % 6 == 0) {
                       return Column(
                         children: [
                           card,

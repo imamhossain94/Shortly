@@ -9,7 +9,6 @@ import 'help_faq_screen.dart';
 import 'about_screen.dart';
 import 'feedback_screen.dart';
 import '../../core/theme.dart';
-import '../../core/services/ad_service.dart';
 import '../../core/services/iap_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_shortener/l10n/app_localizations.dart';
@@ -83,7 +82,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           MenuScreen(),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavWithBanner(context, isDark),
+      bottomNavigationBar: _buildBottomNav(context, isDark),
     );
   }
 
@@ -371,18 +370,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildBottomNavWithBanner(BuildContext context, bool isDark) {
-    final isPremium = IapService().isPremium;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Banner only on secondary tabs — keep the Home screen clean.
-        if (!isPremium && _currentIndex != 0) AdService().getBannerAdWidget(),
-        _buildBottomNav(context, isDark),
-      ],
     );
   }
 

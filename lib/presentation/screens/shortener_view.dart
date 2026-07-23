@@ -882,8 +882,8 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                     final item = history[index];
                     final card = _LinkCard(item: item, isDark: isDark);
                     
-                    // Show first ad after 2 items, then every 4 items
-                    if (index >= 1 && (index - 1) % 4 == 0) {
+                    // One ad only, below the fold — the Home tab stays clean.
+                    if (index == 3) {
                       return Column(
                         children: [
                           card,
