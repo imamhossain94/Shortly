@@ -88,7 +88,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   Widget _buildNavigationDrawer(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    // Drawer content sits under the system bars in edge-to-edge, and Drawer does
+    // not inset its child, so the header and footer clear the bars themselves.
+    final insets = MediaQuery.paddingOf(context);
+
     return Drawer(
       backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
       elevation: 0,
@@ -102,7 +105,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         children: [
           // Premium Header
           Container(
-            padding: const EdgeInsets.fromLTRB(28, 64, 28, 24),
+            padding: EdgeInsets.fromLTRB(28, 40 + insets.top, 28, 24),
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,7 +294,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           
           // Bottom section
           Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + insets.bottom),
             child: Column(
               children: [
                 const Divider(),
