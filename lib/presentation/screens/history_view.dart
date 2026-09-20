@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme.dart';
 import '../widgets/app_custom_bar.dart';
+import '../widgets/app_bar_action.dart';
 import '../providers/history_provider.dart';
 import 'result_screen.dart';
 import '../../core/services/ad_service.dart';
@@ -19,20 +20,22 @@ class HistoryView extends ConsumerStatefulWidget {
 class _HistoryViewState extends ConsumerState<HistoryView>
     with AutomaticKeepAliveClientMixin {
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-  String? _filterType;
 
   @override
   bool get wantKeepAlive => true;
 
   @override
+  void initState() {
+    super.initState();
+    // Reflect a filter another tab set while this view was off-screen, and keep
+    // the clear button in sync with the stored query.
+    _searchController.text = ref.read(historyFilterProvider).query;
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _refreshHistory() {
-    ref.read(historyProvider.notifier).refresh();
   }
 
   @override
@@ -41,27 +44,10 @@ class _HistoryViewState extends ConsumerState<HistoryView>
     final historyState = ref.watch(historyProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final allHistory = historyState.value ?? [];
-
-    // Local filtering logic
-    final history = allHistory.where((item) {
-      bool matchesQuery = true;
-      if (_searchQuery.isNotEmpty) {
-        final q = _searchQuery.toLowerCase();
-        matchesQuery =
-            (item.originalUrl?.toLowerCase().contains(q) ?? false) ||
-            (item.shortenedUrl?.toLowerCase().contains(q) ?? false) ||
-            (item.expandedUrl?.toLowerCase().contains(q) ?? false);
-      }
-
-      if (!matchesQuery) return false;
-
-      if (_filterType == 'shorten') {
-        return item.provider != null;
-      } else if (_filterType == 'expand') {
-        return item.provider == null;
-      }
-      return true;
-    }).toList();
+    // Search text and type filter both live in the provider, so another tab can
+    // open this screen already narrowed down.
+    final filter = ref.watch(historyFilterProvider);
+    final history = ref.watch(filteredHistoryProvider);
 
     if (historyState.isLoading && allHistory.isEmpty) {
       return const Center(
@@ -77,24 +63,10 @@ class _HistoryViewState extends ConsumerState<HistoryView>
           title: '${AppLocalizations.of(context)!.myLinks.split(' ')[0]} ',
           accentTitle: AppLocalizations.of(context)!.myLinks.split(' ').skip(1).join(' '),
           actions: [
-            GestureDetector(
+            AppBarAction(
+              icon: Icons.refresh_rounded,
+              tooltip: AppLocalizations.of(context)!.refresh,
               onTap: () => ref.read(historyProvider.notifier).refresh(),
-              child: Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkCard : Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(11),
-                  border: isDark
-                      ? Border.all(color: AppColors.darkCardBorder)
-                      : Border.all(color: Colors.grey.shade200),
-                ),
-                child: Icon(
-                  Icons.refresh_rounded,
-                  size: 20,
-                  color: isDark ? AppColors.textSecondary : Colors.grey.shade600,
-                ),
-              ),
             ),
           ],
           bottom: Container(
@@ -118,15 +90,15 @@ class _HistoryViewState extends ConsumerState<HistoryView>
                     color: AppColors.textMuted, fontSize: 13),
                 prefixIcon: const Icon(Icons.search_rounded,
                     color: AppColors.textMuted, size: 19),
-                suffixIcon: _searchController.text.isNotEmpty
+                suffixIcon: filter.query.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.close_rounded, size: 17),
                         color: AppColors.textMuted,
                         onPressed: () {
                           _searchController.clear();
-                          setState(() {
-                            _searchQuery = '';
-                          });
+                          ref
+                              .read(historyFilterProvider.notifier)
+                              .updateQuery('');
                         },
                       )
                     : PopupMenuButton<String?>(
@@ -137,19 +109,19 @@ class _HistoryViewState extends ConsumerState<HistoryView>
                           borderRadius: BorderRadius.circular(16),
                         ),
                         elevation: 4,
-                        onSelected: (value) {
-                          setState(() {
-                            _filterType = value;
-                          });
-                        },
+                        onSelected: (value) => ref
+                            .read(historyFilterProvider.notifier)
+                            .updateType(value),
                         itemBuilder: (context) {
                           final items = [
                             {'value': 'all', 'label': AppLocalizations.of(context)!.all},
-                            {'value': 'shorten', 'label': AppLocalizations.of(context)!.shortenedUrl},
-                            {'value': 'expand', 'label': AppLocalizations.of(context)!.expanded},
+                            {'value': HistoryType.shortened, 'label': AppLocalizations.of(context)!.shortenedUrl},
+                            {'value': HistoryType.expanded, 'label': AppLocalizations.of(context)!.expanded},
                           ];
                           return items.map((item) {
-                            final isSelected = _filterType == item['value'];
+                            final isSelected = item['value'] == 'all'
+                                ? filter.type == HistoryType.all
+                                : filter.type == item['value'];
                             return PopupMenuItem<String?>(
                               value: item['value'],
                               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -179,11 +151,8 @@ class _HistoryViewState extends ConsumerState<HistoryView>
                 focusedBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
+              onChanged: (value) =>
+                  ref.read(historyFilterProvider.notifier).updateQuery(value),
             ),
           ),
         ),
@@ -204,6 +173,22 @@ class _HistoryViewState extends ConsumerState<HistoryView>
                 isDark: isDark,
                 isAccent: true,
               ),
+              // Spells out an active filter and offers a way out of it. The
+              // filter menu hides behind the search field's suffix, so arriving
+              // here pre-filtered from another tab would otherwise look like a
+              // short list rather than a filtered one.
+              if (filter.type != HistoryType.all) ...[
+                const SizedBox(width: 8),
+                _ActiveFilterChip(
+                  label: filter.type == HistoryType.expanded
+                      ? AppLocalizations.of(context)!.expanded
+                      : AppLocalizations.of(context)!.shortenedUrl,
+                  isDark: isDark,
+                  onClear: () => ref
+                      .read(historyFilterProvider.notifier)
+                      .updateType(HistoryType.all),
+                ),
+              ],
             ],
           ),
         ),
@@ -243,24 +228,70 @@ class _HistoryViewState extends ConsumerState<HistoryView>
                     final card =
                         _HistoryLinkCard(item: item, isDark: isDark, ref: ref);
 
-                    // Show first ad after 3 items, then every 6 items. The
-                    // native card is large now, so it's spaced out further.
-                    if (index >= 2 && (index - 2) % 6 == 0) {
-                      return Column(
-                        children: [
-                          card,
-                          AdService().getNativeAdWidget(
-                            key: ValueKey('history_native_$index'),
-                            isListCard: true,
-                          ),
-                        ],
-                      );
+                    if (!NativeAdPlacement.showsAfter(index, history.length)) {
+                      return card;
                     }
-                    return card;
+                    return Column(
+                      children: [
+                        card,
+                        AdService().getNativeAdWidget(
+                          key: ValueKey('history_native_$index'),
+                          style: NativeAdStyle.listTile,
+                        ),
+                      ],
+                    );
                   },
                 ),
         ),
       ],
+    );
+  }
+}
+
+/// Shows which filter My Links is narrowed to, with a tap target to clear it.
+class _ActiveFilterChip extends StatelessWidget {
+  final String label;
+  final bool isDark;
+  final VoidCallback onClear;
+
+  const _ActiveFilterChip({
+    required this.label,
+    required this.isDark,
+    required this.onClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onClear,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(12, 6, 8, 6),
+          decoration: BoxDecoration(
+            color: AppColors.accent.withValues(alpha: isDark ? 0.18 : 0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.accent.withValues(alpha: 0.35)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.accent,
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(Icons.close_rounded, size: 14, color: AppColors.accent),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

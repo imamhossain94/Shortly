@@ -260,4 +260,58 @@ class AppLocalizationsZh extends AppLocalizations {
   String shortenedCount(int count) {
     return '$count 个已缩短';
   }
+
+  @override
+  String get expandedLinks => '已展开的链接';
+
+  @override
+  String get aboutTagline => '快速且私密地缩短、展开和分享链接。';
+
+  @override
+  String get whatShortlyDoes => 'Shortly 能做什么';
+
+  @override
+  String get featureShortenTitle => '缩短任意链接';
+
+  @override
+  String get featureShortenDesc => '八家服务商可选，也可使用你自己的 Bitly 或 Cutt.ly 密钥。';
+
+  @override
+  String get featureExpandTitle => '点击前先确认';
+
+  @override
+  String get featureExpandDesc => '追踪短链接的跳转，查看它真正指向哪里。';
+
+  @override
+  String get featureQrTitle => '内置二维码';
+
+  @override
+  String get featureQrDesc => '把任意链接变成二维码，一键分享。';
+
+  @override
+  String get featurePrivacyTitle => '你的链接属于你';
+
+  @override
+  String get featurePrivacyDesc => '历史记录仅保存在本机。无需账号，不做追踪。';
+
+  @override
+  String get support => '支持';
+
+  @override
+  String get helpAndFaq => '帮助与常见问题';
+
+  @override
+  String get contactDeveloper => '联系开发者';
+
+  @override
+  String get more => '更多';
+
+  @override
+  String get shareApp => '分享应用';
+
+  @override
+  String get shareAppMessage => '用 Shortly 缩短和检查链接：';
+
+  @override
+  String get madeWithCare => '为经常分享链接的人用心打造。';
 }

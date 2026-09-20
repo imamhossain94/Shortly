@@ -609,6 +609,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} Shortened'**
   String shortenedCount(int count);
+
+  /// No description provided for @expandedLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Expanded Links'**
+  String get expandedLinks;
+
+  /// No description provided for @aboutTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'A fast, private way to shorten, expand and share links.'**
+  String get aboutTagline;
+
+  /// No description provided for @whatShortlyDoes.
+  ///
+  /// In en, this message translates to:
+  /// **'What Shortly does'**
+  String get whatShortlyDoes;
+
+  /// No description provided for @featureShortenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shorten any link'**
+  String get featureShortenTitle;
+
+  /// No description provided for @featureShortenDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Eight providers to choose from, including your own Bitly or Cutt.ly key.'**
+  String get featureShortenDesc;
+
+  /// No description provided for @featureExpandTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check before you tap'**
+  String get featureExpandTitle;
+
+  /// No description provided for @featureExpandDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow a short link\'s redirects and see where it really leads.'**
+  String get featureExpandDesc;
+
+  /// No description provided for @featureQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QR codes built in'**
+  String get featureQrTitle;
+
+  /// No description provided for @featureQrDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn any link into a QR code and share it in a tap.'**
+  String get featureQrDesc;
+
+  /// No description provided for @featurePrivacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your links stay yours'**
+  String get featurePrivacyTitle;
+
+  /// No description provided for @featurePrivacyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'History is stored on this device. No account, no tracking.'**
+  String get featurePrivacyDesc;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @helpAndFaq.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & FAQ'**
+  String get helpAndFaq;
+
+  /// No description provided for @contactDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact developer'**
+  String get contactDeveloper;
+
+  /// No description provided for @more.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get more;
+
+  /// No description provided for @shareApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Share app'**
+  String get shareApp;
+
+  /// No description provided for @shareAppMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Shorten and check links with Shortly:'**
+  String get shareAppMessage;
+
+  /// No description provided for @madeWithCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Made with care for people who share a lot of links.'**
+  String get madeWithCare;
 }
 
 class _AppLocalizationsDelegate

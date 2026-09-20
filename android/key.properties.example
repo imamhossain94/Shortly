@@ -1,0 +1,24 @@
+# Template for android/key.properties — copy to `key.properties` and fill in.
+#
+#   cp android/key.properties.example android/key.properties
+#
+# key.properties holds upload-key secrets and is gitignored. This example file
+# is committed, so never put real passwords here.
+#
+# Release builds are signed with these values. If key.properties is missing or
+# any value below is blank, the build falls back to the debug key and prints a
+# warning — fine for `flutter run --release`, but Play will reject the upload.
+
+# Password for the keystore file itself.
+storePassword=your-keystore-password
+
+# Password for the key inside the keystore. Often the same as storePassword.
+keyPassword=your-key-password
+
+# Alias of the key to sign with. List the aliases in a keystore with:
+#   keytool -list -v -keystore /path/to/upload-keystore.jks
+keyAlias=upload
+
+# Path to the keystore. An absolute path is safest; a relative path is resolved
+# against android/app/. Use forward slashes on Windows (D:/keys/upload.jks).
+storeFile=D:/path/to/upload-keystore.jks

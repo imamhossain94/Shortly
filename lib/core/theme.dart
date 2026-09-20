@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
@@ -28,7 +29,18 @@ class AppTheme {
         brightness: Brightness.light,
       ),
       textTheme: GoogleFonts.outfitTextTheme(),
-      appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+      // Without an explicit overlay style an AppBar derives one from its own
+      // background; the transparent bars in this app resolve to light icons,
+      // which vanish against a light scaffold. Pin it to the theme instead.
+      appBarTheme: const AppBarTheme(
+        centerTitle: true,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+      ),
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -71,6 +83,11 @@ class AppTheme {
         backgroundColor: AppColors.darkBg,
         foregroundColor: AppColors.textPrimary,
         surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
       ),
       cardTheme: CardThemeData(
         color: AppColors.darkCard,

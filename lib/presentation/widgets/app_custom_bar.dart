@@ -19,7 +19,7 @@ class AppCustomBar extends StatelessWidget {
     this.actions,
     this.bottom,
     this.showDrawerButton = true,
-    this.padding = const EdgeInsets.fromLTRB(16, 32, 16, 10),
+    this.padding = const EdgeInsets.fromLTRB(16, 10, 16, 10),
   });
 
   @override

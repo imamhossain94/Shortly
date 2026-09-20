@@ -325,8 +325,13 @@ class _ResultScreenState extends State<ResultScreen>
                           ],
                         ),
                         
+                        // After the result and every action on it — the user
+                        // has what they came for before an ad appears.
                         const SizedBox(height: 32),
-                        AdService().getNativeAdWidget(),
+                        AdService().getNativeAdWidget(
+                          key: const ValueKey('result_native'),
+                          style: NativeAdStyle.card,
+                        ),
                         const SizedBox(height: 16),
                       ],
                     ),

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants.dart';
 import '../../core/theme.dart';
 import '../widgets/app_custom_bar.dart';
+import '../widgets/remove_ads_sheet.dart';
 import '../providers/shortener_provider.dart';
 import '../providers/history_provider.dart';
 import '../providers/provider_keys_provider.dart';
@@ -465,12 +466,18 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final historyAsync = ref.watch(historyProvider);
     final history = historyAsync.value ?? [];
+    // Home lists only the newest handful; My Links has the rest.
+    final recentCount = history.length > 5 ? 5 : history.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Header (fixed, non-scrollable) ────────────────────────────────
-        const AppCustomBar(title: 'Short', accentTitle: 'ly'),
+        const AppCustomBar(
+          title: 'Short',
+          accentTitle: 'ly',
+          actions: [RemoveAdsAction()],
+        ),
 
         // ── Scrollable Content ───────────────────────────────────────────
         Expanded(
@@ -877,24 +884,30 @@ class _ShortenerViewState extends ConsumerState<ShortenerView>
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: history.length > 5 ? 5 : history.length,
+                  itemCount: recentCount,
                   itemBuilder: (context, index) {
                     final item = history[index];
                     final card = _LinkCard(item: item, isDark: isDark);
-                    
-                    // One ad only, below the fold — the Home tab stays clean.
-                    if (index == 3) {
-                      return Column(
-                        children: [
-                          card,
-                          AdService().getNativeAdWidget(
-                            key: ValueKey('recent_native_$index'),
-                            isListCard: true,
-                          ),
-                        ],
-                      );
-                    }
-                    return card;
+
+                    // Home shows at most five recent links, so it gets at most
+                    // one ad — and only once there is a link below it to scroll
+                    // to. Under four links the tab stays clean.
+                    final showsAd = NativeAdPlacement.showsAfter(
+                      index,
+                      recentCount,
+                      maxAds: 1,
+                    );
+                    if (!showsAd) return card;
+
+                    return Column(
+                      children: [
+                        card,
+                        AdService().getNativeAdWidget(
+                          key: ValueKey('recent_native_$index'),
+                          style: NativeAdStyle.listTile,
+                        ),
+                      ],
+                    );
                   },
                 ),
             ],

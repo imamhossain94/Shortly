@@ -95,5 +95,23 @@
         "type": "int"
       }
     }
-  }
+  },
+  "expandedLinks": "已展开的链接",
+  "aboutTagline": "快速且私密地缩短、展开和分享链接。",
+  "whatShortlyDoes": "Shortly 能做什么",
+  "featureShortenTitle": "缩短任意链接",
+  "featureShortenDesc": "八家服务商可选，也可使用你自己的 Bitly 或 Cutt.ly 密钥。",
+  "featureExpandTitle": "点击前先确认",
+  "featureExpandDesc": "追踪短链接的跳转，查看它真正指向哪里。",
+  "featureQrTitle": "内置二维码",
+  "featureQrDesc": "把任意链接变成二维码，一键分享。",
+  "featurePrivacyTitle": "你的链接属于你",
+  "featurePrivacyDesc": "历史记录仅保存在本机。无需账号，不做追踪。",
+  "support": "支持",
+  "helpAndFaq": "帮助与常见问题",
+  "contactDeveloper": "联系开发者",
+  "more": "更多",
+  "shareApp": "分享应用",
+  "shareAppMessage": "用 Shortly 缩短和检查链接：",
+  "madeWithCare": "为经常分享链接的人用心打造。"
 }

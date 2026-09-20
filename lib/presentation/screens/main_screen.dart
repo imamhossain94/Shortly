@@ -10,6 +10,7 @@ import 'about_screen.dart';
 import 'feedback_screen.dart';
 import '../../core/theme.dart';
 import '../../core/services/iap_service.dart';
+import '../providers/navigation_provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_shortener/l10n/app_localizations.dart';
 
@@ -21,9 +22,12 @@ class MainScreen extends ConsumerStatefulWidget {
 }
 
 class _MainScreenState extends ConsumerState<MainScreen> {
-  int _currentIndex = 0;
   final PageController _pageController = PageController();
   String _version = 'v1.0.0';
+
+  /// The tab the pager is on. Mirrors [mainTabProvider], which is the source of
+  /// truth so sibling tabs can navigate to each other.
+  int get _currentIndex => ref.watch(mainTabProvider);
 
   @override
   void initState() {
@@ -41,8 +45,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 
   void _onTabTapped(int index) {
-    setState(() => _currentIndex = index);
-    _pageController.jumpToPage(index);
+    ref.read(mainTabProvider.notifier).select(index);
   }
 
   @override
@@ -53,6 +56,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Drive the pager from the provider, so a tab change requested by another
+    // view (Expand → My Links, say) moves the page too.
+    ref.listen<int>(mainTabProvider, (previous, next) {
+      if (_pageController.hasClients) _pageController.jumpToPage(next);
+    });
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Update system UI based on theme

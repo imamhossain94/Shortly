@@ -95,5 +95,23 @@
         "type": "int"
       }
     }
-  }
+  },
+  "expandedLinks": "الروابط الموسّعة",
+  "aboutTagline": "طريقة سريعة وخاصة لاختصار الروابط وتوسيعها ومشاركتها.",
+  "whatShortlyDoes": "ماذا يفعل Shortly",
+  "featureShortenTitle": "اختصر أي رابط",
+  "featureShortenDesc": "ثمانية مزودين للاختيار، بما في ذلك مفتاح Bitly أو Cutt.ly الخاص بك.",
+  "featureExpandTitle": "تحقّق قبل النقر",
+  "featureExpandDesc": "تتبّع تحويلات الرابط المختصر واعرف إلى أين يؤدي فعلاً.",
+  "featureQrTitle": "رموز QR مدمجة",
+  "featureQrDesc": "حوّل أي رابط إلى رمز QR وشاركه بنقرة واحدة.",
+  "featurePrivacyTitle": "روابطك تبقى لك",
+  "featurePrivacyDesc": "يُحفظ السجل على هذا الجهاز. بلا حساب وبلا تتبّع.",
+  "support": "الدعم",
+  "helpAndFaq": "المساعدة والأسئلة الشائعة",
+  "contactDeveloper": "تواصل مع المطوّر",
+  "more": "المزيد",
+  "shareApp": "مشاركة التطبيق",
+  "shareAppMessage": "اختصر روابطك وتحقّق منها مع Shortly:",
+  "madeWithCare": "صُنع بعناية لمن يشاركون الكثير من الروابط."
 }
