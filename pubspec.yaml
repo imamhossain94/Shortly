@@ -47,7 +47,7 @@ dependencies:
   url_launcher: ^6.3.2
   qr_flutter: ^4.1.0
   shared_preferences: ^2.5.4
-  applovin_max: ^4.6.3
+  applovin_max: ^4.6.4
   in_app_purchase: ^3.3.0 # requires Play Billing Library 8.x (Google Play deadline Aug 31, 2026)
   in_app_review: ^2.0.9
   in_app_update: ^4.2.3

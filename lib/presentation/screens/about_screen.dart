@@ -92,7 +92,10 @@ class _AboutScreenState extends State<AboutScreen> {
             children: [
               Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              // Bottom inset keeps the last item clear of the gesture bar
+              // now that the window draws edge-to-edge.
+              padding: EdgeInsets.fromLTRB(
+                  24, 24, 24, 24 + MediaQuery.paddingOf(context).bottom),
               child: Column(
                 children: [
                   const SizedBox(height: 40),

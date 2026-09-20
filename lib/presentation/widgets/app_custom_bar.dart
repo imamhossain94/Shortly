@@ -7,6 +7,9 @@ class AppCustomBar extends StatelessWidget {
   final List<Widget>? actions;
   final Widget? bottom;
   final bool showDrawerButton;
+  /// Padding around the bar's own content. The status bar / display-cutout
+  /// inset is added to [padding]'s top at build time, so this is the visual gap
+  /// below the system bar rather than an absolute offset from the window edge.
   final EdgeInsets padding;
 
   const AppCustomBar({
@@ -16,15 +19,19 @@ class AppCustomBar extends StatelessWidget {
     this.actions,
     this.bottom,
     this.showDrawerButton = true,
-    this.padding = const EdgeInsets.fromLTRB(16, 56, 16, 10),
+    this.padding = const EdgeInsets.fromLTRB(16, 32, 16, 10),
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // The app draws edge-to-edge, so the bar has to clear the status bar and any
+    // display cutout itself. Reading the inset also keeps it correct in landscape
+    // and on devices whose status bar is taller than a fixed offset would allow.
+    final topInset = MediaQuery.paddingOf(context).top;
 
     return Padding(
-      padding: padding,
+      padding: padding.copyWith(top: padding.top + topInset),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

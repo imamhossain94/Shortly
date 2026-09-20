@@ -90,7 +90,10 @@ class HelpFaqScreen extends StatelessWidget {
             children: [
               Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(16),
+              // Bottom inset keeps the last item clear of the gesture bar
+              // now that the window draws edge-to-edge.
+              padding: EdgeInsets.fromLTRB(
+                  16, 16, 16, 16 + MediaQuery.paddingOf(context).bottom),
               itemCount: faqs.length,
               itemBuilder: (context, index) {
                 final faq = faqs[index];
