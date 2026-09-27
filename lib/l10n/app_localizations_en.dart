@@ -265,4 +265,64 @@ class AppLocalizationsEn extends AppLocalizations {
   String shortenedCount(int count) {
     return '$count Shortened';
   }
+
+  @override
+  String get expandedLinks => 'Expanded Links';
+
+  @override
+  String get aboutTagline =>
+      'A fast, private way to shorten, expand and share links.';
+
+  @override
+  String get whatShortlyDoes => 'What Shortly does';
+
+  @override
+  String get featureShortenTitle => 'Shorten any link';
+
+  @override
+  String get featureShortenDesc =>
+      'Eight providers to choose from, including your own Bitly or Cutt.ly key.';
+
+  @override
+  String get featureExpandTitle => 'Check before you tap';
+
+  @override
+  String get featureExpandDesc =>
+      'Follow a short link\'s redirects and see where it really leads.';
+
+  @override
+  String get featureQrTitle => 'QR codes built in';
+
+  @override
+  String get featureQrDesc =>
+      'Turn any link into a QR code and share it in a tap.';
+
+  @override
+  String get featurePrivacyTitle => 'Your links stay yours';
+
+  @override
+  String get featurePrivacyDesc =>
+      'History is stored on this device. No account, no tracking.';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get helpAndFaq => 'Help & FAQ';
+
+  @override
+  String get contactDeveloper => 'Contact developer';
+
+  @override
+  String get more => 'More';
+
+  @override
+  String get shareApp => 'Share app';
+
+  @override
+  String get shareAppMessage => 'Shorten and check links with Shortly:';
+
+  @override
+  String get madeWithCare =>
+      'Made with care for people who share a lot of links.';
 }

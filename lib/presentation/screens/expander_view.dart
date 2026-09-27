@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme.dart';
 import '../widgets/app_custom_bar.dart';
+import '../widgets/app_bar_action.dart';
+import '../providers/navigation_provider.dart';
 import '../providers/shortener_provider.dart';
 import '../providers/history_provider.dart';
 import 'result_screen.dart';
@@ -76,9 +78,20 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Header (fixed, non-scrollable) ────────────────────────────────
-        const AppCustomBar(
+        AppCustomBar(
           title: 'Verify',
           accentTitle: ' Link',
+          actions: [
+            // Straight through to the links this screen produces, already
+            // narrowed to expanded ones.
+            AppBarAction(
+              icon: Icons.history_rounded,
+              tooltip: AppLocalizations.of(context)!.expandedLinks,
+              onTap: () => ref
+                  .read(mainTabProvider.notifier)
+                  .openMyLinks(HistoryType.expanded),
+            ),
+          ],
         ),
 
         // ── Scrollable content ─────────────────────────────────────────────
@@ -312,6 +325,14 @@ class _ExpanderViewState extends ConsumerState<ExpanderView>
                     title: AppLocalizations.of(context)!.seeFullUrlTitle,
                     desc: AppLocalizations.of(context)!.seeFullUrlDesc,
                     isDark: isDark,
+                  ),
+
+                  // End-of-content slot: past everything the screen is for, so
+                  // it can never sit between the user and the expand button.
+                  const SizedBox(height: 24),
+                  AdService().getNativeAdWidget(
+                    key: const ValueKey('expander_native'),
+                    style: NativeAdStyle.card,
                   ),
                 ],
               ),

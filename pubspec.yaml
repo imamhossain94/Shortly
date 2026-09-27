@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.3.3+33
+version: 2.3.4+34
 
 environment:
   sdk: ^3.11.5
@@ -40,8 +40,8 @@ dependencies:
   html: ^0.15.6
   sqflite: ^2.4.2
   path: ^1.9.1
-  share_plus: ^12.0.1
-  google_fonts: ^6.3.3
+  share_plus: ^13.3.0
+  google_fonts: ^8.2.1
   intl: ^0.20.2
   flutter_animate: ^4.5.2
   url_launcher: ^6.3.2
@@ -50,10 +50,10 @@ dependencies:
   applovin_max: ^4.6.4
   in_app_purchase: ^3.3.0 # requires Play Billing Library 8.x (Google Play deadline Aug 31, 2026)
   in_app_review: ^2.0.9
-  in_app_update: ^4.2.3
+  in_app_update: ^5.0.0
   flutter_localizations:
     sdk: flutter
-  package_info_plus: ^9.0.1
+  package_info_plus: ^10.2.1
   receive_sharing_intent: ^1.8.1
 
 dev_dependencies:
@@ -65,7 +65,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

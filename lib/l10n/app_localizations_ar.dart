@@ -265,4 +265,62 @@ class AppLocalizationsAr extends AppLocalizations {
   String shortenedCount(int count) {
     return '$count مختصرة';
   }
+
+  @override
+  String get expandedLinks => 'الروابط الموسّعة';
+
+  @override
+  String get aboutTagline =>
+      'طريقة سريعة وخاصة لاختصار الروابط وتوسيعها ومشاركتها.';
+
+  @override
+  String get whatShortlyDoes => 'ماذا يفعل Shortly';
+
+  @override
+  String get featureShortenTitle => 'اختصر أي رابط';
+
+  @override
+  String get featureShortenDesc =>
+      'ثمانية مزودين للاختيار، بما في ذلك مفتاح Bitly أو Cutt.ly الخاص بك.';
+
+  @override
+  String get featureExpandTitle => 'تحقّق قبل النقر';
+
+  @override
+  String get featureExpandDesc =>
+      'تتبّع تحويلات الرابط المختصر واعرف إلى أين يؤدي فعلاً.';
+
+  @override
+  String get featureQrTitle => 'رموز QR مدمجة';
+
+  @override
+  String get featureQrDesc => 'حوّل أي رابط إلى رمز QR وشاركه بنقرة واحدة.';
+
+  @override
+  String get featurePrivacyTitle => 'روابطك تبقى لك';
+
+  @override
+  String get featurePrivacyDesc =>
+      'يُحفظ السجل على هذا الجهاز. بلا حساب وبلا تتبّع.';
+
+  @override
+  String get support => 'الدعم';
+
+  @override
+  String get helpAndFaq => 'المساعدة والأسئلة الشائعة';
+
+  @override
+  String get contactDeveloper => 'تواصل مع المطوّر';
+
+  @override
+  String get more => 'المزيد';
+
+  @override
+  String get shareApp => 'مشاركة التطبيق';
+
+  @override
+  String get shareAppMessage => 'اختصر روابطك وتحقّق منها مع Shortly:';
+
+  @override
+  String get madeWithCare => 'صُنع بعناية لمن يشاركون الكثير من الروابط.';
 }

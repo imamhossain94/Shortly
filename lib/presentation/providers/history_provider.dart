@@ -4,9 +4,18 @@ import '../../data/repository/url_repository.dart';
 
 final urlRepositoryProvider = Provider((ref) => UrlRepository());
 
+/// The `type` values [HistoryFilter] accepts. `null` means "no filter".
+abstract class HistoryType {
+  static const String? all = null;
+  static const String shortened = 'shorten';
+  static const String expanded = 'expand';
+}
+
 class HistoryFilter {
   final String query;
-  final String? type; // 'shorten', 'expand', or null (all)
+
+  /// One of [HistoryType], or null for everything.
+  final String? type;
 
   HistoryFilter({this.query = '', this.type});
 
@@ -15,9 +24,6 @@ class HistoryFilter {
   }
 }
 
-// StateProvider is available in Riverpod. If it errors, it might be due to package version or import.
-// flutter_riverpod exports StateProvider from riverpod.
-// Let's use Notifier for Filter to be consistent with everything else.
 class FilterNotifier extends Notifier<HistoryFilter> {
   @override
   HistoryFilter build() {
@@ -29,7 +35,10 @@ class FilterNotifier extends Notifier<HistoryFilter> {
   }
 
   void updateType(String? newType) {
-    state = HistoryFilter(query: state.query, type: newType);
+    // The filter menu sends 'all' for the unfiltered entry; normalise it so
+    // callers only ever compare against the two real types.
+    final normalised = newType == 'all' ? HistoryType.all : newType;
+    state = HistoryFilter(query: state.query, type: normalised);
   }
 }
 
@@ -90,9 +99,9 @@ final filteredHistoryProvider = Provider<List<UrlData>>((ref) {
 
         if (!matchesQuery) return false;
 
-        if (filter.type == 'shorten') {
+        if (filter.type == HistoryType.shortened) {
           return item.provider != null;
-        } else if (filter.type == 'expand') {
+        } else if (filter.type == HistoryType.expanded) {
           return item.provider == null;
         }
         return true;

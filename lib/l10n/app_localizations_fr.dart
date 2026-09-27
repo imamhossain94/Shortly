@@ -267,4 +267,65 @@ class AppLocalizationsFr extends AppLocalizations {
   String shortenedCount(int count) {
     return '$count Raccourcis';
   }
+
+  @override
+  String get expandedLinks => 'Liens développés';
+
+  @override
+  String get aboutTagline =>
+      'Un moyen rapide et privé de raccourcir, développer et partager des liens.';
+
+  @override
+  String get whatShortlyDoes => 'Ce que fait Shortly';
+
+  @override
+  String get featureShortenTitle => 'Raccourcir n\'importe quel lien';
+
+  @override
+  String get featureShortenDesc =>
+      'Huit fournisseurs au choix, y compris votre propre clé Bitly ou Cutt.ly.';
+
+  @override
+  String get featureExpandTitle => 'Vérifiez avant de cliquer';
+
+  @override
+  String get featureExpandDesc =>
+      'Suivez les redirections d\'un lien court et voyez où il mène vraiment.';
+
+  @override
+  String get featureQrTitle => 'Codes QR intégrés';
+
+  @override
+  String get featureQrDesc =>
+      'Transformez un lien en code QR et partagez-le en un geste.';
+
+  @override
+  String get featurePrivacyTitle => 'Vos liens restent les vôtres';
+
+  @override
+  String get featurePrivacyDesc =>
+      'L\'historique reste sur cet appareil. Aucun compte, aucun suivi.';
+
+  @override
+  String get support => 'Assistance';
+
+  @override
+  String get helpAndFaq => 'Aide et FAQ';
+
+  @override
+  String get contactDeveloper => 'Contacter le développeur';
+
+  @override
+  String get more => 'Plus';
+
+  @override
+  String get shareApp => 'Partager l\'app';
+
+  @override
+  String get shareAppMessage =>
+      'Raccourcissez et vérifiez vos liens avec Shortly :';
+
+  @override
+  String get madeWithCare =>
+      'Conçu avec soin pour celles et ceux qui partagent beaucoup de liens.';
 }

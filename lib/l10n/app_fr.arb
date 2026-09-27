@@ -95,5 +95,23 @@
         "type": "int"
       }
     }
-  }
+  },
+  "expandedLinks": "Liens développés",
+  "aboutTagline": "Un moyen rapide et privé de raccourcir, développer et partager des liens.",
+  "whatShortlyDoes": "Ce que fait Shortly",
+  "featureShortenTitle": "Raccourcir n'importe quel lien",
+  "featureShortenDesc": "Huit fournisseurs au choix, y compris votre propre clé Bitly ou Cutt.ly.",
+  "featureExpandTitle": "Vérifiez avant de cliquer",
+  "featureExpandDesc": "Suivez les redirections d'un lien court et voyez où il mène vraiment.",
+  "featureQrTitle": "Codes QR intégrés",
+  "featureQrDesc": "Transformez un lien en code QR et partagez-le en un geste.",
+  "featurePrivacyTitle": "Vos liens restent les vôtres",
+  "featurePrivacyDesc": "L'historique reste sur cet appareil. Aucun compte, aucun suivi.",
+  "support": "Assistance",
+  "helpAndFaq": "Aide et FAQ",
+  "contactDeveloper": "Contacter le développeur",
+  "more": "Plus",
+  "shareApp": "Partager l'app",
+  "shareAppMessage": "Raccourcissez et vérifiez vos liens avec Shortly :",
+  "madeWithCare": "Conçu avec soin pour celles et ceux qui partagent beaucoup de liens."
 }

@@ -266,4 +266,64 @@ class AppLocalizationsHi extends AppLocalizations {
   String shortenedCount(int count) {
     return '$count छोटे किए गए';
   }
+
+  @override
+  String get expandedLinks => 'विस्तारित लिंक';
+
+  @override
+  String get aboutTagline =>
+      'लिंक छोटा करने, खोलने और साझा करने का तेज़ और निजी तरीका।';
+
+  @override
+  String get whatShortlyDoes => 'Shortly क्या करता है';
+
+  @override
+  String get featureShortenTitle => 'कोई भी लिंक छोटा करें';
+
+  @override
+  String get featureShortenDesc =>
+      'आठ प्रोवाइडर चुनें, अपनी Bitly या Cutt.ly कुंजी के साथ भी।';
+
+  @override
+  String get featureExpandTitle => 'टैप करने से पहले जाँचें';
+
+  @override
+  String get featureExpandDesc =>
+      'छोटे लिंक के रीडायरेक्ट देखें और पता करें वह असल में कहाँ ले जाता है।';
+
+  @override
+  String get featureQrTitle => 'QR कोड अंतर्निहित';
+
+  @override
+  String get featureQrDesc =>
+      'किसी भी लिंक को QR कोड बनाएँ और एक टैप में साझा करें।';
+
+  @override
+  String get featurePrivacyTitle => 'आपके लिंक आपके ही रहते हैं';
+
+  @override
+  String get featurePrivacyDesc =>
+      'इतिहास इसी डिवाइस पर रहता है। कोई खाता नहीं, कोई ट्रैकिंग नहीं।';
+
+  @override
+  String get support => 'सहायता';
+
+  @override
+  String get helpAndFaq => 'मदद और सामान्य प्रश्न';
+
+  @override
+  String get contactDeveloper => 'डेवलपर से संपर्क करें';
+
+  @override
+  String get more => 'अधिक';
+
+  @override
+  String get shareApp => 'ऐप साझा करें';
+
+  @override
+  String get shareAppMessage => 'Shortly से लिंक छोटे करें और जाँचें:';
+
+  @override
+  String get madeWithCare =>
+      'उन लोगों के लिए ध्यान से बनाया गया जो बहुत लिंक साझा करते हैं।';
 }

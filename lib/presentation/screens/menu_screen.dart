@@ -9,9 +9,11 @@ import '../../core/constants.dart';
 import '../../core/services/iap_service.dart';
 import '../../core/services/ad_service.dart';
 import '../widgets/app_custom_bar.dart';
+import '../widgets/app_bar_action.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
 import '../providers/provider_keys_provider.dart';
+import 'about_screen.dart';
 import 'feedback_screen.dart';
 import 'provider_config_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -28,7 +30,19 @@ class MenuScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Header (fixed, non-scrollable) ────────────────────────────────
-        AppCustomBar(title: AppLocalizations.of(context)!.settings),
+        AppCustomBar(
+          title: AppLocalizations.of(context)!.settings,
+          actions: [
+            AppBarAction(
+              icon: Icons.info_outline_rounded,
+              tooltip: AppLocalizations.of(context)!.about,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AboutScreen()),
+              ),
+            ),
+          ],
+        ),
 
         // ── Scrollable content ─────────────────────────────────────────────
         Expanded(

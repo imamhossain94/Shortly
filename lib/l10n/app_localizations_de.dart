@@ -267,4 +267,64 @@ class AppLocalizationsDe extends AppLocalizations {
   String shortenedCount(int count) {
     return '$count Gekürzt';
   }
+
+  @override
+  String get expandedLinks => 'Erweiterte Links';
+
+  @override
+  String get aboutTagline =>
+      'Schnell und privat Links kürzen, auflösen und teilen.';
+
+  @override
+  String get whatShortlyDoes => 'Was Shortly kann';
+
+  @override
+  String get featureShortenTitle => 'Jeden Link kürzen';
+
+  @override
+  String get featureShortenDesc =>
+      'Acht Anbieter zur Auswahl, auch mit eigenem Bitly- oder Cutt.ly-Schlüssel.';
+
+  @override
+  String get featureExpandTitle => 'Prüfen vor dem Tippen';
+
+  @override
+  String get featureExpandDesc =>
+      'Folge den Weiterleitungen eines Kurzlinks und sieh, wohin er wirklich führt.';
+
+  @override
+  String get featureQrTitle => 'QR-Codes integriert';
+
+  @override
+  String get featureQrDesc =>
+      'Verwandle jeden Link in einen QR-Code und teile ihn mit einem Tipp.';
+
+  @override
+  String get featurePrivacyTitle => 'Deine Links bleiben deine';
+
+  @override
+  String get featurePrivacyDesc =>
+      'Der Verlauf bleibt auf diesem Gerät. Kein Konto, kein Tracking.';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get helpAndFaq => 'Hilfe & FAQ';
+
+  @override
+  String get contactDeveloper => 'Entwickler kontaktieren';
+
+  @override
+  String get more => 'Mehr';
+
+  @override
+  String get shareApp => 'App teilen';
+
+  @override
+  String get shareAppMessage => 'Links kürzen und prüfen mit Shortly:';
+
+  @override
+  String get madeWithCare =>
+      'Mit Sorgfalt gemacht für alle, die viele Links teilen.';
 }

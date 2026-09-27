@@ -95,5 +95,23 @@
         "type": "int"
       }
     }
-  }
+  },
+  "expandedLinks": "विस्तारित लिंक",
+  "aboutTagline": "लिंक छोटा करने, खोलने और साझा करने का तेज़ और निजी तरीका।",
+  "whatShortlyDoes": "Shortly क्या करता है",
+  "featureShortenTitle": "कोई भी लिंक छोटा करें",
+  "featureShortenDesc": "आठ प्रोवाइडर चुनें, अपनी Bitly या Cutt.ly कुंजी के साथ भी।",
+  "featureExpandTitle": "टैप करने से पहले जाँचें",
+  "featureExpandDesc": "छोटे लिंक के रीडायरेक्ट देखें और पता करें वह असल में कहाँ ले जाता है।",
+  "featureQrTitle": "QR कोड अंतर्निहित",
+  "featureQrDesc": "किसी भी लिंक को QR कोड बनाएँ और एक टैप में साझा करें।",
+  "featurePrivacyTitle": "आपके लिंक आपके ही रहते हैं",
+  "featurePrivacyDesc": "इतिहास इसी डिवाइस पर रहता है। कोई खाता नहीं, कोई ट्रैकिंग नहीं।",
+  "support": "सहायता",
+  "helpAndFaq": "मदद और सामान्य प्रश्न",
+  "contactDeveloper": "डेवलपर से संपर्क करें",
+  "more": "अधिक",
+  "shareApp": "ऐप साझा करें",
+  "shareAppMessage": "Shortly से लिंक छोटे करें और जाँचें:",
+  "madeWithCare": "उन लोगों के लिए ध्यान से बनाया गया जो बहुत लिंक साझा करते हैं।"
 }
