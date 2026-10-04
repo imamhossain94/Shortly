@@ -30,7 +30,9 @@ abstract class AppConstants {
   static const String developerStoreLink =
       'https://play.google.com/store/apps/dev?id=5785086860664884952';
   static const String privacyPolicyUrl =
-      'https://url-shortener-privacy-policy.blogspot.com/2021/11/privacy-policy-md.html';
+      'https://newagedevs.com/products/shortly/privacy';
+  static const String termsUrl =
+      'https://newagedevs.com/products/shortly/terms';
 
   // AppLovin MAX SDK Key
   static const String appLovinSdkKey =

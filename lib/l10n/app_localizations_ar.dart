@@ -245,6 +245,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get privacyPolicy => 'سياسة الخصوصية';
 
   @override
+  String get termsAndConditions => 'الشروط والأحكام';
+
+  @override
   String get about => 'حول';
 
   @override

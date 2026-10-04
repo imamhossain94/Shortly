@@ -246,6 +246,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get privacyPolicy => 'गोपनीयता नीति';
 
   @override
+  String get termsAndConditions => 'नियम और शर्तें';
+
+  @override
   String get about => 'के बारे में';
 
   @override

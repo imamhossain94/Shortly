@@ -175,7 +175,7 @@ Shortly/
 Shortly respects user privacy:
 - Shortened URLs and history records are saved **locally on your device** via SQLite.
 - Only the URLs you choose to shorten or expand are sent to the designated shortener API endpoint.
-- For more details, review the [Privacy Policy](https://url-shortener-privacy-policy.blogspot.com/2021/11/privacy-policy-md.html).
+- For more details, review the [Privacy Policy](https://newagedevs.com/products/shortly/privacy) and [Terms & Conditions](https://newagedevs.com/products/shortly/terms).
 
 ---
 

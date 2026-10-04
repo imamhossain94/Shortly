@@ -229,6 +229,13 @@ class _AboutScreenState extends State<AboutScreen> {
                   isDark: isDark,
                   onTap: () => _open(AppConstants.privacyPolicyUrl),
                 ),
+                _Divider(isDark: isDark),
+                _LinkTile(
+                  icon: Icons.description_outlined,
+                  label: l10n.termsAndConditions,
+                  isDark: isDark,
+                  onTap: () => _open(AppConstants.termsUrl),
+                ),
               ],
             ),
           ),
