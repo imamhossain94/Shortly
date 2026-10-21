@@ -97,10 +97,12 @@ flutter {
 
 dependencies {
     implementation("androidx.core:core-splashscreen:1.2.0")
-    // AppLovin mediation adapters
-    implementation("com.applovin.mediation:inmobi-adapter:+")
+    // AppLovin mediation adapters, pinned: "+" took whatever release was newest
+    // at build time, so no two builds were guaranteed the same adapters.
+    // Not 11.5.0.0: SDK 11.5.0's billing reader (com.inmobi.media.b50) crashes, "Already resumed"; revisit when InMobi ships newer than 11.5.0.
+    implementation("com.applovin.mediation:inmobi-adapter:11.4.1.3")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
-    implementation("com.applovin.mediation:vungle-adapter:+")
-    implementation("com.applovin.mediation:facebook-adapter:+")
+    implementation("com.applovin.mediation:vungle-adapter:7.7.9.0")
+    implementation("com.applovin.mediation:facebook-adapter:6.22.0.1")
 }
