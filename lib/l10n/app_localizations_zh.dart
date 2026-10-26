@@ -240,6 +240,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get privacyPolicy => '隐私政策';
 
   @override
+  String get termsAndConditions => '条款和条件';
+
+  @override
   String get about => '关于';
 
   @override

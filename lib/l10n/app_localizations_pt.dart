@@ -246,6 +246,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get privacyPolicy => 'Política de Privacidade';
 
   @override
+  String get termsAndConditions => 'Termos e Condições';
+
+  @override
   String get about => 'Sobre';
 
   @override

@@ -538,6 +538,21 @@ class MenuScreen extends ConsumerWidget {
                         }
                       },
                     ),
+                    _Divider(isDark: isDark),
+                    _SettingsTile(
+                      icon: Icons.description_outlined,
+                      label: AppLocalizations.of(context)!.termsAndConditions,
+                      isDark: isDark,
+                      onTap: () async {
+                        final Uri url = Uri.parse(
+                          AppConstants.termsUrl,
+                        );
+                        if (await canLaunchUrl(url)) {
+                          AdService().suppressNextAppOpenAd();
+                          launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                    ),
                   ],
                 ),
 
